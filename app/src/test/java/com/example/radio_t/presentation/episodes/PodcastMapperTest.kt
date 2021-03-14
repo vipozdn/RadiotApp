@@ -20,14 +20,15 @@ internal class PodcastMapperTest {
             TimeLabels("t1"),
             TimeLabels("t2"),
             TimeLabels("t3"),
-        )
+        ),
     )
 
     Assert.assertEquals(
         EpisodeUiModel(
             number,
             title,
-            "- t1\n- t2\n- t3"
+            "- t1\n- t2\n- t3",
+            "",
         ),
         PodcastMapper().map(podcast)
     )

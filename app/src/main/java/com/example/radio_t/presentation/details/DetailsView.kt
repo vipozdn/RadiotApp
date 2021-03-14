@@ -1,11 +1,13 @@
 package com.example.radio_t.presentation.details
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.radio_t.presentation.episodes.Episode
+import com.example.remark.ui.CommentView
 
 @Composable
 fun DetailView(podcastNumber: Long?) {
@@ -22,6 +24,10 @@ private fun PodcastContent(podcastNumber: Long) {
   viewModel.loadPodcast(podcastNumber)
   val podcast by viewModel.podcast.observeAsState()
   podcast?.let {
-    Episode(podcast = it)
+    Column {
+      Episode(podcast = it)
+      CommentView(postUrl = it.url)
+    }
+
   }
 }

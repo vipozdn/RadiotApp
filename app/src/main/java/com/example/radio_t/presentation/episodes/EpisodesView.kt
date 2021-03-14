@@ -20,6 +20,7 @@ data class EpisodeUiModel(
     val number: Long,
     val title: String,
     val topics: String,
+    val url: String
 )
 
 @Composable

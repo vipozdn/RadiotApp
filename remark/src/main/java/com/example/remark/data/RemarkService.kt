@@ -12,5 +12,6 @@ interface RemarkService {
       @Query("site") siteId: String = RemarkSettings.siteId,
       @Query("sort") sort: String = RemarkSettings.defaultSorting,
       @Query("format") format: String = "tree",
-  )
+  ): Comments
 }
+
