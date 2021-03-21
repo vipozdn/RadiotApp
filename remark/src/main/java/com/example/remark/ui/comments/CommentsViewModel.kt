@@ -1,4 +1,4 @@
-package com.example.remark.ui
+package com.example.remark.ui.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.remark.data.RemarkService
 import com.example.remark.di.Graph
+import com.example.remark.ui.comments.mappers.CommentUiMapper
 import kotlinx.coroutines.launch
 
 class CommentsViewModel(

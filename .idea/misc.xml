@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="remark/src/main/res/drawable/down.xml" value="0.2212962962962963" />
+        <entry key="remark/src/main/res/drawable/down_unselect.xml" value="0.2212962962962963" />
+        <entry key="remark/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.2212962962962963" />
+        <entry key="remark/src/main/res/drawable/up.xml" value="0.4" />
+        <entry key="remark/src/main/res/drawable/up_unselected.xml" value="0.2212962962962963" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

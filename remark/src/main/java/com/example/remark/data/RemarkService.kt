@@ -13,5 +13,10 @@ interface RemarkService {
       @Query("sort") sort: String = RemarkSettings.defaultSorting,
       @Query("format") format: String = "tree",
   ): Comments
+
+  @GET("api/v1/config")
+  suspend fun getConfig(
+      @Query("site") siteId: String,
+  ): Config
 }
 

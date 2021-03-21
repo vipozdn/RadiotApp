@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.radio_t.presentation.episodes.Episode
-import com.example.remark.ui.CommentView
+import com.example.remark.ui.CommentWidget
 
 @Composable
 fun DetailView(podcastNumber: Long?) {
@@ -26,8 +26,7 @@ private fun PodcastContent(podcastNumber: Long) {
   podcast?.let {
     Column {
       Episode(podcast = it)
-      CommentView(postUrl = it.url)
+      CommentWidget(postUrl = it.url)
     }
-
   }
 }
