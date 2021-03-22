@@ -1,0 +1,21 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run unit tests
+        run: ./gradlew app:test remark:test
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run detekt
+        run: ./gradlew app:detekt remark:detekt
