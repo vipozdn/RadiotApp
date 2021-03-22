@@ -1,7 +1,11 @@
 package com.example.remark.data.repositories
 
-import com.example.remark.data.*
-import com.example.remark.data.pojo.*
+import com.example.remark.data.RemarkService
+import com.example.remark.data.pojo.Comment
+import com.example.remark.data.pojo.CommentWrapper
+import com.example.remark.data.pojo.Comments
+import com.example.remark.data.pojo.VoteResponse
+import com.example.remark.data.pojo.VoteType
 import io.kotlintest.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk

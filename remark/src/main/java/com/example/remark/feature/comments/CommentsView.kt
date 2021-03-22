@@ -2,10 +2,19 @@ package com.example.remark.feature.comments
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -43,6 +52,7 @@ fun CommentView(postUrl: String) {
   data?.let {
     LazyColumn(modifier = Modifier.padding(8.dp)) {
       items(it) { comment ->
+        @Suppress("MagicNumber")
         Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
           Text(text = comment.userName, style = MaterialTheme.typography.subtitle2)
           Text(text = comment.text, style = MaterialTheme.typography.body1)

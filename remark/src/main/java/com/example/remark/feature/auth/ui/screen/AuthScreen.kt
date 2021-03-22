@@ -1,9 +1,11 @@
 package com.example.remark.feature.auth.ui.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
