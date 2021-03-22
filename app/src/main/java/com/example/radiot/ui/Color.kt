@@ -1,4 +1,6 @@
-package com.example.radio_t.ui
+@file:Suppress("MagicNumber")
+
+package com.example.radiot.ui
 
 import androidx.compose.ui.graphics.Color
 

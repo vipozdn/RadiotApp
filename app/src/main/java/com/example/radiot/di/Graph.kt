@@ -1,7 +1,7 @@
-package com.example.radio_t.di
+package com.example.radiot.di
 
-import com.example.radio_t.data.PodcastRepository
-import com.example.radio_t.data.RadiotService
+import com.example.radiot.data.PodcastRepository
+import com.example.radiot.data.RadiotService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -33,5 +33,4 @@ object Graph {
   val json: Json = Json {
     ignoreUnknownKeys = true
   }
-
 }

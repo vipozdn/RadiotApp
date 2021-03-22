@@ -15,7 +15,6 @@ import com.example.remark.feature.CommentWidgetViewModel
 import com.example.remark.feature.LoginState
 import com.example.remark.feature.auth.ui.screen.AuthScreen
 import com.example.remark.feature.auth.ui.view.LoginView
-import kotlin.math.log
 
 object Destinations {
   const val DATA = "data"

@@ -1,7 +1,7 @@
-package com.example.radio_t.presentation.episodes
+package com.example.radiot.presentation.episodes
 
-import com.example.radio_t.data.Podcast
-import com.example.radio_t.data.TimeLabels
+import com.example.radiot.data.Podcast
+import com.example.radiot.data.TimeLabels
 import org.junit.Assert
 import org.junit.Test
 

@@ -1,7 +1,8 @@
 package com.example.remark.data.repositories
 
 import com.example.remark.RemarkSettings
-import com.example.remark.data.*
+import com.example.remark.data.RemarkService
+import com.example.remark.data.apiCall
 import com.example.remark.data.pojo.CommentWrapper
 import com.example.remark.data.pojo.Comments
 import com.example.remark.data.pojo.VoteResponse
@@ -37,7 +38,11 @@ class CommentRepository(
     return cache
   }
 
-  private fun copyComments(comments: List<CommentWrapper>, voteResponse: VoteResponse, voteType: VoteType): List<CommentWrapper> {
+  private fun copyComments(
+      comments: List<CommentWrapper>,
+      voteResponse: VoteResponse,
+      voteType: VoteType,
+  ): List<CommentWrapper> {
     return comments.map {
       if (it.comment.id == voteResponse.id) {
         CommentWrapper(it.comment.copy(score = voteResponse.score, vote = voteType.backendCode), it.replies)
@@ -46,5 +51,4 @@ class CommentRepository(
       }
     }
   }
-
 }

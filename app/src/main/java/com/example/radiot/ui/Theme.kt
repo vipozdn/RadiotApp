@@ -1,4 +1,4 @@
-package com.example.radio_t.ui
+package com.example.radiot.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors

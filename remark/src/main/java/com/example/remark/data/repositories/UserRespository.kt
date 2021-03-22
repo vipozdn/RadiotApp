@@ -54,5 +54,4 @@ class UserStorage(
     private const val KEY_JWT_TOKEN = "KEY_JWT_TOKEN"
     private const val KEY_XSRF_TOKEN = "KEY_XSRF_TOKEN"
   }
-
 }

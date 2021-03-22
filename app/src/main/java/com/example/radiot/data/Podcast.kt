@@ -1,4 +1,4 @@
-package com.example.radio_t.data
+package com.example.radiot.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

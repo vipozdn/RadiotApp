@@ -1,4 +1,4 @@
-package com.example.radio_t.presentation.details
+package com.example.radiot.presentation.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.radio_t.presentation.episodes.Episode
+import com.example.radiot.presentation.episodes.Episode
 import com.example.remark.feature.comments.CommentWidget
 
 @Composable

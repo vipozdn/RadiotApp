@@ -1,6 +1,6 @@
-package com.example.radio_t.presentation.episodes
+package com.example.radiot.presentation.episodes
 
-import com.example.radio_t.data.Podcast
+import com.example.radiot.data.Podcast
 
 class PodcastMapper {
 

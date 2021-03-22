@@ -1,7 +1,6 @@
 package com.example.remark.data
 
-import java.lang.Exception
-
+@Suppress("TooGenericExceptionCaught")
 suspend fun <T : Any> apiCall(block: suspend () -> T): Result<T> {
   return try {
     Result.success(block())

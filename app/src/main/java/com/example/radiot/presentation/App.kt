@@ -1,15 +1,17 @@
-package com.example.radio_t.presentation
+package com.example.radiot.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
-import com.example.radio_t.presentation.details.DetailView
-import com.example.radio_t.presentation.episodes.EpisodesView
-import com.example.radio_t.ui.RadiotTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
+import com.example.radiot.presentation.details.DetailView
+import com.example.radiot.presentation.episodes.EpisodesView
+import com.example.radiot.ui.RadiotTheme
 
 object Destinations {
   const val LIST = "list"

@@ -1,4 +1,4 @@
-package com.example.radio_t.data
+package com.example.radiot.data
 
 class PodcastRepository(
     private val radiotService: RadiotService,

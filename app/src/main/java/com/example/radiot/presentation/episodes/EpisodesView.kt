@@ -1,4 +1,4 @@
-package com.example.radio_t.presentation.episodes
+package com.example.radiot.presentation.episodes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,13 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-data class EpisodeUiModel(
-    val number: Long,
-    val title: String,
-    val topics: String,
-    val url: String,
-)
 
 @Composable
 fun EpisodesView(openDetails: (Long) -> Unit) {
