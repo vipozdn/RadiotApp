@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.remark.data.VoteType
+import com.example.remark.data.pojo.VoteType
 
 data class CommentUiModel(
     val userName: String,
@@ -38,7 +38,7 @@ fun CommentView(postUrl: String) {
   val viewModel: CommentsViewModel = viewModel(CommentsViewModel::class.java)
   viewModel.start(postUrl)
 
-  val data by viewModel.comments.observeAsState()
+  val data by viewModel.commentsLiveData.observeAsState()
 
   data?.let {
     LazyColumn(modifier = Modifier.padding(8.dp)) {

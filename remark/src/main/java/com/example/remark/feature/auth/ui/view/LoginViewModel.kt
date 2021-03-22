@@ -3,7 +3,7 @@ package com.example.remark.feature.auth.ui.view
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.remark.data.UserStorage
+import com.example.remark.data.repositories.UserStorage
 import com.example.remark.di.Graph
 
 sealed class LoginUiModel {

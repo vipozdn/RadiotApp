@@ -1,6 +1,6 @@
 package com.example.remark.feature.auth.ui
 
-import com.example.remark.data.RemarkCredentials
+import com.example.remark.data.repositories.RemarkCredentials
 
 class CredentialCreator {
 

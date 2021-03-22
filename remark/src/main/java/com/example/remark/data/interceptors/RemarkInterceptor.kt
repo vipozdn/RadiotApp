@@ -1,7 +1,7 @@
 package com.example.remark.data.interceptors
 
 import com.example.remark.RemarkSettings
-import com.example.remark.data.UserStorage
+import com.example.remark.data.repositories.UserStorage
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response

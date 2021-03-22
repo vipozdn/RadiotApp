@@ -1,4 +1,4 @@
-package com.example.remark.data
+package com.example.remark.data.pojo
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

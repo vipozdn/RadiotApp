@@ -1,6 +1,9 @@
 package com.example.remark.data
 
 import com.example.remark.RemarkSettings
+import com.example.remark.data.pojo.Comments
+import com.example.remark.data.pojo.Config
+import com.example.remark.data.pojo.VoteResponse
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path

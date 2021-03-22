@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.example.remark.RemarkSettings
 import com.example.remark.data.RemarkService
-import com.example.remark.data.UserStorage
+import com.example.remark.data.repositories.UserStorage
 import com.example.remark.data.interceptors.RemarkInterceptor
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory

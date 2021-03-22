@@ -1,11 +1,11 @@
-package com.example.remark.data
+package com.example.remark.data.pojo
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-class VoteResponse(
+data class VoteResponse(
     val id: String,
-    val score: Int,
+    val score: Long,
 )
 
 enum class VoteType(val backendCode: Int) {

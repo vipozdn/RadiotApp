@@ -1,4 +1,4 @@
-package com.example.remark.data
+package com.example.remark.data.repositories
 
 import android.content.SharedPreferences
 import com.example.remark.feature.auth.ui.CredentialCreator

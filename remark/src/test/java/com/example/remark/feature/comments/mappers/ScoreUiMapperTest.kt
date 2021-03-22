@@ -2,9 +2,8 @@ package com.example.remark.feature.comments.mappers
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import arrow.core.identity
 import com.example.remark.R
-import com.example.remark.data.Comment
+import com.example.remark.data.pojo.Comment
 import com.example.remark.feature.comments.ScoreUiModel
 import io.kotlintest.shouldBe
 import io.mockk.every

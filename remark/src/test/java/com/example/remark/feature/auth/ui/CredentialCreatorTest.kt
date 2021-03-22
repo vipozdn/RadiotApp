@@ -1,6 +1,6 @@
 package com.example.remark.feature.auth.ui
 
-import com.example.remark.data.RemarkCredentials
+import com.example.remark.data.repositories.RemarkCredentials
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory

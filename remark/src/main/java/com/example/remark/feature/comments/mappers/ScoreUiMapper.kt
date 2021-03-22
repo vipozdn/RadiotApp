@@ -3,7 +3,7 @@ package com.example.remark.feature.comments.mappers
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.example.remark.R
-import com.example.remark.data.Comment
+import com.example.remark.data.pojo.Comment
 import com.example.remark.feature.comments.ScoreUiModel
 
 class ScoreUiMapper {
@@ -41,5 +41,4 @@ class ScoreUiMapper {
       else -> Color.Gray
     }.toArgb()
   }
-
 }
