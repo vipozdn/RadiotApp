@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.radio_t"
+        applicationId "com.stelmashchuk.radio_t"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
