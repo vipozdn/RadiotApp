@@ -1,9 +1,9 @@
-package com.example.remark.ui.auth
+package com.example.remark.feature.auth.ui.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
 fun AuthScreen() {
@@ -26,7 +27,7 @@ fun AuthScreen() {
       AuthList(it, viewModel)
     }
     currentProvider?.let {
-      WebPageScreen(it)
+      WebPageScreen(it, viewModel::cookiesChange)
     }
   }
 }
@@ -34,9 +35,9 @@ fun AuthScreen() {
 @Composable
 fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
   LazyRow {
-    items(loginItems) {
-      Button(onClick = { viewModel.selectLoginItem(it) }) {
-        Text(text = it.name)
+    items(loginItems) { loginItem ->
+      Button(onClick = { viewModel.selectLoginItem(loginItem) }) {
+        Text(text = loginItem.name)
       }
     }
   }
@@ -44,16 +45,35 @@ fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebPageScreen(urlToRender: String) {
-  AndroidView(factory = {
-    WebView(it).apply {
+fun WebPageScreen(urlToRender: String, onCookieChange: (String) -> Unit) {
+  AndroidView(factory = { context ->
+    val webView = WebView(context)
+    CookieManager.getInstance().acceptThirdPartyCookies(webView)
+    CookieManager.getInstance().setAcceptCookie(true)
+    webView.apply {
       layoutParams = ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT,
           ViewGroup.LayoutParams.MATCH_PARENT
       )
-      webViewClient = WebViewClient()
+      this.settings.apply {
+        @SuppressLint("SetJavaScriptEnabled")
+        javaScriptEnabled = true
+        javaScriptCanOpenWindowsAutomatically = true
+      }
+
+      CookieManager.getInstance().setAcceptCookie(true)
+      CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+
+      this.webChromeClient = WebChromeClient()
+      webViewClient = object : WebViewClient() {
+        override fun onPageFinished(view: WebView?, url: String?) {
+          super.onPageFinished(view, url)
+          CookieManager.getInstance().getCookie(url)?.let(onCookieChange)
+        }
+      }
       loadUrl(urlToRender)
     }
+    webView
   }, update = {
     it.loadUrl(urlToRender)
   })

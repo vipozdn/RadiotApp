@@ -1,15 +1,16 @@
-package com.example.remark.ui.comments.mappers
+package com.example.remark.feature.comments.mappers
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.example.remark.R
 import com.example.remark.data.Comment
-import com.example.remark.ui.comments.ScoreUiModel
+import com.example.remark.feature.comments.ScoreUiModel
 
 class ScoreUiMapper {
 
   fun map(comment: Comment): ScoreUiModel {
     return ScoreUiModel(
+        comment.id,
         comment.score.toString(),
         getColor(comment.score),
         getUpIcon(comment),

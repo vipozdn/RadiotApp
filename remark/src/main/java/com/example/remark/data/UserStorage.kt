@@ -1,6 +1,7 @@
 package com.example.remark.data
 
 import android.content.SharedPreferences
+import com.example.remark.feature.auth.ui.CredentialCreator
 
 data class RemarkCredentials(
     val jwtToken: String,
@@ -11,7 +12,22 @@ data class RemarkCredentials(
   }
 }
 
-class UserStorage(private val sharedPreferences: SharedPreferences) {
+class UserStorage(
+    private val sharedPreferences: SharedPreferences,
+    private val credentialCreator: CredentialCreator = CredentialCreator(),
+) {
+
+  /**
+   * @return true when credential save success
+   */
+  fun saveByCookies(cookies: String): Boolean {
+    credentialCreator.tryCreate(cookies)?.let {
+      save(it)
+      return true
+    } ?: let {
+      return false
+    }
+  }
 
   fun save(remarkCredentials: RemarkCredentials) {
     sharedPreferences.edit()

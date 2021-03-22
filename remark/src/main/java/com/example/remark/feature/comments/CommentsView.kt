@@ -1,21 +1,21 @@
-package com.example.remark.ui.comments
+package com.example.remark.feature.comments
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.remark.data.VoteType
 
 data class CommentUiModel(
     val userName: String,
@@ -26,6 +26,7 @@ data class CommentUiModel(
 )
 
 data class ScoreUiModel(
+    val commentId: String,
     val score: String,
     val color: Int,
     @DrawableRes val upRes: Int,
@@ -35,7 +36,7 @@ data class ScoreUiModel(
 @Composable
 fun CommentView(postUrl: String) {
   val viewModel: CommentsViewModel = viewModel(CommentsViewModel::class.java)
-  viewModel.loadComments(postUrl)
+  viewModel.start(postUrl)
 
   val data by viewModel.comments.observeAsState()
 
@@ -51,7 +52,7 @@ fun CommentView(postUrl: String) {
                   .padding(vertical = 8.dp),
               horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = comment.time)
-            ScoreView(score = comment.score)
+            ScoreView(score = comment.score, viewModel)
           }
         }
         Divider()
@@ -61,10 +62,33 @@ fun CommentView(postUrl: String) {
 }
 
 @Composable
-fun ScoreView(score: ScoreUiModel) {
-  Row {
-    Image(painterResource(score.upRes), "up")
+fun ScoreView(score: ScoreUiModel, viewModel: CommentsViewModel) {
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    VoteButton(onClick = { viewModel.vote(score.commentId, VoteType.UP) }) {
+      Image(painterResource(score.upRes), "up")
+    }
     Text(text = score.score, color = Color(score.color))
-    Image(painterResource(score.downRes), "down")
+    VoteButton(onClick = { viewModel.vote(score.commentId, VoteType.DOWN) }) {
+      Image(painterResource(score.downRes), "down")
+    }
+  }
+}
+
+@Composable
+fun VoteButton(
+    onClick: () -> Unit,
+    content: @Composable (RowScope.() -> Unit),
+) {
+  val buttonColors = ButtonDefaults.buttonColors(
+      backgroundColor = Color.Transparent,
+      contentColor = Color.Transparent
+  )
+
+  Button(
+      colors = buttonColors,
+      onClick = onClick,
+      elevation = null,
+  ) {
+    content()
   }
 }

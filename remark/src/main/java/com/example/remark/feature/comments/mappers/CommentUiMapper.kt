@@ -1,9 +1,9 @@
-package com.example.remark.ui.comments.mappers
+package com.example.remark.feature.comments.mappers
 
 import com.example.remark.data.Comment
 import com.example.remark.data.CommentWrapper
 import com.example.remark.data.Comments
-import com.example.remark.ui.comments.CommentUiModel
+import com.example.remark.feature.comments.CommentUiModel
 
 class CommentUiMapper(
     private val scoreUiMapper: ScoreUiMapper = ScoreUiMapper(),

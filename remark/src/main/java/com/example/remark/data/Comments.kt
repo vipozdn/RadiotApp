@@ -16,6 +16,7 @@ data class CommentWrapper(
 
 @Serializable
 data class Comment(
+    val id : String,
     @SerialName("orig")
     val text: String = "",
     val score: Long,

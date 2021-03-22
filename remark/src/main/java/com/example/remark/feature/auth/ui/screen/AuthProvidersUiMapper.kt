@@ -1,10 +1,10 @@
-package com.example.remark.ui.auth
+package com.example.remark.feature.auth.ui.screen
 
 import com.example.remark.RemarkSettings
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class LoginItemUiMapper {
+class AuthProvidersUiMapper {
 
   fun map(providers: List<String>): List<LoginUiItem> {
     return providers.map { provider ->
@@ -16,7 +16,6 @@ class LoginItemUiMapper {
               .addPathSegments("auth")
               .addPathSegments(provider)
               .addPathSegments("login")
-              .addQueryParameter("from", RemarkSettings.baseUrl)
               .addQueryParameter("site", RemarkSettings.siteId)
               .addQueryParameter("session", "1")
               .build()

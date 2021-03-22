@@ -1,4 +1,4 @@
-package com.example.remark.ui.auth
+package com.example.remark.feature.auth.ui.screen
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.remark.RemarkSettings
 import com.example.remark.data.RemarkService
+import com.example.remark.data.UserStorage
 import com.example.remark.di.Graph
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,8 @@ data class LoginUiItem(
 
 class AuthViewModel(
     private val remarkService: RemarkService = Graph.remarkService,
-    private val loginItemUiMapper: LoginItemUiMapper = LoginItemUiMapper(),
+    private val loginItemUiMapper: AuthProvidersUiMapper = AuthProvidersUiMapper(),
+    private val userStorage: UserStorage = Graph.userStorage,
 ) : ViewModel() {
 
   private val _loginUiItem = MutableLiveData<List<LoginUiItem>>()
@@ -28,7 +30,7 @@ class AuthViewModel(
 
   init {
     viewModelScope.launch {
-      val config = remarkService.getConfig(RemarkSettings.siteId)
+      val config = remarkService.getConfig()
       val loginUiItems = loginItemUiMapper.map(config.authProviders)
       _currentLoginProvider.postValue(loginUiItems.first().url)
       _loginUiItem.postValue(loginUiItems)
@@ -37,5 +39,9 @@ class AuthViewModel(
 
   fun selectLoginItem(provider: LoginUiItem) {
     _currentLoginProvider.postValue(provider.url)
+  }
+
+  fun cookiesChange(cookies: String) {
+    userStorage.saveByCookies(cookies)
   }
 }

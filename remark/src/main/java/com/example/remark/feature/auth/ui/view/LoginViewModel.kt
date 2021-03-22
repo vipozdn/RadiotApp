@@ -1,9 +1,8 @@
-package com.example.remark.ui.login
+package com.example.remark.feature.auth.ui.view
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.remark.RemarkSettings
 import com.example.remark.data.UserStorage
 import com.example.remark.di.Graph
 

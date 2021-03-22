@@ -1,4 +1,4 @@
-package com.example.remark.ui.comments.mappers
+package com.example.remark.feature.comments.mappers
 
 class TimeMapper {
 

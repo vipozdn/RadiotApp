@@ -1,4 +1,4 @@
-package com.example.remark.ui.login
+package com.example.remark.feature.auth.ui.view
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +25,9 @@ fun LoginView(openLoginScreen: () -> Unit) {
           Text(text = "Login")
         }
       }
-      LoginUiModel.AuthUser -> TODO()
+      LoginUiModel.AuthUser -> {
+
+      }
     }
   }
 }
