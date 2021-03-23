@@ -25,7 +25,7 @@ jobs:
       - name: Build Release AAB
         env:
           VERSION_NAME: ${{ steps.tag_name.outputs.SOURCE_TAG }}
-          VERSION_CODE: ${{ env.GITHUB_RUN_NUMBER }}
+          VERSION_CODE: ${GITHUB_RUN_NUMBER}
         id: buildRelease
         run: ./gradlew bundleRelease
 
