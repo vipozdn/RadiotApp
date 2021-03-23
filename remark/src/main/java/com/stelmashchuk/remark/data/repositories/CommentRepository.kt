@@ -2,24 +2,25 @@ package com.stelmashchuk.remark.data.repositories
 
 import com.stelmashchuk.remark.RemarkSettings
 import com.stelmashchuk.remark.data.RemarkService
-import com.stelmashchuk.remark.data.apiCall
 import com.stelmashchuk.remark.data.pojo.CommentWrapper
 import com.stelmashchuk.remark.data.pojo.Comments
 import com.stelmashchuk.remark.data.pojo.VoteResponse
 import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.data.Result
+import com.stelmashchuk.remark.data.runCatching
 
 class CommentRepository(
-    private val remarkService: com.stelmashchuk.remark.data.RemarkService,
+    private val remarkService: RemarkService,
 ) {
 
   private lateinit var cache: Comments
 
   suspend fun getComments(
       postUrl: String,
-      sort: String = com.stelmashchuk.remark.RemarkSettings.defaultSorting,
+      sort: String = RemarkSettings.defaultSorting,
       format: String = "tree",
   ): Result<Comments> {
-    val result = apiCall { remarkService.getComments(postUrl, sort, format) }
+    val result = Result.runCatching { remarkService.getComments(postUrl, sort, format) }
     result.getOrNull()?.also {
       cache = it
     }
@@ -31,7 +32,7 @@ class CommentRepository(
       postUrl: String,
       vote: VoteType,
   ): Comments {
-    val voteResponse = apiCall { remarkService.vote(commentId, postUrl, vote.backendCode) }
+    val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
     voteResponse.getOrNull()?.let {
       cache = Comments(copyComments(cache.comments, it, vote))
     }

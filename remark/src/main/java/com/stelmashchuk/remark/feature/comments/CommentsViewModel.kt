@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.data.ifSuccess
+import com.stelmashchuk.remark.data.onSuccess
 import com.stelmashchuk.remark.data.pojo.VoteType
 import com.stelmashchuk.remark.data.repositories.CommentRepository
 import com.stelmashchuk.remark.di.Graph
@@ -25,7 +25,7 @@ class CommentsViewModel(
     this.postUrl = postUrl
     viewModelScope.launch {
       val comments = commentRepository.getComments(postUrl = postUrl)
-      comments.ifSuccess {
+      comments.onSuccess {
         _commentsLiveData.postValue(commentUiMapper.map(it))
       }
     }
