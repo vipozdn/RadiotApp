@@ -53,5 +53,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_JSON }}
           packageName: com.stelmashchuk.radio_t
           releaseFile: app/build/outputs/bundle/release/app-release.aab
-          track: beta
+          track: production
           whatsNewDirectory: store/whatsnew/
