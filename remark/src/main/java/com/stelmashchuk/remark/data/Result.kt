@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions", "TooGenericExceptionCaught", "MaxLineLength", "UnusedPrivateMember")
+
 package com.stelmashchuk.remark.data
 
 public class Result<out T> @PublishedApi internal constructor(
