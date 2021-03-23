@@ -13,8 +13,8 @@ android {
         applicationId "com.stelmashchuk.radio_t"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 3
-        versionName "0.0.3"
+        versionCode System.getenv("version_code")
+        versionName System.getenv("version_name")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
