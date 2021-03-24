@@ -14,7 +14,7 @@ interface RemarkService {
   @GET("/api/v1/find")
   suspend fun getComments(
       @Query("url") postUrl: String,
-      @Query("sort") sort: String = com.stelmashchuk.remark.RemarkSettings.defaultSorting,
+      @Query("sort") sort: String = RemarkSettings.defaultSorting,
       @Query("format") format: String = "tree",
   ): Comments
 

@@ -1,10 +1,13 @@
 package com.stelmashchuk.remark.data.pojo
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VoteResponse(
+    @SerialName("id")
     val id: String,
+    @SerialName("score")
     val score: Long,
 )
 
