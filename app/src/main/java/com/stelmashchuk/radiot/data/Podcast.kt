@@ -5,7 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Podcast(
+    @SerialName("url")
     val url: String,
+    @SerialName("title")
     val title: String,
     @SerialName("show_num")
     val number: Long,
@@ -15,5 +17,6 @@ data class Podcast(
 
 @Serializable
 data class TimeLabels(
+    @SerialName("topic")
     val topic: String,
 )

@@ -9,9 +9,9 @@ Android приложение для подкаста Radio-t с поддержк
 - UI: Jetpack compose
 - UI pattern: MVVM.
 - Threading: coroutine
-- Linter: detekt
-- Testing: Junit and mockk
-- CI: Github actions
+- Linter: [detekt](https://github.com/detekt/detekt)
+- Testing: Junit and [mockk](https://github.com/mockk/mockk)
+- CI: Github actions (run test, static code analysis, release app to google play)
 
 ### RoadMap
 
@@ -34,12 +34,6 @@ Android приложение для подкаста Radio-t с поддержк
 - app - приложение
 - remark - внутренняя библиотека для системы комментариев [remark42](https://github.com/umputun/remark42)
 
-## Beta
-
-На данный момент приложения еще нет в релизе но вы можете его поставить как внутренний тестер
-по [ссылке](https://play.google.com/apps/internaltest/4700474952294733221), плюс вы все можете
-собрать проект сами.
-
 ### Помощь проекту
 
-Я, как автор проекта, будет рад любым MR или найденным багам.
+Автор проекта будет рад любым MR или найденным багам.
