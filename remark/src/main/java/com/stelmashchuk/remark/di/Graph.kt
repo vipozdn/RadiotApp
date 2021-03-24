@@ -2,12 +2,12 @@ package com.stelmashchuk.remark.di
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.ironz.binaryprefs.BinaryPreferencesBuilder
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.remark.RemarkSettings
 import com.stelmashchuk.remark.data.RemarkService
 import com.stelmashchuk.remark.data.interceptors.RemarkInterceptor
 import com.stelmashchuk.remark.data.repositories.UserStorage
-import com.ironz.binaryprefs.BinaryPreferencesBuilder
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -23,9 +23,9 @@ public object Graph {
     this.context = context
   }
 
-  val remarkService: com.stelmashchuk.remark.data.RemarkService by lazy {
+  val remarkService: RemarkService by lazy {
     Retrofit.Builder()
-        .baseUrl(com.stelmashchuk.remark.RemarkSettings.baseUrl)
+        .baseUrl(RemarkSettings.baseUrl)
         .client(
             OkHttpClient.Builder()
                 .addInterceptor(RemarkInterceptor(userStorage))
@@ -34,7 +34,7 @@ public object Graph {
         )
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
-        .create(com.stelmashchuk.remark.data.RemarkService::class.java)
+        .create(RemarkService::class.java)
   }
 
   private val json: Json = Json {
