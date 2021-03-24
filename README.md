@@ -2,6 +2,8 @@
 
 Android приложение для подкаста Radio-t. На данный момент еще в разработке. Данный проект сделан автором с целю изучить новые технологии поэтому не следует ожидать от приложения быстрого развития.
 
+<a href='https://play.google.com/store/apps/details?id=com.stelmashchuk.radio_t&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Доступно в Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ru_badge_web_generic.png'/></a>
+
 ### Технологии:
 
 - UI: Jetpack compose
