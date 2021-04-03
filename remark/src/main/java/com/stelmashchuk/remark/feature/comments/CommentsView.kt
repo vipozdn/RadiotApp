@@ -54,9 +54,7 @@ fun CommentView(postUrl: String) {
   data?.let {
     when (it) {
       is ViewState.Data -> {
-        Box(modifier = Modifier.fillMaxSize()) {
-          CommentContent(comments = it.data, viewModel::vote)
-        }
+        CommentContent(comments = it.data, viewModel::vote)
       }
       ViewState.Loading -> FullSizeProgress()
     }
@@ -65,7 +63,9 @@ fun CommentView(postUrl: String) {
 
 @Composable
 fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, voteType: VoteType) -> Unit) {
-  LazyColumn(modifier = Modifier.padding(8.dp)) {
+  LazyColumn(modifier = Modifier
+      .padding(8.dp)
+      .fillMaxSize()) {
     items(comments) { comment ->
       @Suppress("MagicNumber")
       Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
