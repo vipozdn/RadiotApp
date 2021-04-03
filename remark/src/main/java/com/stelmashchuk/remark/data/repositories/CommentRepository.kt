@@ -1,6 +1,7 @@
 package com.stelmashchuk.remark.data.repositories
 
 import com.stelmashchuk.remark.RemarkSettings
+import com.stelmashchuk.remark.data.HttpConstants
 import com.stelmashchuk.remark.data.RemarkService
 import com.stelmashchuk.remark.data.Result
 import com.stelmashchuk.remark.data.onFailure
@@ -19,6 +20,7 @@ class TooManyRequests : Exception()
 class CommentRepository(
     private val remarkService: RemarkService,
     private val userStorage: UserStorage,
+    private val voteRequestHandler: VoteRequestHandler = VoteRequestHandler(),
 ) {
 
   private lateinit var cache: Comments
@@ -35,6 +37,7 @@ class CommentRepository(
     return result
   }
 
+  @Suppress("ReturnCount")
   suspend fun vote(
       commentId: String,
       postUrl: String,
@@ -47,21 +50,33 @@ class CommentRepository(
       return Result.failure(NotAuthUser())
     }
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
+    return voteRequestHandler.handleVoteResponse(cache.comments, voteResponse, vote)
+  }
+}
+
+class VoteRequestHandler {
+
+  fun handleVoteResponse(
+      comments: List<CommentWrapper>,
+      voteResponse: Result<VoteResponse>,
+      vote: VoteType,
+  ): Result<Comments> {
+    var result = Result.failure<Comments>(Throwable())
     voteResponse.onSuccess {
-      cache = Comments(copyComments(cache.comments, it, vote))
-      return Result.success(cache)
+      val cache = Comments(copyComments(comments, it, vote))
+      result = Result.success(cache)
     }
     voteResponse.onFailure { throwable ->
-      return voteErrorHandle(throwable)
+      result = voteErrorHandle(throwable)
     }
-    return Result.failure(Exception())
+    return result
   }
 
   private fun voteErrorHandle(throwable: Throwable): Result<Comments> {
     if (throwable is HttpException) {
       return when (throwable.code()) {
-        401 -> Result.failure(NotAuthUser())
-        429 -> Result.failure(TooManyRequests())
+        HttpConstants.UN_AUTH -> Result.failure(NotAuthUser())
+        HttpConstants.TOO_MANY_REQUESTS -> Result.failure(TooManyRequests())
         else -> Result.failure(throwable)
       }
     }
