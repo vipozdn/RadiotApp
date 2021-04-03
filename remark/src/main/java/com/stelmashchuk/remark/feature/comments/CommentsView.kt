@@ -12,17 +12,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.common.FullSizeProgress
 import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.feature.NavigationActions
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
 
 data class CommentUiModel(
@@ -42,19 +50,32 @@ data class ScoreUiModel(
 )
 
 @Composable
-fun CommentView(postUrl: String) {
+fun CommentView(postUrl: String, navigationActions: NavigationActions) {
   val viewModel: CommentsViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentsViewModel(postUrl = postUrl) as T
+      return CommentsViewModel(postUrl = postUrl, navigationActions = navigationActions) as T
     }
   })
 
   val data by viewModel.commentsLiveData.observeAsState()
-  data?.let {
-    when (it) {
+  val message by viewModel.messageLiveData.observeAsState()
+
+  data?.let { state ->
+    when (state) {
       is ViewState.Data -> {
-        CommentContent(comments = it.data, viewModel::vote)
+        Scaffold(
+            backgroundColor = Color.White,
+            snackbarHost = {
+              message?.let {
+                Snackbar {
+                  Text(text = stringResource(id = R.string.too_many_request))
+                }
+              }
+            }
+        ) {
+          CommentContent(comments = state.data, viewModel::vote)
+        }
       }
       ViewState.Loading -> FullSizeProgress()
     }

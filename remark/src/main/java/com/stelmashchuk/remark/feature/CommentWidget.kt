@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.feature.comments
+package com.stelmashchuk.remark.feature
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -11,17 +11,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import com.stelmashchuk.remark.feature.CommentWidgetViewModel
-import com.stelmashchuk.remark.feature.LoginState
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
 import com.stelmashchuk.remark.feature.auth.ui.view.LoginView
+import com.stelmashchuk.remark.feature.comments.CommentView
 
 object Destinations {
   const val DATA = "data"
   const val LOGIN = "login"
 }
 
-class Actions(navController: NavHostController) {
+class NavigationActions(navController: NavHostController) {
   val openLogin: () -> Unit = {
     navController.navigate(Destinations.LOGIN)
   }
@@ -34,8 +33,8 @@ class Actions(navController: NavHostController) {
 @Composable
 fun CommentWidget(postUrl: String) {
   val navController = rememberNavController()
-  val actions = remember(navController) {
-    Actions(navController)
+  val navigationActions = remember(navController) {
+    NavigationActions(navController)
   }
 
   val viewModel = viewModel(CommentWidgetViewModel::class.java)
@@ -43,16 +42,16 @@ fun CommentWidget(postUrl: String) {
 
   when (loginState) {
     LoginState.AUTH -> {
-      CommentView(postUrl)
+      CommentView(postUrl, navigationActions)
     }
     LoginState.UNAUTH -> {
       NavHost(navController = navController, startDestination = Destinations.DATA) {
         composable(Destinations.DATA) {
           Column {
             LoginView {
-              actions.openLogin()
+              navigationActions.openLogin()
             }
-            CommentView(postUrl)
+            CommentView(postUrl, navigationActions)
           }
         }
         composable(Destinations.LOGIN) {

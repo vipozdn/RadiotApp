@@ -17,12 +17,10 @@ internal class ScoreUiMapperTest {
   @Test
   fun `Verify create score model`() {
     val comment = mockk<Comment>(relaxed = true) {
-      every { id } answers { "id" }
       every { score } answers { 2 }
     }
 
     scoreUiMapper.map(comment) shouldBe ScoreUiModel(
-        "id",
         "2",
         Color.Green.toArgb(),
         R.drawable.up_unselected,
