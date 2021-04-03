@@ -32,6 +32,7 @@ import com.stelmashchuk.remark.common.FullSizeProgress
 import com.stelmashchuk.remark.data.pojo.VoteType
 import com.stelmashchuk.remark.feature.NavigationActions
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 data class CommentUiModel(
     val userName: String,
@@ -91,7 +92,7 @@ fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, v
       @Suppress("MagicNumber")
       Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
         Text(text = comment.userName, style = MaterialTheme.typography.subtitle2)
-        Text(text = comment.text, style = MaterialTheme.typography.body1)
+        MarkdownText(markdown = comment.text)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
