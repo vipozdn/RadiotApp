@@ -1,7 +1,10 @@
 package com.stelmashchuk.remark.data.repositories
 
 import android.content.SharedPreferences
+import android.os.Looper
+import android.webkit.CookieManager
 import com.stelmashchuk.remark.feature.auth.ui.CredentialCreator
+import java.util.logging.Handler
 
 data class RemarkCredentials(
     val jwtToken: String,
@@ -34,6 +37,15 @@ class UserStorage(
         .putString(KEY_JWT_TOKEN, remarkCredentials.jwtToken)
         .putString(KEY_XSRF_TOKEN, remarkCredentials.xsrfToken)
         .apply()
+  }
+
+  fun logout() {
+    android.os.Handler(Looper.getMainLooper()).post {
+      CookieManager.getInstance().removeAllCookies {
+
+      }
+    }
+    save(RemarkCredentials("", ""))
   }
 
   fun getCredential(): RemarkCredentials {

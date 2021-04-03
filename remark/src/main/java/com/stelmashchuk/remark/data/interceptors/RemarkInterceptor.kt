@@ -1,5 +1,7 @@
 package com.stelmashchuk.remark.data.interceptors
 
+import com.stelmashchuk.remark.RemarkSettings
+import com.stelmashchuk.remark.data.HttpConstants
 import com.stelmashchuk.remark.data.repositories.UserStorage
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -21,7 +23,13 @@ class RemarkInterceptor(private val userStorage: UserStorage) : Interceptor {
 
     request.method(original.method, original.body)
 
-    return chain.proceed(request.build())
+    val response = chain.proceed(request.build())
+
+    if (response.code == HttpConstants.UN_AUTH) {
+      userStorage.logout()
+    }
+
+    return response
   }
 
   private fun addAuthHeaders(request: Request.Builder) {
@@ -34,7 +42,7 @@ class RemarkInterceptor(private val userStorage: UserStorage) : Interceptor {
 
   private fun addSiteId(request: Request.Builder, original: Request) {
     request.url(original.url.newBuilder()
-        .addQueryParameter("site", com.stelmashchuk.remark.RemarkSettings.siteId)
+        .addQueryParameter("site", RemarkSettings.siteId)
         .build())
   }
 }

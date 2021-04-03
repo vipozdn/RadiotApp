@@ -14,7 +14,6 @@ import com.stelmashchuk.remark.data.repositories.CommentRepository
 import com.stelmashchuk.remark.data.repositories.NotAuthUser
 import com.stelmashchuk.remark.data.repositories.TooManyRequests
 import com.stelmashchuk.remark.di.Graph
-import com.stelmashchuk.remark.feature.NavigationActions
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import kotlinx.coroutines.launch
 
@@ -27,7 +26,6 @@ data class InfoMessage(@StringRes val id: Int)
 
 class CommentsViewModel(
     private val postUrl: String,
-    private val navigationActions: NavigationActions,
     private val commentUiMapper: CommentUiMapper = CommentUiMapper(),
     private val commentRepository: CommentRepository = CommentRepository(Graph.remarkService, Graph.userStorage),
 ) : ViewModel() {
@@ -56,7 +54,7 @@ class CommentsViewModel(
       result.onFailure {
         when (it) {
           is NotAuthUser -> {
-            navigationActions.openLogin()
+            //navigationActions.openLogin()
           }
           is TooManyRequests -> {
             messageLiveData.postValue(InfoMessage(R.string.too_many_request))

@@ -26,4 +26,8 @@ class CommentWidgetViewModel(
       })
     }
   }
+
+  fun logout() {
+    userStorage.logout()
+  }
 }
