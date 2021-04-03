@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.radiot.presentation.episodes.Episode
-import com.stelmashchuk.remark.feature.comments.CommentWidget
+import com.stelmashchuk.remark.feature.CommentWidget
 
 @Composable
 fun DetailView(podcastNumber: Long?) {

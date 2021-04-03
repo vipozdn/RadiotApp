@@ -45,7 +45,7 @@ class UserStorage(
 
   fun addListener(onCredentialsUpdate: (RemarkCredentials) -> Unit) {
     onCredentialsUpdate(getCredential())
-    sharedPreferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+    sharedPreferences.registerOnSharedPreferenceChangeListener { _, _ ->
       onCredentialsUpdate(getCredential())
     }
   }

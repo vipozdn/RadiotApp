@@ -1,19 +1,20 @@
 package com.stelmashchuk.remark.feature.comments
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,10 +22,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.stelmashchuk.remark.R
+import com.stelmashchuk.remark.common.FullSizeProgress
 import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.feature.NavigationActions
+import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
 
 data class CommentUiModel(
     val userName: String,
@@ -32,10 +39,10 @@ data class CommentUiModel(
     val level: Int,
     val score: ScoreUiModel,
     val time: String,
+    val commentId: String,
 )
 
 data class ScoreUiModel(
-    val commentId: String,
     val score: String,
     val color: Int,
     @DrawableRes val upRes: Int,
@@ -43,62 +50,60 @@ data class ScoreUiModel(
 )
 
 @Composable
-fun CommentView(postUrl: String) {
-  val viewModel: CommentsViewModel = viewModel(CommentsViewModel::class.java)
-  viewModel.start(postUrl)
+fun CommentView(postUrl: String, navigationActions: NavigationActions) {
+  val viewModel: CommentsViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      @Suppress("UNCHECKED_CAST")
+      return CommentsViewModel(postUrl = postUrl, navigationActions = navigationActions) as T
+    }
+  })
 
   val data by viewModel.commentsLiveData.observeAsState()
+  val message by viewModel.messageLiveData.observeAsState()
 
-  data?.let {
-    LazyColumn(modifier = Modifier.padding(8.dp)) {
-      items(it) { comment ->
-        @Suppress("MagicNumber")
-        Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
-          Text(text = comment.userName, style = MaterialTheme.typography.subtitle2)
-          Text(text = comment.text, style = MaterialTheme.typography.body1)
-          Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(vertical = 8.dp),
-              horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = comment.time)
-            ScoreView(score = comment.score, viewModel)
+  data?.let { state ->
+    when (state) {
+      is ViewState.Data -> {
+        Scaffold(
+            backgroundColor = Color.White,
+            snackbarHost = {
+              message?.let {
+                Snackbar {
+                  Text(text = stringResource(id = R.string.too_many_request))
+                }
+              }
+            }
+        ) {
+          CommentContent(comments = state.data, viewModel::vote)
+        }
+      }
+      ViewState.Loading -> FullSizeProgress()
+    }
+  }
+}
+
+@Composable
+fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, voteType: VoteType) -> Unit) {
+  LazyColumn(modifier = Modifier
+      .padding(8.dp)
+      .fillMaxSize()) {
+    items(comments) { comment ->
+      @Suppress("MagicNumber")
+      Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
+        Text(text = comment.userName, style = MaterialTheme.typography.subtitle2)
+        Text(text = comment.text, style = MaterialTheme.typography.body1)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+          Text(text = comment.time)
+          ScoreView(score = comment.score) { voteType ->
+            onVote(comment.commentId, voteType)
           }
         }
-        Divider()
       }
+      Divider()
     }
-  }
-}
-
-@Composable
-fun ScoreView(score: ScoreUiModel, viewModel: CommentsViewModel) {
-  Row(verticalAlignment = Alignment.CenterVertically) {
-    VoteButton(onClick = { viewModel.vote(score.commentId, VoteType.UP) }) {
-      Image(painterResource(score.upRes), "up")
-    }
-    Text(text = score.score, color = Color(score.color))
-    VoteButton(onClick = { viewModel.vote(score.commentId, VoteType.DOWN) }) {
-      Image(painterResource(score.downRes), "down")
-    }
-  }
-}
-
-@Composable
-fun VoteButton(
-    onClick: () -> Unit,
-    content: @Composable (RowScope.() -> Unit),
-) {
-  val buttonColors = ButtonDefaults.buttonColors(
-      backgroundColor = Color.Transparent,
-      contentColor = Color.Transparent
-  )
-
-  Button(
-      colors = buttonColors,
-      onClick = onClick,
-      elevation = null,
-  ) {
-    content()
   }
 }
