@@ -7,7 +7,7 @@ import com.stelmashchuk.remark.feature.comments.CommentUiModel
 
 class CommentUiMapper(
     private val scoreUiMapper: ScoreUiMapper = ScoreUiMapper(),
-    private val timeMapper: TimeMapper = TimeMapper()
+    private val timeMapper: TimeMapper = TimeMapper(),
 ) {
 
   fun map(comments: Comments): List<CommentUiModel> {
@@ -23,11 +23,12 @@ class CommentUiMapper(
 
   private fun mapSingleComment(comment: Comment, level: Int): CommentUiModel {
     return CommentUiModel(
-        comment.user.name,
-        comment.text,
-        level,
-        scoreUiMapper.map(comment),
-        timeMapper.map(comment.time)
+        userName = comment.user.name,
+        text = comment.text,
+        level = level,
+        score = scoreUiMapper.map(comment),
+        time = timeMapper.map(comment.time),
+        commentId = comment.id
     )
   }
 }

@@ -10,7 +10,6 @@ class ScoreUiMapper {
 
   fun map(comment: Comment): ScoreUiModel {
     return ScoreUiModel(
-        comment.id,
         comment.score.toString(),
         getColor(comment.score),
         getUpIcon(comment),

@@ -11,22 +11,26 @@ import com.stelmashchuk.remark.di.Graph
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import kotlinx.coroutines.launch
 
+sealed class ViewState<out T> {
+  object Loading : ViewState<Nothing>()
+  data class Data<T>(val data: T) : ViewState<T>()
+}
+
 class CommentsViewModel(
+    private val postUrl: String,
     private val commentUiMapper: CommentUiMapper = CommentUiMapper(),
     private val commentRepository: CommentRepository = CommentRepository(Graph.remarkService),
 ) : ViewModel() {
 
-  private val _commentsLiveData = MutableLiveData<List<CommentUiModel>>()
-  val commentsLiveData: LiveData<List<CommentUiModel>> = _commentsLiveData
+  private val _commentsLiveData = MutableLiveData<ViewState<List<CommentUiModel>>>()
+  val commentsLiveData: LiveData<ViewState<List<CommentUiModel>>> = _commentsLiveData
 
-  private lateinit var postUrl: String
-
-  fun start(postUrl: String) {
-    this.postUrl = postUrl
+  init {
+    _commentsLiveData.postValue(ViewState.Loading)
     viewModelScope.launch {
       val comments = commentRepository.getComments(postUrl = postUrl)
       comments.onSuccess {
-        _commentsLiveData.postValue(commentUiMapper.map(it))
+        _commentsLiveData.postValue(ViewState.Data(commentUiMapper.map(it)))
       }
     }
   }
@@ -34,7 +38,7 @@ class CommentsViewModel(
   fun vote(commentId: String, voteType: VoteType) {
     viewModelScope.launch {
       val comments = commentRepository.vote(commentId, postUrl, voteType)
-      _commentsLiveData.postValue(commentUiMapper.map(comments))
+      _commentsLiveData.postValue(ViewState.Data(commentUiMapper.map(comments)))
     }
   }
 }
