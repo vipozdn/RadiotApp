@@ -11,12 +11,12 @@ class AuthProvidersUiMapper {
       LoginUiItem(
           provider,
           HttpUrl.Builder()
-              .scheme(com.stelmashchuk.remark.RemarkSettings.baseUrl.toHttpUrl().scheme)
-              .host(com.stelmashchuk.remark.RemarkSettings.baseUrl.toHttpUrl().host)
+              .scheme(RemarkSettings.baseUrl.toHttpUrl().scheme)
+              .host(RemarkSettings.baseUrl.toHttpUrl().host)
               .addPathSegments("auth")
               .addPathSegments(provider)
               .addPathSegments("login")
-              .addQueryParameter("site", com.stelmashchuk.remark.RemarkSettings.siteId)
+              .addQueryParameter("site", RemarkSettings.siteId)
               .addQueryParameter("session", "1")
               .build()
               .toString()

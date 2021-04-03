@@ -15,7 +15,7 @@ data class LoginUiItem(
 )
 
 class AuthViewModel(
-    private val remarkService: com.stelmashchuk.remark.data.RemarkService = Graph.remarkService,
+    private val remarkService: RemarkService = Graph.remarkService,
     private val loginItemUiMapper: AuthProvidersUiMapper = AuthProvidersUiMapper(),
     private val userStorage: UserStorage = Graph.userStorage,
 ) : ViewModel() {
@@ -23,14 +23,15 @@ class AuthViewModel(
   private val _loginUiItem = MutableLiveData<List<LoginUiItem>>()
   val loginUiItem: LiveData<List<LoginUiItem>> = _loginUiItem
 
-
   private val _currentLoginProvider = MutableLiveData<String>()
   val currentLoginProvider: LiveData<String> = _currentLoginProvider
 
   init {
     viewModelScope.launch {
       val config = remarkService.getConfig()
-      val loginUiItems = loginItemUiMapper.map(config.authProviders)
+
+      @Suppress("MagicString")
+      val loginUiItems = loginItemUiMapper.map(config.authProviders.filter { it != "google" })
       _currentLoginProvider.postValue(loginUiItems.first().url)
       _loginUiItem.postValue(loginUiItems)
     }
