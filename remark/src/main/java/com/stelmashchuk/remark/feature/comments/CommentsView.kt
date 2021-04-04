@@ -109,7 +109,9 @@ fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: V
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween) {
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
       Text(text = comment.time)
       ScoreView(score = comment.score) { voteType ->
         onVote(comment.commentId, voteType)

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.stelmashchuk.remark.RemarkSettings
 import com.stelmashchuk.remark.data.RemarkService
 import com.stelmashchuk.remark.data.interceptors.RemarkInterceptor
@@ -21,6 +22,7 @@ public object Graph {
 
   fun init(context: Context) {
     this.context = context
+    AndroidThreeTen.init(context)
   }
 
   val remarkService: RemarkService by lazy {
