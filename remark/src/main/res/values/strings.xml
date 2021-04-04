@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="too_many_request">Тебя очень много, отдохни </string>
+    <string name="too_many_request">Тебя слишком много, отдохни…</string>
 </resources>

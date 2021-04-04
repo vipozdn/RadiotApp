@@ -3,11 +3,13 @@ package com.stelmashchuk.remark.feature.comments.mappers
 import com.stelmashchuk.remark.data.pojo.Comment
 import com.stelmashchuk.remark.data.pojo.CommentWrapper
 import com.stelmashchuk.remark.data.pojo.Comments
+import com.stelmashchuk.remark.data.pojo.User
 import com.stelmashchuk.remark.feature.comments.CommentUiModel
 
 class CommentUiMapper(
     private val scoreUiMapper: ScoreUiMapper = ScoreUiMapper(),
     private val timeMapper: TimeMapper = TimeMapper(),
+    private val userUiMapper: UserUiMapper = UserUiMapper(),
 ) {
 
   fun map(comments: Comments): List<CommentUiModel> {
@@ -23,12 +25,12 @@ class CommentUiMapper(
 
   private fun mapSingleComment(comment: Comment, level: Int): CommentUiModel {
     return CommentUiModel(
-        userName = comment.user.name,
         text = comment.text,
         level = level,
         score = scoreUiMapper.map(comment),
         time = timeMapper.map(comment.time),
-        commentId = comment.id
+        commentId = comment.id,
+        author = userUiMapper.map(comment.user)
     )
   }
 }
