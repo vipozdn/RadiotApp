@@ -13,5 +13,4 @@ class TimeMapper {
 
     return localDateTime.format(uiFormatter)
   }
-
 }
