@@ -103,17 +103,7 @@ fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, v
 fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: VoteType) -> Unit) {
   @Suppress("MagicNumber")
   Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-      CoilImage(
-          modifier = Modifier.padding(4.dp),
-          data = comment.author.avatar,
-          contentDescription = "Avatar ${comment.author.name}",
-          requestBuilder = {
-            transformations(CircleCropTransformation())
-          },
-      )
-      Text(text = comment.author.name, style = MaterialTheme.typography.subtitle2)
-    }
+    CommentAuthor(author = comment.author)
     MarkdownText(markdown = comment.text)
     Row(
         modifier = Modifier
@@ -125,5 +115,20 @@ fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: V
         onVote(comment.commentId, voteType)
       }
     }
+  }
+}
+
+@Composable
+fun CommentAuthor(author: CommentAuthorUiModel) {
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    CoilImage(
+        modifier = Modifier.padding(4.dp),
+        data = author.avatar,
+        contentDescription = "Avatar ${author.name}",
+        requestBuilder = {
+          transformations(CircleCropTransformation())
+        },
+    )
+    Text(text = author.name, style = MaterialTheme.typography.subtitle2)
   }
 }
