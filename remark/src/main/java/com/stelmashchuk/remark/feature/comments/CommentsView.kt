@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -24,19 +25,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.stelmashchuk.remark.R
+import coil.transform.CircleCropTransformation
+import com.google.accompanist.coil.CoilImage
 import com.stelmashchuk.remark.common.FullSizeProgress
 import com.stelmashchuk.remark.data.pojo.VoteType
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 data class CommentUiModel(
-    val userName: String,
+    val author: CommentAuthorUiModel,
     val text: String,
     val level: Int,
     val score: ScoreUiModel,
     val time: String,
     val commentId: String,
+)
+
+data class CommentAuthorUiModel(
+    val name: String,
+    val avatar: String,
 )
 
 data class ScoreUiModel(
@@ -67,7 +74,7 @@ fun CommentView(postUrl: String) {
             snackbarHost = {
               message?.let {
                 Snackbar {
-                  Text(text = stringResource(id = R.string.too_many_request))
+                  Text(text = stringResource(id = it.id))
                 }
               }
             }
@@ -86,22 +93,37 @@ fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, v
       .padding(8.dp)
       .fillMaxSize()) {
     items(comments) { comment ->
-      @Suppress("MagicNumber")
-      Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
-        Text(text = comment.userName, style = MaterialTheme.typography.subtitle2)
-        MarkdownText(markdown = comment.text)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(text = comment.time)
-          ScoreView(score = comment.score) { voteType ->
-            onVote(comment.commentId, voteType)
-          }
-        }
-      }
+      CommentView(comment, onVote)
       Divider()
+    }
+  }
+}
+
+@Composable
+fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: VoteType) -> Unit) {
+  @Suppress("MagicNumber")
+  Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      CoilImage(
+          modifier = Modifier.padding(4.dp),
+          data = comment.author.avatar,
+          contentDescription = "Avatar ${comment.author.name}",
+          requestBuilder = {
+            transformations(CircleCropTransformation())
+          },
+      )
+      Text(text = comment.author.name, style = MaterialTheme.typography.subtitle2)
+    }
+    MarkdownText(markdown = comment.text)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween) {
+      Text(text = comment.time)
+      ScoreView(score = comment.score) { voteType ->
+        onVote(comment.commentId, voteType)
+      }
     }
   }
 }

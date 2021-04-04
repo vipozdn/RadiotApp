@@ -37,4 +37,6 @@ data class Comment(
 data class User(
     @SerialName("name")
     val name: String,
+    @SerialName("picture")
+    val avatar: String,
 )

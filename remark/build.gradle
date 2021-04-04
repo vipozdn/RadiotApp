@@ -75,6 +75,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     implementation 'com.github.jeziellago:compose-markdown:0.2.0'
+    implementation "com.google.accompanist:accompanist-coil:0.7.0"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
