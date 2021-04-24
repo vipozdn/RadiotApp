@@ -70,7 +70,6 @@ fun CommentView(postUrl: String) {
     when (state) {
       is ViewState.Data -> {
         Scaffold(
-            backgroundColor = Color.White,
             snackbarHost = {
               message?.let {
                 Snackbar {

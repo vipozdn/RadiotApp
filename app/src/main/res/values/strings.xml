@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Radio-t</string>
+    <string name="label_podcasts">Подкасты</string>
+    <string name="label_pre_show">Темы</string>
 </resources>

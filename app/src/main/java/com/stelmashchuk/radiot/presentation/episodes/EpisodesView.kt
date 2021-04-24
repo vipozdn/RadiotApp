@@ -23,7 +23,7 @@ fun EpisodesView(openDetails: (Long) -> Unit) {
 
   val posts by viewModel.post.observeAsState(emptyList())
 
-  LazyColumn(modifier = Modifier.background(Color.White)) {
+  LazyColumn(Modifier.background(Color.Black)) {
     items(posts) { podcast ->
       Episode(podcast, openDetails)
     }
@@ -33,6 +33,7 @@ fun EpisodesView(openDetails: (Long) -> Unit) {
 @Composable
 fun Episode(podcast: EpisodeUiModel, openDetails: (Long) -> Unit = {}) {
   Column(modifier = Modifier
+      .background(Color.Black)
       .padding(8.dp)
       .fillMaxWidth()
       .clickable { openDetails(podcast.number) }) {
