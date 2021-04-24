@@ -20,3 +20,11 @@ data class TimeLabels(
     @SerialName("topic")
     val topic: String,
 )
+
+@Serializable
+data class Theme(
+    @SerialName("url")
+    val url: String,
+    @SerialName("title")
+    val title: String,
+)

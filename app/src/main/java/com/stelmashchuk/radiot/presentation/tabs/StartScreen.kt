@@ -19,6 +19,9 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.stelmashchuk.radiot.R
 import com.stelmashchuk.radiot.presentation.episodes.PodcastsTab
+import com.stelmashchuk.radiot.presentation.themes.ThemesTab
+import com.stelmashchuk.radiot.presentation.themes.details.ThemeDetails
+import com.stelmashchuk.radiot.presentation.themes.list.ThemeList
 
 enum class Tabs(
     @StringRes val label: Int,
@@ -56,7 +59,7 @@ fun StartScreen() {
         startDestination = Tabs.PODCASTS.name
     ) {
       composable(Tabs.PODCASTS.name) { PodcastsTab() }
-      composable(Tabs.PRE_SHOW.name) { Text(text = "TEST text") }
+      composable(Tabs.PRE_SHOW.name) { ThemesTab() }
     }
   }
 }
