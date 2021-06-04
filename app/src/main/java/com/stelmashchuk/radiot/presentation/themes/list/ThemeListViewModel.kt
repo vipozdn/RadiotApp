@@ -29,4 +29,5 @@ class ThemeListViewModel(
 data class ThemeUiModel(
     val title: String,
     val url: String,
+    val number : String = url.split('/').last()
 )

@@ -11,17 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.KEY_ROUTE
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.stelmashchuk.radiot.R
 import com.stelmashchuk.radiot.presentation.episodes.PodcastsTab
 import com.stelmashchuk.radiot.presentation.themes.ThemesTab
-import com.stelmashchuk.radiot.presentation.themes.details.ThemeDetails
-import com.stelmashchuk.radiot.presentation.themes.list.ThemeList
 
 enum class Tabs(
     @StringRes val label: Int,
@@ -41,7 +34,7 @@ fun StartScreen() {
       bottomBar = {
         BottomNavigation {
           val navBackStackEntry by navController.currentBackStackEntryAsState()
-          val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+          val currentRoute = navBackStackEntry?.destination?.route
           items.forEach { tab ->
             BottomNavigationItem(selected = currentRoute == tab.name, onClick = {
               navController.navigate(tab.name)

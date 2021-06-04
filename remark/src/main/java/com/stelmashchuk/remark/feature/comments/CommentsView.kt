@@ -1,6 +1,7 @@
 package com.stelmashchuk.remark.feature.comments
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,14 +20,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.common.FullSizeProgress
 import com.stelmashchuk.remark.data.pojo.VoteType
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
@@ -111,7 +116,7 @@ fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: V
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-      Text(text = comment.time)
+      Text(text = comment.time, fontSize = 12.sp)
       ScoreView(score = comment.score) { voteType ->
         onVote(comment.commentId, voteType)
       }
@@ -122,13 +127,16 @@ fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: V
 @Composable
 fun CommentAuthor(author: CommentAuthorUiModel) {
   Row(verticalAlignment = Alignment.CenterVertically) {
-    CoilImage(
-        modifier = Modifier.padding(4.dp),
-        data = author.avatar,
+    Image(
+        painter = rememberCoilPainter(
+            request = author.avatar,
+            requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
+              return transformations(CircleCropTransformation())
+            },
+            shouldRefetchOnSizeChange = { _, _ -> false },
+        ),
         contentDescription = "Avatar ${author.name}",
-        requestBuilder = {
-          transformations(CircleCropTransformation())
-        },
+        modifier = Modifier.padding(4.dp),
     )
     Text(text = author.name, style = MaterialTheme.typography.subtitle2)
   }

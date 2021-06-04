@@ -7,10 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import com.stelmashchuk.radiot.presentation.details.DetailView
-import com.stelmashchuk.radiot.presentation.episodes.EpisodesView
 import com.stelmashchuk.radiot.presentation.themes.details.ThemeDetails
 import com.stelmashchuk.radiot.presentation.themes.list.ThemeList
 

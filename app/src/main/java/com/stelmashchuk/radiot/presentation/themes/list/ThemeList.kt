@@ -22,7 +22,7 @@ fun ThemeList(openDetails: (String) -> Unit) {
   LazyColumn(Modifier.background(Color.Black)) {
     items(themes) {
       Text(modifier = Modifier.clickable {
-        openDetails(it.url)
+        openDetails(it.title)
       }, text = it.title, style = MaterialTheme.typography.h4)
     }
   }
