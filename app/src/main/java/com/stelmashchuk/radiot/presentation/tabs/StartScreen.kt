@@ -1,7 +1,5 @@
 package com.stelmashchuk.radiot.presentation.tabs
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -11,19 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.*
-import com.stelmashchuk.radiot.R
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.stelmashchuk.radiot.presentation.episodes.PodcastsTab
 import com.stelmashchuk.radiot.presentation.themes.ThemesTab
-
-enum class Tabs(
-    @StringRes val label: Int,
-    @DrawableRes val icon: Int,
-) {
-  PODCASTS(R.string.label_podcasts, R.drawable.ic_podcasts),
-  PRE_SHOW(R.string.label_pre_show, R.drawable.ic_preshow),
-  //ABOUT,
-}
 
 @Composable
 fun StartScreen() {
