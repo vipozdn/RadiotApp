@@ -1,15 +1,18 @@
 package com.stelmashchuk.radiot.presentation.details
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.stelmashchuk.radiot.presentation.episodes.Episode
 import com.stelmashchuk.remark.feature.CommentWidget
 
 @Composable
@@ -23,13 +26,22 @@ fun DetailView(podcastNumber: Long?) {
 
 @Composable
 private fun PodcastContent(podcastNumber: Long) {
-  val viewModel = viewModel(DetailsViewModel::class.java)
-  viewModel.loadPodcast(podcastNumber)
+  val viewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(podcastNumber))
+
   val podcast by viewModel.podcast.observeAsState()
-  podcast?.let {
-    Column(modifier = Modifier.background(Color.White)) {
-      Episode(podcast = it)
-      CommentWidget(postUrl = it.url)
+  podcast?.let { episode ->
+    Scaffold(topBar = {
+      TopAppBar {
+        Text(text = episode.title, style = MaterialTheme.typography.h4)
+      }
+    }) {
+      Column(modifier = Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+      ) {
+        Text(text = episode.topics, style = MaterialTheme.typography.body1)
+        CommentWidget(postUrl = episode.url)
+      }
     }
   }
 }

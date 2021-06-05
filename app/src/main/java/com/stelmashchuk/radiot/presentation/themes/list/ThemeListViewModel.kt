@@ -19,7 +19,7 @@ class ThemeListViewModel(
     viewModelScope.launch {
       _themes.postValue(radiotService.loadTheme()
           .map {
-            ThemeUiModel(it.title, it.url)
+            ThemeUiModel(it.title, it.url, it.number)
           }
       )
     }
@@ -29,5 +29,5 @@ class ThemeListViewModel(
 data class ThemeUiModel(
     val title: String,
     val url: String,
-    val number : String = url.split('/').last()
+    val number: Long,
 )

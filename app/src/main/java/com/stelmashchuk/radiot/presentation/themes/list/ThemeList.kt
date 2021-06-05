@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun ThemeList(openDetails: (String) -> Unit) {
+fun ThemeList(openDetails: (Long) -> Unit) {
   val viewModel = viewModel(ThemeListViewModel::class.java)
 
   val themes by viewModel.themes.observeAsState(emptyList())
@@ -22,7 +22,7 @@ fun ThemeList(openDetails: (String) -> Unit) {
   LazyColumn(Modifier.background(Color.Black)) {
     items(themes) {
       Text(modifier = Modifier.clickable {
-        openDetails(it.title)
+        openDetails(it.number)
       }, text = it.title, style = MaterialTheme.typography.h4)
     }
   }

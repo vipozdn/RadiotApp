@@ -19,7 +19,7 @@ private object Destinations {
 }
 
 private class Actions(navController: NavHostController) {
-  val openDetails: (String) -> Unit = {
+  val openDetails: (Long) -> Unit = {
     navController.navigate("${Destinations.DETAILS}/$it")
   }
 }
@@ -37,10 +37,10 @@ fun ThemesTab() {
     composable(Destinations.DETAILS + "/{${Destinations.KEY_THEME_NUMBER}}",
         arguments = listOf(
             navArgument(Destinations.KEY_THEME_NUMBER) {
-              type = NavType.StringType
+              type = NavType.LongType
             })
     ) {
-      ThemeDetails(it.arguments?.getString(Destinations.KEY_THEME_NUMBER))
+      ThemeDetails(it.arguments?.getLong(Destinations.KEY_THEME_NUMBER))
     }
   }
 }

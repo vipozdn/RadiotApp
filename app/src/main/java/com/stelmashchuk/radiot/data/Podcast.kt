@@ -27,4 +27,5 @@ data class Theme(
     val url: String,
     @SerialName("title")
     val title: String,
+    val number: Long = title.split(' ').last().toLong(),
 )

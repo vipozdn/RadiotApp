@@ -4,15 +4,15 @@ class ThemesRepository(
     private val radiotService: RadiotService,
 ) {
 
-  private val cache = mutableMapOf<String, Theme>()
+  private val cache = mutableMapOf<Long, Theme>()
 
   suspend fun loadTheme(): List<Theme> {
     return radiotService.getThemes(PREP_COUNT).also { themes ->
-      cache.putAll(themes.map { Pair(it.url, it) })
+      cache.putAll(themes.map { Pair(it.number, it) })
     }
   }
 
-  fun getThemeFromCache(number: String): Theme? {
+  fun getThemeFromCache(number: Long): Theme? {
     return cache[number]
   }
 
