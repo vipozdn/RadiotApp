@@ -9,4 +9,10 @@ interface RadiotService {
   @GET("site-api/last/{posts}")
   suspend fun getPosts(@Path("posts") posts: Long, @Query("categories") type: String = "podcast"): List<Podcast>
 
+  @GET("site-api/last/{posts}")
+  suspend fun getThemes(@Path("posts") posts: Long, @Query("categories") type: String = "prep"): List<Theme>
+
+  companion object {
+    const val DEF_THEMES_COUNT = 50L
+  }
 }
