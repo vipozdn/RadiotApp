@@ -70,12 +70,12 @@ data class ScoreUiModel(
     @DrawableRes val downRes: Int,
 )
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun CommentView(postUrl: String) {
+fun CommentView(postUrl: String, level: Int = 1) {
   val viewModel: CommentsViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-
       return CommentsViewModel(postUrl = postUrl) as T
     }
   })
@@ -103,7 +103,7 @@ fun CommentView(postUrl: String) {
   }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@ExperimentalAnimationApi
 @Composable
 fun CommentData(comments: List<CommentUiModel>, vote: (String, VoteType) -> Unit) {
   AnimatedVisibility(visibleState = remember { MutableTransitionState(initialState = false) }
