@@ -157,7 +157,7 @@ fun CommentAuthor(author: CommentAuthorUiModel) {
             requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
               return transformations(CircleCropTransformation())
             },
-            shouldRefetchOnSizeChange = { _, _ -> false },
+            shouldRefetchOnSizeChange = { _, _ -> true },
         ),
         contentDescription = "Avatar ${author.name}",
         modifier = Modifier.padding(4.dp),

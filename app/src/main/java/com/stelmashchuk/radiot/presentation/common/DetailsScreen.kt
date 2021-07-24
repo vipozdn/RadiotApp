@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
-@ExperimentalAnimationApi
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DetailsScreen(name: String, content: @Composable (PaddingValues) -> Unit) {
   AnimatedVisibility(visibleState = remember { MutableTransitionState(initialState = false) }
