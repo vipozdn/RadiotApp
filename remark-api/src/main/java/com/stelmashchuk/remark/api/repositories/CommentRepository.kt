@@ -1,33 +1,37 @@
-package com.stelmashchuk.remark.data.repositories
+package com.stelmashchuk.remark.api.repositories
 
-import com.stelmashchuk.remark.RemarkSettings
-import com.stelmashchuk.remark.data.HttpConstants
-import com.stelmashchuk.remark.data.RemarkService
-import com.stelmashchuk.remark.data.Result
-import com.stelmashchuk.remark.data.onFailure
-import com.stelmashchuk.remark.data.onSuccess
-import com.stelmashchuk.remark.data.pojo.CommentWrapper
-import com.stelmashchuk.remark.data.pojo.Comments
-import com.stelmashchuk.remark.data.pojo.VoteResponse
-import com.stelmashchuk.remark.data.pojo.VoteType
-import com.stelmashchuk.remark.data.runCatching
+import com.stelmashchuk.remark.api.HttpConstants
+import com.stelmashchuk.remark.api.RemarkService
+import com.stelmashchuk.remark.api.Result
+import com.stelmashchuk.remark.api.onFailure
+import com.stelmashchuk.remark.api.onSuccess
+import com.stelmashchuk.remark.api.pojo.CommentWrapper
+import com.stelmashchuk.remark.api.pojo.Comments
+import com.stelmashchuk.remark.api.pojo.VoteResponse
+import com.stelmashchuk.remark.api.pojo.VoteType
+import com.stelmashchuk.remark.api.runCatching
 import retrofit2.HttpException
 
 class NotAuthUser : Exception()
 class CacheNotValid : Exception()
 class TooManyRequests : Exception()
 
-class CommentRepository(
+class CommentRepository internal constructor(
     private val remarkService: RemarkService,
     private val userStorage: UserStorage,
     private val voteRequestHandler: VoteRequestHandler = VoteRequestHandler(),
+    private val commentFinder: CommentFinder = CommentFinder(),
 ) {
 
   private var cache: Comments? = null
 
+  fun getReplayByComment(rootId: String): List<CommentWrapper> {
+    return commentFinder.getChildComments(cache?.comments.orEmpty(), rootId = rootId)
+  }
+
   suspend fun getComments(
       postUrl: String,
-      sort: String = RemarkSettings.defaultSorting,
+      sort: String = "",
       format: String = "tree",
   ): Result<Comments> {
     if (cache == null) {

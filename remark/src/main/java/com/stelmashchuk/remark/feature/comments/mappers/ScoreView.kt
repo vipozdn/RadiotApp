@@ -10,17 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 @Composable
-fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit) {
+fun ScoreView(score: ScoreUiModel, onVote: (com.stelmashchuk.remark.api.pojo.VoteType) -> Unit) {
   Row(verticalAlignment = Alignment.CenterVertically) {
-    VoteButton(onClick = { onVote(VoteType.UP) }) {
+    VoteButton(onClick = { onVote(com.stelmashchuk.remark.api.pojo.VoteType.UP) }) {
       Image(painterResource(score.upRes), "up")
     }
     Text(text = score.score, color = Color(score.color))
-    VoteButton(onClick = { onVote(VoteType.DOWN) }) {
+    VoteButton(onClick = { onVote(com.stelmashchuk.remark.api.pojo.VoteType.DOWN) }) {
       Image(painterResource(score.downRes), "down")
     }
   }

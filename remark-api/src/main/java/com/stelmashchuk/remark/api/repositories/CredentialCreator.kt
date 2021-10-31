@@ -1,8 +1,6 @@
-package com.stelmashchuk.remark.feature.auth.ui
+package com.stelmashchuk.remark.api.repositories
 
-import com.stelmashchuk.remark.data.repositories.RemarkCredentials
-
-class CredentialCreator {
+internal class CredentialCreator {
 
     private data class CookiesItem(
         val key: String,
@@ -22,7 +20,7 @@ class CredentialCreator {
         val xsrf = items.find { it.key == "XSRF-TOKEN" }?.value
 
         return if (jwt != null && xsrf != null) {
-            RemarkCredentials(jwt, xsrf)
+          RemarkCredentials(jwt, xsrf)
         } else {
             null
         }

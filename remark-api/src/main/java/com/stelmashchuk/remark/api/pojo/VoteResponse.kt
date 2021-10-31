@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.data.pojo
+package com.stelmashchuk.remark.api.pojo
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

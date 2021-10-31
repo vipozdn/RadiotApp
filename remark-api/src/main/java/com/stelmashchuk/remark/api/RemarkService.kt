@@ -1,9 +1,8 @@
-package com.stelmashchuk.remark.data
+package com.stelmashchuk.remark.api
 
-import com.stelmashchuk.remark.RemarkSettings
-import com.stelmashchuk.remark.data.pojo.Comments
-import com.stelmashchuk.remark.data.pojo.Config
-import com.stelmashchuk.remark.data.pojo.VoteResponse
+import com.stelmashchuk.remark.api.pojo.Comments
+import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.pojo.VoteResponse
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -14,7 +13,7 @@ interface RemarkService {
   @GET("/api/v1/find")
   suspend fun getComments(
       @Query("url") postUrl: String,
-      @Query("sort") sort: String = RemarkSettings.defaultSorting,
+      @Query("sort") sort: String = "",
       @Query("format") format: String = "tree",
   ): Comments
 

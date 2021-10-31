@@ -6,10 +6,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,18 +21,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -45,7 +38,7 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.common.FullSizeProgress
-import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
@@ -56,6 +49,7 @@ data class CommentUiModel(
     val score: ScoreUiModel,
     val time: String,
     val commentId: String,
+    val replyCount: Int? = null,
 )
 
 data class CommentAuthorUiModel(
@@ -76,7 +70,7 @@ fun CommentView(postUrl: String, level: Int = 1) {
   val viewModel: CommentsViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentsViewModel(postUrl = postUrl) as T
+      return CommentsViewModel(commentRoot = CommentRoot.Post(postUrl)) as T
     }
   })
 
@@ -105,7 +99,7 @@ fun CommentView(postUrl: String, level: Int = 1) {
 
 @ExperimentalAnimationApi
 @Composable
-fun CommentData(comments: List<CommentUiModel>, vote: (String, VoteType) -> Unit) {
+fun CommentData(comments: List<CommentUiModel>, vote: (String, com.stelmashchuk.remark.api.pojo.VoteType) -> Unit) {
   AnimatedVisibility(visibleState = remember { MutableTransitionState(initialState = false) }
       .apply { targetState = true },
       modifier = Modifier,
@@ -116,7 +110,7 @@ fun CommentData(comments: List<CommentUiModel>, vote: (String, VoteType) -> Unit
 }
 
 @Composable
-fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, voteType: VoteType) -> Unit) {
+fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, voteType: com.stelmashchuk.remark.api.pojo.VoteType) -> Unit) {
   LazyColumn(modifier = Modifier
       .padding(8.dp)
       .fillMaxSize()) {
@@ -128,7 +122,7 @@ fun CommentContent(comments: List<CommentUiModel>, onVote: (commentId: String, v
 }
 
 @Composable
-fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: VoteType) -> Unit) {
+fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: com.stelmashchuk.remark.api.pojo.VoteType) -> Unit) {
   @Suppress("MagicNumber")
   Column(modifier = Modifier.padding(start = (8 * comment.level).dp)) {
     CommentAuthor(author = comment.author)
@@ -144,6 +138,9 @@ fun CommentView(comment: CommentUiModel, onVote: (commentId: String, voteType: V
       ScoreView(score = comment.score) { voteType ->
         onVote(comment.commentId, voteType)
       }
+    }
+    comment.replyCount?.let {
+      Text(text = "Replay $it")
     }
   }
 }

@@ -1,11 +1,10 @@
 package com.stelmashchuk.remark.data.repositories
 
-import com.stelmashchuk.remark.data.RemarkService
-import com.stelmashchuk.remark.data.pojo.Comment
-import com.stelmashchuk.remark.data.pojo.CommentWrapper
-import com.stelmashchuk.remark.data.pojo.Comments
-import com.stelmashchuk.remark.data.pojo.VoteResponse
-import com.stelmashchuk.remark.data.pojo.VoteType
+import com.stelmashchuk.remark.api.RemarkService
+import com.stelmashchuk.remark.api.pojo.*
+import com.stelmashchuk.remark.api.repositories.CommentRepository
+import com.stelmashchuk.remark.api.repositories.NotAuthUser
+import com.stelmashchuk.remark.api.repositories.UserStorage
 import io.kotlintest.shouldBe
 import io.mockk.coEvery
 import io.mockk.every

@@ -3,7 +3,7 @@ package com.stelmashchuk.remark.feature
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.stelmashchuk.remark.data.repositories.UserStorage
+import com.stelmashchuk.remark.api.repositories.UserStorage
 import com.stelmashchuk.remark.di.Graph
 
 enum class LoginState {
@@ -11,7 +11,7 @@ enum class LoginState {
 }
 
 class CommentWidgetViewModel(
-    private val userStorage: UserStorage = Graph.userStorage,
+    private val userStorage: com.stelmashchuk.remark.api.repositories.UserStorage = Graph.userStorage,
 ) : ViewModel() {
 
   private val _loginState = MutableLiveData<LoginState>()

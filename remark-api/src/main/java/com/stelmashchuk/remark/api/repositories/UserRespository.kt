@@ -1,10 +1,8 @@
-package com.stelmashchuk.remark.data.repositories
+package com.stelmashchuk.remark.api.repositories
 
 import android.content.SharedPreferences
 import android.os.Looper
 import android.webkit.CookieManager
-import com.stelmashchuk.remark.feature.auth.ui.CredentialCreator
-import java.util.logging.Handler
 
 data class RemarkCredentials(
     val jwtToken: String,
@@ -15,13 +13,13 @@ data class RemarkCredentials(
   }
 }
 
-class UserStorage(
+internal class UserStorage(
     private val sharedPreferences: SharedPreferences,
     private val credentialCreator: CredentialCreator = CredentialCreator(),
 ) {
 
   /**
-   * @return true when credential save success
+   * @return true if credential save success
    */
   fun saveByCookies(cookies: String): Boolean {
     credentialCreator.tryCreate(cookies)?.let {

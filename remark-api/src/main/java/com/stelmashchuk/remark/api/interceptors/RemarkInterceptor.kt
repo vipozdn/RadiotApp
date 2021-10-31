@@ -1,8 +1,7 @@
-package com.stelmashchuk.remark.data.interceptors
+package com.stelmashchuk.remark.api.interceptors
 
-import com.stelmashchuk.remark.RemarkSettings
-import com.stelmashchuk.remark.data.HttpConstants
-import com.stelmashchuk.remark.data.repositories.UserStorage
+import com.stelmashchuk.remark.api.HttpConstants
+import com.stelmashchuk.remark.api.repositories.UserStorage
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -11,7 +10,10 @@ private const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
 private const val KEY_COOKIE = "Cookie"
 private const val JWT_PREFIX = "JWT="
 
-class RemarkInterceptor(private val userStorage: UserStorage) : Interceptor {
+class RemarkInterceptor(
+    private val userStorage: UserStorage,
+    private val siteId: String,
+) : Interceptor {
 
   override fun intercept(chain: Interceptor.Chain): Response {
     val original = chain.request()
@@ -36,13 +38,13 @@ class RemarkInterceptor(private val userStorage: UserStorage) : Interceptor {
     if (userStorage.getCredential().isValid()) {
       val user = userStorage.getCredential()
       request.header(KEY_HEADER_XSRF, user.xsrfToken)
-      request.header(KEY_COOKIE, "${JWT_PREFIX}${user.jwtToken}")
+      request.header(KEY_COOKIE, "$JWT_PREFIX${user.jwtToken}")
     }
   }
 
   private fun addSiteId(request: Request.Builder, original: Request) {
     request.url(original.url.newBuilder()
-        .addQueryParameter("site", RemarkSettings.siteId)
+        .addQueryParameter("site", siteId)
         .build())
   }
 }

@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.data
+package com.stelmashchuk.remark.api
 
 object HttpConstants {
 
