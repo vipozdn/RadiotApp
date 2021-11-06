@@ -3,7 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.gms.google-services'
-    id("io.gitlab.arturbosch.detekt").version("1.16.0")
     id 'com.google.firebase.crashlytics'
 }
 
