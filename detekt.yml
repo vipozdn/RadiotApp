@@ -1,0 +1,24 @@
+naming:
+  FunctionNaming:
+    active: false
+style:
+  MaxLineLength:
+    active: false
+  UseDataClass:
+    active: false
+  ClassOrdering:
+    active: false
+  RedundantVisibilityModifierRule:
+    active: false
+  ExpressionBodySyntax:
+    active: false
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicProperty:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
+potential-bugs:
+  LateinitUsage:
+    active: false

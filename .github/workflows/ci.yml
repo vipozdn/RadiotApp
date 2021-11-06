@@ -11,11 +11,15 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run unit tests
-        run: ./gradlew app:test remark:test
-  linter:
+        run: ./gradlew app:test remark:test remark-api:test
+  detekt:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
-      - name: Run detekt
-        run: ./gradlew app:detekt remark:detekt
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v2
+
+      - name: "detekt"
+        uses: natiginfo/action-detekt-all@1.19.0-RC1
+        with:
+          args: --config detekt.yml
