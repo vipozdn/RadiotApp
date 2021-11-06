@@ -22,4 +22,4 @@ jobs:
       - name: "detekt"
         uses: natiginfo/action-detekt-all@1.19.0-RC1
         with:
-          args: --fail-fast --config detekt.yml
+          args: --config detekt.yml
