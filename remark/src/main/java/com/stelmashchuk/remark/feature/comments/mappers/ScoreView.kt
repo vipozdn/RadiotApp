@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 @Composable

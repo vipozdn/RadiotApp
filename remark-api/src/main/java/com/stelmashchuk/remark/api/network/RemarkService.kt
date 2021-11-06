@@ -1,6 +1,8 @@
 package com.stelmashchuk.remark.api
 
-import com.stelmashchuk.remark.api.pojo.*
+import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
+import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.pojo.VoteResponse
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path

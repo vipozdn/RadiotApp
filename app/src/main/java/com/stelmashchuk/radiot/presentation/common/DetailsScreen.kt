@@ -1,12 +1,7 @@
 package com.stelmashchuk.radiot.presentation.common
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -15,7 +10,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

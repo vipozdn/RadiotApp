@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.radiot.presentation.common.DetailsScreen
 import com.stelmashchuk.remark.feature.RemarkView
-import com.stelmashchuk.remark.feature.comments.OneCommentView
 
 @Composable
 fun DetailView(podcastNumber: Long?) {

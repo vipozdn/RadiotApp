@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.RemarkApi
-import com.stelmashchuk.remark.common.SingleLiveEvent
 import com.stelmashchuk.remark.di.Graph
 import kotlinx.coroutines.launch
 
