@@ -1,13 +1,15 @@
 package com.stelmashchuk.remark.api.new
 
-import com.stelmashchuk.remark.api.HttpConstants
-import com.stelmashchuk.remark.api.RemarkService
+import com.stelmashchuk.remark.api.network.HttpConstants
+import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import kotlin.reflect.KFunction1

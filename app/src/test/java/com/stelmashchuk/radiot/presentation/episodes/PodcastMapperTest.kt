@@ -5,7 +5,6 @@ import com.stelmashchuk.radiot.data.TimeLabels
 import org.junit.Assert
 import org.junit.Test
 
-
 internal class PodcastMapperTest {
 
   @Test

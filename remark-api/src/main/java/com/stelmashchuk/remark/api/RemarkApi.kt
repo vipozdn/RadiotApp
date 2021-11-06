@@ -4,6 +4,7 @@ import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.remark.api.network.RemarkInterceptor
+import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.new.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.serialization.json.Json

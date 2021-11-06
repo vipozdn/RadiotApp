@@ -1,6 +1,5 @@
 package com.stelmashchuk.remark.api.network
 
-import com.stelmashchuk.remark.api.HttpConstants
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import okhttp3.Interceptor
 import okhttp3.Request

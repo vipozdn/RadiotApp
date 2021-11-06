@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api
+package com.stelmashchuk.remark.api.network
 
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.pojo.Config

@@ -19,3 +19,6 @@ comments:
     active: false
   UndocumentedPublicFunction:
     active: false
+potential-bugs:
+  LateinitUsage:
+    active: false
