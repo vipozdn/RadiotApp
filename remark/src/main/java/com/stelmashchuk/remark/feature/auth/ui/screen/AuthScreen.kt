@@ -17,7 +17,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-
 @Composable
 fun AuthScreen(onLoginFinish: () -> Unit) {
   val viewModel = viewModel(AuthViewModel::class.java)

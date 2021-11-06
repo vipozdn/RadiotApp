@@ -77,16 +77,12 @@ public class CommentDataController internal constructor(
     fun notRootCommentFilter(comment: Comment): Boolean = comment.parentId == (commentRoot as CommentRoot.Comment).commentId
 
     val filterPrediction: KFunction1<Comment, Boolean> = when (commentRoot) {
-      is CommentRoot.Comment -> {
-        ::notRootCommentFilter
-      }
-      is CommentRoot.Post -> {
-        ::rootCommentFilter
-      }
+      is CommentRoot.Comment -> ::notRootCommentFilter
+      is CommentRoot.Post -> ::rootCommentFilter
     }
     return flow
         .map { comments ->
-          return@map comments.filter(filterPrediction)
+          comments.filter(filterPrediction)
               .map {
                 CommentInfo(it, getReplayCount(it.id))
               }
@@ -124,7 +120,7 @@ public class CommentDataController internal constructor(
   private suspend fun handleSuccessVote(commentId: String, voteResponse: Result<VoteResponse>, vote: VoteType): Nothing? {
     val comments = flow.value.toMutableList()
     comments.replaceAll {
-      return@replaceAll if (it.id == commentId) {
+      if (it.id == commentId) {
         it.copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
       } else {
         it

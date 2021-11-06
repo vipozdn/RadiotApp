@@ -4,3 +4,14 @@ naming:
 style:
   MaxLineLength:
     active: false
+  UseDataClass:
+    active: false
+  ClassOrdering:
+    active: false
+  RedundantVisibilityModifierRule:
+    active: false
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicProperty:
+    active: false
