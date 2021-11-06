@@ -10,8 +10,12 @@ style:
     active: false
   RedundantVisibilityModifierRule:
     active: false
+  ExpressionBodySyntax:
+    active: false
 comments:
   UndocumentedPublicClass:
     active: false
   UndocumentedPublicProperty:
+    active: false
+  UndocumentedPublicFunction:
     active: false

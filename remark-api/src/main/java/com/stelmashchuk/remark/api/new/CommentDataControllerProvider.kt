@@ -98,11 +98,15 @@ public class CommentDataController internal constructor(
       return RemarkError.NotAuthUser
     }
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
-    if (voteResponse.isSuccess) {
-      return handleSuccessVote(commentId, voteResponse, vote)
-    }
+    return handleResponse(voteResponse, commentId, vote)
+  }
 
-    return handleOtherCases(voteResponse)
+  private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: String, vote: VoteType): RemarkError? {
+    return if (voteResponse.isSuccess) {
+      handleSuccessVote(commentId, voteResponse, vote)
+    } else {
+      handleOtherCases(voteResponse)
+    }
   }
 
   private fun handleOtherCases(voteResponse: Result<VoteResponse>): RemarkError? {
