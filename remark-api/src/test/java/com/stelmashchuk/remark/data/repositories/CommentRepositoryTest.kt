@@ -20,7 +20,7 @@ internal class CommentRepositoryTest {
     val postUrl = "postUrl"
     val commentId = "comment_id"
     val remarkService = mockk<RemarkService> {
-      coEvery { getComments(postUrl) } coAnswers {
+      coEvery { getCommentsTree(postUrl) } coAnswers {
         mockRootCommentTree(commentId, score = 0, vote = 0)
       }
       coEvery { vote(commentId, postUrl, VoteType.UP.backendCode) } coAnswers {
@@ -48,7 +48,7 @@ internal class CommentRepositoryTest {
     val postUrl = "postUrl"
     val commentId = "comment_id"
     val remarkService = mockk<RemarkService> {
-      coEvery { getComments(postUrl) } coAnswers {
+      coEvery { getCommentsTree(postUrl) } coAnswers {
         mockRootCommentTree(commentId, score = 6, vote = 0)
       }
       coEvery { vote(commentId, postUrl, VoteType.DOWN.backendCode) } coAnswers {
@@ -76,7 +76,7 @@ internal class CommentRepositoryTest {
     val postUrl = "postUrl"
     val commentId = "comment_id"
     val remarkService = mockk<RemarkService> {
-      coEvery { getComments(postUrl) } coAnswers {
+      coEvery { getCommentsTree(postUrl) } coAnswers {
         mockSecondLevelCommentTree(commentId, score = 2, vote = 0)
       }
       coEvery { vote(commentId, postUrl, VoteType.DOWN.backendCode) } coAnswers {
@@ -115,7 +115,7 @@ internal class CommentRepositoryTest {
   @Test
   fun `Verify not auth user try vote`() {
     val remarkService = mockk<RemarkService> {
-      coEvery { getComments(any()) } coAnswers {
+      coEvery { getCommentsTree(any()) } coAnswers {
         mockRootCommentTree("commentId", score = 6, vote = 0)
       }
     }
@@ -139,7 +139,7 @@ internal class CommentRepositoryTest {
   @Test
   fun `Verify correct handle 401`() {
     val remarkService = mockk<RemarkService> {
-      coEvery { getComments(any()) } coAnswers {
+      coEvery { getCommentsTree(any()) } coAnswers {
         mockRootCommentTree("commentId", score = 6, vote = 0)
       }
       coEvery { vote(any(), any(), any()) } throws HttpException(mockk(relaxed = true) {

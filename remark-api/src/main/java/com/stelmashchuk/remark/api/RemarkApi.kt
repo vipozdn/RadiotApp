@@ -4,6 +4,8 @@ import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.remark.api.interceptors.RemarkInterceptor
+import com.stelmashchuk.remark.api.new.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.repositories.CommentRepository
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.serialization.json.Json
@@ -30,6 +32,10 @@ public class RemarkApi(
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
         .create(RemarkService::class.java)
+  }
+
+  public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
+    CommentDataControllerProvider(remarkService)
   }
 
   public val commentRepository: CommentRepository by lazy {

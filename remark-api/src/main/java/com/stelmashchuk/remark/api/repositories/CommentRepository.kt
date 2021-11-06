@@ -35,7 +35,7 @@ class CommentRepository internal constructor(
       format: String = "tree",
   ): Result<Comments> {
     if (cache == null) {
-      val result = Result.runCatching { remarkService.getComments(postUrl, sort, format) }
+      val result = Result.runCatching { remarkService.getCommentsTree(postUrl, sort, format) }
       result.getOrNull()?.also {
         cache = it
       }

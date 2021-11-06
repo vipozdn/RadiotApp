@@ -26,7 +26,7 @@ fun DetailsScreen(name: String, content: @Composable (PaddingValues) -> Unit) {
       enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(initialAlpha = 0.3f),
       exit = slideOutHorizontally() + fadeOut()) {
     Scaffold(topBar = {
-      TopAppBar(backgroundColor = Color.Black) {
+      TopAppBar {
         Text(text = name, style = MaterialTheme.typography.h4)
       }
     }, content = content)

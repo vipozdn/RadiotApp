@@ -18,9 +18,17 @@ data class CommentWrapper(
 )
 
 @Serializable
+data class CommentOneLevelRoot(
+    @SerialName("comments")
+    val comments: List<Comment>,
+)
+
+@Serializable
 data class Comment(
     @SerialName("id")
     val id: String,
+    @SerialName("pid")
+    val parentId: String,
     @SerialName("orig")
     val text: String = "",
     @SerialName("score")

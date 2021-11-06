@@ -10,7 +10,7 @@ private const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
 private const val KEY_COOKIE = "Cookie"
 private const val JWT_PREFIX = "JWT="
 
-class RemarkInterceptor(
+internal class RemarkInterceptor(
     private val userStorage: UserStorage,
     private val siteId: String,
 ) : Interceptor {

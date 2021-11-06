@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.radiot.presentation.common.DetailsScreen
-import com.stelmashchuk.remark.feature.CommentWidget
+import com.stelmashchuk.remark.feature.comments.CommentView
 
 @Composable
 fun ThemeDetails(number: Long?) {
@@ -24,7 +24,7 @@ fun ThemeContent(number: Long) {
   val data by viewModel.data.observeAsState()
   data?.let { theme ->
     DetailsScreen(name = theme.title) {
-      CommentWidget(postUrl = theme.url)
+      CommentView(postUrl = theme.url)
     }
   }
 }
