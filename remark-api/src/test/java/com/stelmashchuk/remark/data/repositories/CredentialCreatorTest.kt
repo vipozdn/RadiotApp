@@ -1,6 +1,7 @@
 package com.stelmashchuk.remark.data.repositories
 
 import com.stelmashchuk.remark.api.repositories.CredentialCreator
+import com.stelmashchuk.remark.api.repositories.RemarkCredentials
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -16,9 +17,9 @@ internal class CredentialCreatorTest {
   @TestFactory
   fun tryCreate() = listOf(
       "" to null,
-      goodString to com.stelmashchuk.remark.api.repositories.RemarkCredentials(goodJWT, xsrfToken),
+      goodString to RemarkCredentials(goodJWT, xsrfToken),
       "XSRF-TOKEN=$xsrfToken" to null,
-      "JWT=$goodJWT; XSRF-TOKEN=$xsrfToken; another=another" to com.stelmashchuk.remark.api.repositories.RemarkCredentials(
+      "JWT=$goodJWT; XSRF-TOKEN=$xsrfToken; another=another" to RemarkCredentials(
           goodJWT,
           xsrfToken
       ),
