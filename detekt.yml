@@ -1,0 +1,6 @@
+naming:
+  FunctionNaming:
+    active: false
+style:
+  MaxLineLength:
+    active: false

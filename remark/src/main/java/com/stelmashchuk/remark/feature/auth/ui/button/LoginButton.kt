@@ -18,22 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LoginButtonViewModel(
-    userStorage: UserStorage,
-) : ViewModel() {
-
-  private val _needLoginButton = MutableStateFlow(false)
-  val needLoginButton: StateFlow<Boolean> = _needLoginButton
-
-  init {
-    userStorage.addListener {
-      this.viewModelScope.launch {
-        _needLoginButton.emit(!it.isValid())
-      }
-    }
-  }
-}
-
 @Composable
 fun LoginButton(openLogin: () -> Unit) {
   val viewModel: LoginButtonViewModel = viewModel(factory = object : ViewModelProvider.Factory {
@@ -46,6 +30,22 @@ fun LoginButton(openLogin: () -> Unit) {
   if (viewModel.needLoginButton.collectAsState().value) {
     Button(onClick = { openLogin() }, modifier = Modifier.fillMaxWidth()) {
       Text(text = stringResource(id = R.string.login))
+    }
+  }
+}
+
+class LoginButtonViewModel(
+    userStorage: UserStorage,
+) : ViewModel() {
+
+  private val _needLoginButton = MutableStateFlow(false)
+  val needLoginButton: StateFlow<Boolean> = _needLoginButton
+
+  init {
+    userStorage.addListener {
+      this.viewModelScope.launch {
+        _needLoginButton.emit(!it.isValid())
+      }
     }
   }
 }

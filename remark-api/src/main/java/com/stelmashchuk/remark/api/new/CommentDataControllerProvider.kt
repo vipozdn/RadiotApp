@@ -3,6 +3,7 @@ package com.stelmashchuk.remark.api.new
 import com.stelmashchuk.remark.api.HttpConstants
 import com.stelmashchuk.remark.api.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.coroutines.CoroutineScope
@@ -102,18 +103,13 @@ public class CommentDataController internal constructor(
     }
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
     if (voteResponse.isSuccess) {
-      val comments = flow.value.toMutableList()
-      comments.replaceAll {
-        return@replaceAll if (it.id == commentId) {
-          it.copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
-        } else {
-          it
-        }
-      }
-      flow.emit(comments.toList())
-      return null
+      return handleSuccessVote(commentId, voteResponse, vote)
     }
 
+    return handleOtherCases(voteResponse)
+  }
+
+  private fun handleOtherCases(voteResponse: Result<VoteResponse>): RemarkError? {
     if (voteResponse.isFailure) {
       return when ((voteResponse.exceptionOrNull() as? HttpException)?.code()) {
         HttpConstants.UN_AUTH -> RemarkError.NotAuthUser
@@ -123,5 +119,18 @@ public class CommentDataController internal constructor(
     }
 
     return RemarkError.SomethingWentWrong
+  }
+
+  private suspend fun handleSuccessVote(commentId: String, voteResponse: Result<VoteResponse>, vote: VoteType): Nothing? {
+    val comments = flow.value.toMutableList()
+    comments.replaceAll {
+      return@replaceAll if (it.id == commentId) {
+        it.copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
+      } else {
+        it
+      }
+    }
+    flow.emit(comments.toList())
+    return null
   }
 }
