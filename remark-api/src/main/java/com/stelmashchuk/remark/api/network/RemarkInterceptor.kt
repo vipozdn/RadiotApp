@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.interceptors
+package com.stelmashchuk.remark.api.network
 
 import com.stelmashchuk.remark.api.HttpConstants
 import com.stelmashchuk.remark.api.repositories.UserStorage

@@ -19,10 +19,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(onLoginFinish: () -> Unit) {
   val viewModel = viewModel(AuthViewModel::class.java)
   val loginItems by viewModel.loginUiItem.observeAsState()
   val currentProvider by viewModel.currentLoginProvider.observeAsState()
+
+  val loginFinish by viewModel.loginFinishEvent.observeAsState()
+
+  if (loginFinish == true) {
+    onLoginFinish()
+  }
 
   Column {
     loginItems?.let {

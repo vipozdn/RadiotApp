@@ -9,13 +9,6 @@ import retrofit2.http.Query
 interface RemarkService {
 
   @GET("/api/v1/find")
-  suspend fun getCommentsTree(
-      @Query("url") postUrl: String,
-      @Query("sort") sort: String = "-active",
-      @Query("format") format: String = "tree",
-  ): Comments
-
-  @GET("/api/v1/find")
   suspend fun getCommentsPlain(
       @Query("url") postUrl: String,
       @Query("sort") sort: String = "-active",
@@ -32,4 +25,12 @@ interface RemarkService {
   @GET("api/v1/config")
   suspend fun getConfig(): Config
 }
+
+object HttpConstants {
+
+  const val UN_AUTH = 401
+  const val TOO_MANY_REQUESTS = 429
+
+}
+
 

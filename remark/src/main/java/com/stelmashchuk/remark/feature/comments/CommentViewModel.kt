@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.new.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.new.CommentRoot
+import com.stelmashchuk.remark.feature.CommentViewEvent
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,12 @@ class CommentViewModel(
           .collect {
             _comments.value = commentUiMapper.mapOneLevel(it)
           }
+    }
+  }
+
+  fun vote(event: CommentViewEvent.Vote) {
+    viewModelScope.launch {
+      commentDataController.vote(event.commentId, commentRoot.postUrl, event.voteType)
     }
   }
 

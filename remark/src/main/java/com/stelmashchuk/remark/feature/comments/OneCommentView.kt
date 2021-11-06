@@ -1,6 +1,5 @@
 package com.stelmashchuk.remark.feature.comments
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -22,19 +20,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.new.CommentRoot
-import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.di.Graph
+import com.stelmashchuk.remark.feature.CommentViewEvent
+import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -60,52 +53,8 @@ data class ScoreUiModel(
     @DrawableRes val downRes: Int,
 )
 
-sealed class CommentViewEvent(open val commentId: String) {
-  data class OpenReply(
-      override val commentId: String,
-  ) : CommentViewEvent(commentId)
-
-  data class Vote(
-      override val commentId: String,
-      val voteType: VoteType,
-  ) : CommentViewEvent(commentId)
-}
-
-private object Destinations {
-  const val ROOT = "root"
-  const val NOT_ROOT_TEMPLATE = "comment%s"
-  const val ROOT_COMMENT_URL = "ROOT_COMMENT_URL"
-}
-
-private class Actions(navController: NavHostController) {
-  val openReply: (CommentViewEvent.OpenReply) -> Unit = {
-    navController.navigate("${Destinations.NOT_ROOT_TEMPLATE}/${it.commentId}")
-  }
-}
-
 @Composable
-fun CommentView(postUrl: String) {
-  val navController = rememberNavController()
-  val actions = remember(navController) {
-    Actions(navController)
-  }
-  NavHost(navController = navController, startDestination = Destinations.ROOT) {
-    composable(Destinations.ROOT) {
-      OneLevelCommentView(commentRoot = CommentRoot.Post(postUrl), actions.openReply)
-    }
-    composable(Destinations.NOT_ROOT_TEMPLATE + "/{${Destinations.ROOT_COMMENT_URL}}",
-        arguments = listOf(
-            navArgument(Destinations.ROOT_COMMENT_URL) {
-              type = NavType.StringType
-            })
-    ) {
-      OneLevelCommentView(CommentRoot.Comment(postUrl, it.arguments?.getString(Destinations.ROOT_COMMENT_URL)!!), actions.openReply)
-    }
-  }
-}
-
-@Composable
-fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.OpenReply) -> Unit) {
+fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.OpenReply) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -116,10 +65,13 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
   val state = viewModel.comments
       .collectAsState(initial = emptyList())
 
-  CommentsContent(state.value) { event ->
-    when (event) {
-      is CommentViewEvent.OpenReply -> openReply(event)
-      is CommentViewEvent.Vote -> TODO()
+  Column {
+    LoginButton(openLogin)
+    CommentsContent(state.value) { event ->
+      when (event) {
+        is CommentViewEvent.OpenReply -> openReply(event)
+        is CommentViewEvent.Vote -> viewModel.vote(event)
+      }
     }
   }
 }
@@ -130,14 +82,14 @@ fun CommentsContent(comments: List<CommentUiModel>, onEvent: (CommentViewEvent) 
       .padding(8.dp)
       .fillMaxSize()) {
     items(comments) { comment ->
-      CommentView(comment, onEvent)
+      OneCommentView(comment, onEvent)
       Divider()
     }
   }
 }
 
 @Composable
-fun CommentView(comment: CommentUiModel, onEvent: (CommentViewEvent) -> Unit) {
+fun OneCommentView(comment: CommentUiModel, onEvent: (CommentViewEvent) -> Unit) {
   @Suppress("MagicNumber")
   Row {
     Image(

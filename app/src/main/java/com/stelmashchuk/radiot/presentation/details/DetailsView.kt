@@ -12,7 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.radiot.presentation.common.DetailsScreen
-import com.stelmashchuk.remark.feature.comments.CommentView
+import com.stelmashchuk.remark.feature.RemarkView
+import com.stelmashchuk.remark.feature.comments.OneCommentView
 
 @Composable
 fun DetailView(podcastNumber: Long?) {
@@ -35,7 +36,7 @@ private fun PodcastContent(podcastNumber: Long) {
           .fillMaxWidth()
       ) {
         Text(text = episode.topics, style = MaterialTheme.typography.body1)
-        CommentView(postUrl = episode.url)
+        RemarkView(postUrl = episode.url)
       }
     }
   }

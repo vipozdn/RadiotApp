@@ -3,10 +3,8 @@ package com.stelmashchuk.remark.api
 import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.stelmashchuk.remark.api.interceptors.RemarkInterceptor
+import com.stelmashchuk.remark.api.network.RemarkInterceptor
 import com.stelmashchuk.remark.api.new.CommentDataControllerProvider
-import com.stelmashchuk.remark.api.pojo.Comment
-import com.stelmashchuk.remark.api.repositories.CommentRepository
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -35,11 +33,7 @@ public class RemarkApi(
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(remarkService)
-  }
-
-  public val commentRepository: CommentRepository by lazy {
-    CommentRepository(remarkService, userStorage)
+    CommentDataControllerProvider(remarkService, userStorage)
   }
 
   public suspend fun getConfig() = remarkService.getConfig()
@@ -52,7 +46,7 @@ public class RemarkApi(
     ignoreUnknownKeys = true
   }
 
-  private val userStorage: UserStorage by lazy {
+  public val userStorage: UserStorage by lazy {
     UserStorage(BinaryPreferencesBuilder(context).build())
   }
 }

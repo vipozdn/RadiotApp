@@ -13,7 +13,7 @@ data class RemarkCredentials(
   }
 }
 
-internal class UserStorage(
+public class UserStorage internal constructor(
     private val sharedPreferences: SharedPreferences,
     private val credentialCreator: CredentialCreator = CredentialCreator(),
 ) {
@@ -30,7 +30,7 @@ internal class UserStorage(
     }
   }
 
-  fun save(remarkCredentials: RemarkCredentials) {
+  private fun save(remarkCredentials: RemarkCredentials) {
     sharedPreferences.edit()
         .putString(KEY_JWT_TOKEN, remarkCredentials.jwtToken)
         .putString(KEY_XSRF_TOKEN, remarkCredentials.xsrfToken)

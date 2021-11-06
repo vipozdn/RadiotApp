@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.RemarkApi
+import com.stelmashchuk.remark.common.SingleLiveEvent
 import com.stelmashchuk.remark.di.Graph
 import kotlinx.coroutines.launch
 
@@ -24,6 +25,9 @@ class AuthViewModel(
   private val _currentLoginProvider = MutableLiveData<String>()
   val currentLoginProvider: LiveData<String> = _currentLoginProvider
 
+  private val _loginFinishEvent = MutableLiveData<Boolean>()
+  val loginFinishEvent: LiveData<Boolean> = _loginFinishEvent
+
   init {
     viewModelScope.launch {
       val config = remarkApi.getConfig()
@@ -40,6 +44,8 @@ class AuthViewModel(
   }
 
   fun cookiesChange(cookies: String) {
-    remarkApi.saveByCookies(cookies)
+    if (remarkApi.saveByCookies(cookies)) {
+      _loginFinishEvent.postValue(true)
+    }
   }
 }
