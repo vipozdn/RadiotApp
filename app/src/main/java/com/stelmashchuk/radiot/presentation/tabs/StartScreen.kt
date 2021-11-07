@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -29,7 +31,12 @@ fun StartScreen() {
           items.forEach { tab ->
             BottomNavigationItem(selected = currentRoute == tab.name, onClick = {
               navController.navigate(tab.name) {
+
+                popUpTo(navController.graph.findStartDestination().id) {
+                  saveState = true
+                }
                 launchSingleTop = true
+                restoreState = true
               }
             }, icon = {
               Icon(painter = painterResource(id = tab.icon), contentDescription = stringResource(id = tab.label))
@@ -48,4 +55,10 @@ fun StartScreen() {
       composable(Tabs.PRE_SHOW.name) { ThemesTab() }
     }
   }
+}
+
+@Preview
+@Composable
+fun StartScreenPreview() {
+  StartScreen()
 }

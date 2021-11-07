@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.stelmashchuk.radiot.presentation.details.DetailView
 
+
 private object Destinations {
   const val LIST = "list"
 
