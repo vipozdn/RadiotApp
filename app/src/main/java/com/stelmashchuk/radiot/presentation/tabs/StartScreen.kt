@@ -31,6 +31,7 @@ fun StartScreen() {
           items.forEach { tab ->
             BottomNavigationItem(selected = currentRoute == tab.name, onClick = {
               navController.navigate(tab.name) {
+
                 popUpTo(navController.graph.findStartDestination().id) {
                   saveState = true
                 }

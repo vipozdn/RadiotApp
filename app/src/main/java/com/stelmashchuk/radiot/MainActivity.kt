@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.stelmashchuk.radiot.presentation.App
 import com.stelmashchuk.remark.di.Graph as RemarkGraph
 
-
 class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.data.RemarkService
-import com.stelmashchuk.remark.data.repositories.UserStorage
+import com.stelmashchuk.remark.api.RemarkApi
 import com.stelmashchuk.remark.di.Graph
 import kotlinx.coroutines.launch
 
@@ -15,9 +14,8 @@ data class LoginUiItem(
 )
 
 class AuthViewModel(
-    private val remarkService: RemarkService = Graph.remarkService,
+    private val remarkApi: RemarkApi = Graph.api,
     private val loginItemUiMapper: AuthProvidersUiMapper = AuthProvidersUiMapper(),
-    private val userStorage: UserStorage = Graph.userStorage,
 ) : ViewModel() {
 
   private val _loginUiItem = MutableLiveData<List<LoginUiItem>>()
@@ -26,9 +24,12 @@ class AuthViewModel(
   private val _currentLoginProvider = MutableLiveData<String>()
   val currentLoginProvider: LiveData<String> = _currentLoginProvider
 
+  private val _loginFinishEvent = MutableLiveData<Boolean>()
+  val loginFinishEvent: LiveData<Boolean> = _loginFinishEvent
+
   init {
     viewModelScope.launch {
-      val config = remarkService.getConfig()
+      val config = remarkApi.getConfig()
 
       @Suppress("MagicString")
       val loginUiItems = loginItemUiMapper.map(config.authProviders.filter { it != "google" })
@@ -42,6 +43,8 @@ class AuthViewModel(
   }
 
   fun cookiesChange(cookies: String) {
-    userStorage.saveByCookies(cookies)
+    if (remarkApi.saveByCookies(cookies)) {
+      _loginFinishEvent.postValue(true)
+    }
   }
 }

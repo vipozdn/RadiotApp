@@ -2,11 +2,8 @@ package com.stelmashchuk.radiot.presentation.episodes
 
 import com.stelmashchuk.radiot.data.Podcast
 import com.stelmashchuk.radiot.data.TimeLabels
-import com.stelmashchuk.radiot.presentation.episodes.EpisodeUiModel
-import com.stelmashchuk.radiot.presentation.episodes.PodcastMapper
 import org.junit.Assert
 import org.junit.Test
-
 
 internal class PodcastMapperTest {
 

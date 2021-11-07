@@ -1,8 +1,8 @@
 package com.stelmashchuk.radiot.di
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.radiot.data.PodcastRepository
 import com.stelmashchuk.radiot.data.RadiotService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.radiot.data.ThemesRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

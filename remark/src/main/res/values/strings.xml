@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="too_many_request">Тебя слишком много, отдохни…</string>
+    <string name="reply">%d Reply</string>
+    <string name="login">Login</string>
 </resources>
