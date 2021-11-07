@@ -1,5 +1,6 @@
-package com.stelmashchuk.remark.api.new
+package com.stelmashchuk.remark.api
 
+import android.util.Log
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
@@ -26,10 +27,6 @@ public class CommentDataControllerProvider internal constructor(
       CommentDataController(postUrl, scope, remarkService, userStorage)
     }
   }
-
-  fun clean(postUrl: String) {
-    map.remove(postUrl)
-  }
 }
 
 sealed class CommentRoot(open val postUrl: String) {
@@ -42,6 +39,11 @@ sealed class CommentRoot(open val postUrl: String) {
       val commentId: String,
   ) : CommentRoot(postUrl)
 }
+
+data class FullCommentInfo(
+    val rootComment: CommentInfo?,
+    val comments: List<CommentInfo>,
+)
 
 data class CommentInfo(
     val comment: Comment,
@@ -74,7 +76,7 @@ public class CommentDataController internal constructor(
     return comments.count { it.parentId == commentId }
   }
 
-  fun observeComments(commentRoot: CommentRoot): Flow<List<CommentInfo>> {
+  fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
     fun rootCommentFilter(comment: Comment): Boolean = comment.parentId.isBlank()
     fun notRootCommentFilter(comment: Comment): Boolean = comment.parentId == (commentRoot as CommentRoot.Comment).commentId
 
@@ -82,12 +84,22 @@ public class CommentDataController internal constructor(
       is CommentRoot.Comment -> ::notRootCommentFilter
       is CommentRoot.Post -> ::rootCommentFilter
     }
+
+    val rootComment: CommentInfo? = when (commentRoot) {
+      is CommentRoot.Comment -> {
+        Log.e("TAG_11", "this ${hashCode()}")
+        val root: Comment = flow.value.find { it.id == commentRoot.commentId }!!
+        CommentInfo(root, getReplayCount(root.id))
+      }
+      is CommentRoot.Post -> null
+    }
+
     return flow
         .map { comments ->
-          comments.filter(filterPrediction)
+          FullCommentInfo(rootComment = rootComment, comments = comments.filter(filterPrediction)
               .map {
                 CommentInfo(it, getReplayCount(it.id))
-              }
+              })
         }
   }
 

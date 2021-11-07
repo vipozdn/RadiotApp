@@ -1,6 +1,5 @@
 package com.stelmashchuk.radiot.presentation.episodes
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -23,7 +21,7 @@ fun EpisodesView(openDetails: (Long) -> Unit) {
 
   val posts by viewModel.post.observeAsState(emptyList())
 
-  LazyColumn(Modifier.background(Color.Black)) {
+  LazyColumn {
     items(posts) { podcast ->
       Episode(podcast, openDetails)
     }
@@ -33,7 +31,6 @@ fun EpisodesView(openDetails: (Long) -> Unit) {
 @Composable
 fun Episode(podcast: EpisodeUiModel, openDetails: (Long) -> Unit = {}) {
   Column(modifier = Modifier
-      .background(Color.Black)
       .padding(8.dp)
       .fillMaxWidth()
       .clickable { openDetails(podcast.number) }) {

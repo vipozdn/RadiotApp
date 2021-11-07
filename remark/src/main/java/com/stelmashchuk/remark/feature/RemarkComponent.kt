@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.stelmashchuk.remark.api.new.CommentRoot
+import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
 import com.stelmashchuk.remark.feature.comments.OneLevelCommentView

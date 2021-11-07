@@ -15,7 +15,7 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = purple500,
+    primary = Color(0xFF536DFE),
     primaryVariant = purple700,
     secondary = teal200,
     background = Color.White,
@@ -45,5 +45,5 @@ fun RadiotTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
 @Preview
 @Composable
 fun RadiotThemePreview() {
-    RadiotTheme(true) { StartScreen() }
+    RadiotTheme(false) { StartScreen() }
 }
