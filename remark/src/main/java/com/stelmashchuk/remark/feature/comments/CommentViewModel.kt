@@ -29,10 +29,15 @@ class CommentViewModel(
   val comments: StateFlow<CommentUiState> = _comments
 
   init {
+    _comments.value = CommentUiState.Loading
     viewModelScope.launch {
       commentDataController.observeComments(commentRoot)
           .collect {
-            _comments.value = CommentUiState.Data(commentUiMapper.mapOneLevel(it))
+            if (it.comments.isEmpty()) {
+              _comments.value = CommentUiState.Empty
+            } else {
+              _comments.value = CommentUiState.Data(commentUiMapper.mapOneLevel(it))
+            }
           }
     }
   }
