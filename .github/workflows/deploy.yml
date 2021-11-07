@@ -48,10 +48,9 @@ jobs:
 
       - name: Deploy to Play Store (BETA)
         id: deploy
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_JSON }}
           packageName: com.stelmashchuk.radio_t
           releaseFile: app/build/outputs/bundle/release/app-release.aab
           track: production
-          whatsNewDirectory: store/whatsnew/
