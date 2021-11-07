@@ -31,29 +31,27 @@ jobs:
 
       - name: Sign AAB
         id: sign
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@v1.0.4
         with:
           releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: Radiot
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "30.0.2"
 
       - name: Upload AAB
         id: uploadArtifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v1.0.15
         with:
           name: app
           path: app/build/outputs/bundle/release/app-release.aab
 
       - name: Deploy to Play Store (BETA)
         id: deploy
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_JSON }}
           packageName: com.stelmashchuk.radio_t
           releaseFile: app/build/outputs/bundle/release/app-release.aab
-          track: beta
+          track: production
           whatsNewDirectory: store/whatsnew/
