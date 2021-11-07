@@ -1,6 +1,5 @@
 package com.stelmashchuk.radiot.presentation.themes.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
@@ -19,7 +17,7 @@ fun ThemeList(openDetails: (Long) -> Unit) {
 
   val themes by viewModel.themes.observeAsState(emptyList())
 
-  LazyColumn(Modifier.background(Color.Black)) {
+  LazyColumn {
     items(themes) {
       Text(modifier = Modifier.clickable {
         openDetails(it.number)

@@ -7,7 +7,7 @@ import com.stelmashchuk.radiot.ui.RadiotTheme
 
 @Composable
 fun App() {
-  RadiotTheme {
+  RadiotTheme(false) {
     StartScreen()
   }
 }

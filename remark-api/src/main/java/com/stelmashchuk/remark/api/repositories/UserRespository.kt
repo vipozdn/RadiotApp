@@ -1,6 +1,7 @@
 package com.stelmashchuk.remark.api.repositories
 
 import android.content.SharedPreferences
+import android.os.Handler
 import android.os.Looper
 import android.webkit.CookieManager
 
@@ -38,7 +39,7 @@ public class UserStorage internal constructor(
   }
 
   fun logout() {
-    android.os.Handler(Looper.getMainLooper()).post {
+    Handler(Looper.getMainLooper()).post {
       CookieManager.getInstance().removeAllCookies {
 
       }

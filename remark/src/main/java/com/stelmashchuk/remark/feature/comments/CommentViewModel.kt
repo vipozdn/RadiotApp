@@ -2,14 +2,20 @@ package com.stelmashchuk.remark.feature.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.api.new.CommentDataControllerProvider
-import com.stelmashchuk.remark.api.new.CommentRoot
+import com.stelmashchuk.remark.api.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.feature.CommentViewEvent
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
+sealed class CommentUiState {
+  object Empty : CommentUiState()
+  object Loading : CommentUiState()
+  data class Data(val data: FullCommentsUiModel) : CommentUiState()
+}
 
 class CommentViewModel(
     private val commentRoot: CommentRoot,
@@ -19,14 +25,14 @@ class CommentViewModel(
 
   private val commentDataController = commentDataControllerProvider.getDataController(commentRoot.postUrl, viewModelScope)
 
-  private val _comments = MutableStateFlow(emptyList<CommentUiModel>())
-  val comments: StateFlow<List<CommentUiModel>> = _comments
+  private val _comments = MutableStateFlow<CommentUiState>(CommentUiState.Empty)
+  val comments: StateFlow<CommentUiState> = _comments
 
   init {
     viewModelScope.launch {
       commentDataController.observeComments(commentRoot)
           .collect {
-            _comments.value = commentUiMapper.mapOneLevel(it)
+            _comments.value = CommentUiState.Data(commentUiMapper.mapOneLevel(it))
           }
     }
   }
@@ -35,10 +41,5 @@ class CommentViewModel(
     viewModelScope.launch {
       commentDataController.vote(event.commentId, commentRoot.postUrl, event.voteType)
     }
-  }
-
-  override fun onCleared() {
-    super.onCleared()
-    commentDataControllerProvider.clean(commentRoot.postUrl)
   }
 }
