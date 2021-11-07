@@ -5,6 +5,8 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.stelmashchuk.radiot.presentation.tabs.StartScreen
 
 private val DarkColorPalette = darkColors(
     primary = purple200,
@@ -26,16 +28,22 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun RadiotTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
-  val colors = if (darkTheme) {
-    DarkColorPalette
-  } else {
-    LightColorPalette
-  }
+    val colors = if (darkTheme) {
+        DarkColorPalette
+    } else {
+        LightColorPalette
+    }
 
-  MaterialTheme(
-      colors = colors,
-      typography = typography,
-      shapes = shapes,
-      content = content
-  )
+    MaterialTheme(
+        colors = colors,
+        typography = typography,
+        shapes = shapes,
+        content = content
+    )
+}
+
+@Preview
+@Composable
+fun RadiotThemePreview() {
+    RadiotTheme(true) { StartScreen() }
 }
