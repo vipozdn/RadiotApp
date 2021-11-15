@@ -1,8 +1,8 @@
 package com.stelmashchuk.remark.feature.root
 
 import androidx.annotation.StringRes
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 object SnackBarBus {
 
@@ -10,11 +10,10 @@ object SnackBarBus {
     data class ById(@StringRes val msgId: Int) : SnackBarData()
   }
 
-  private val _snackBar = MutableSharedFlow<SnackBarData?>(replay = 1)
-  val snackBar: SharedFlow<SnackBarData?> = _snackBar
+  private val _snackBar = MutableStateFlow<SnackBarData?>(null)
+  val snackBar: StateFlow<SnackBarData?> = _snackBar
 
   suspend fun showSnackBar(@StringRes msgId: Int) {
     _snackBar.emit(SnackBarData.ById(msgId))
   }
-
 }
