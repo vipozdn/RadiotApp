@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -80,6 +81,8 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
 
   val state = viewModel.comments.collectAsState()
 
+  val info = viewModel.info.collectAsState()
+
   Column {
     LoginButton(openLogin)
     when (val data = state.value) {
@@ -100,6 +103,14 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
           CircularProgressIndicator()
         }
+      }
+    }
+    if (info.value != null) {
+      when (info.value) {
+        InfoMessages.TooManyRequests -> {
+          Text(text = stringResource(id = R.string.too_many_request), modifier = Modifier.fillMaxWidth())
+        }
+        null -> {}
       }
     }
   }

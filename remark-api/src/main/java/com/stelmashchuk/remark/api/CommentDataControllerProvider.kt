@@ -87,7 +87,6 @@ public class CommentDataController internal constructor(
 
     val rootComment: CommentInfo? = when (commentRoot) {
       is CommentRoot.Comment -> {
-        Log.e("TAG_11", "this ${hashCode()}")
         val root: Comment = flow.value.find { it.id == commentRoot.commentId }!!
         CommentInfo(root, getReplayCount(root.id))
       }
