@@ -2,11 +2,13 @@ package com.stelmashchuk.remark.feature.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.feature.CommentViewEvent
+import com.stelmashchuk.remark.feature.root.CommentViewEvent
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
+import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -16,10 +18,6 @@ sealed class CommentUiState {
   object Empty : CommentUiState()
   object Loading : CommentUiState()
   data class Data(val data: FullCommentsUiModel) : CommentUiState()
-}
-
-sealed class InfoMessages {
-  object TooManyRequests : InfoMessages()
 }
 
 class CommentViewModel(
@@ -32,9 +30,6 @@ class CommentViewModel(
 
   private val _comments = MutableStateFlow<CommentUiState>(CommentUiState.Empty)
   val comments: StateFlow<CommentUiState> = _comments
-
-  private val _info = MutableStateFlow<InfoMessages?>(null)
-  val info: StateFlow<InfoMessages?> = _info
 
   init {
     _comments.value = CommentUiState.Loading
@@ -50,10 +45,6 @@ class CommentViewModel(
     }
   }
 
-  fun closeDialog() {
-    _info.value = null
-  }
-
   fun vote(event: CommentViewEvent.Vote) {
     viewModelScope.launch {
       when (commentDataController.vote(event.commentId, commentRoot.postUrl, event.voteType)) {
@@ -64,7 +55,7 @@ class CommentViewModel(
 
         }
         RemarkError.TooManyRequests -> {
-          _info.value = InfoMessages.TooManyRequests
+          SnackBarBus.showSnackBar(R.string.too_many_request)
         }
         null -> {
         }
