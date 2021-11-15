@@ -1,5 +1,7 @@
 package com.stelmashchuk.radiot.presentation.tabs
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -7,6 +9,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +34,6 @@ fun StartScreen() {
           items.forEach { tab ->
             BottomNavigationItem(selected = currentRoute == tab.name, onClick = {
               navController.navigate(tab.name) {
-
                 popUpTo(navController.graph.findStartDestination().id) {
                   saveState = true
                 }
@@ -46,13 +48,21 @@ fun StartScreen() {
           }
         }
       }
-  ) {
+  ) { innerPadding ->
     NavHost(
         navController,
         startDestination = Tabs.PODCASTS.name
     ) {
-      composable(Tabs.PODCASTS.name) { PodcastsTab() }
-      composable(Tabs.PRE_SHOW.name) { ThemesTab() }
+      composable(Tabs.PODCASTS.name) {
+        Box(modifier = Modifier.padding(innerPadding)) {
+          PodcastsTab()
+        }
+      }
+      composable(Tabs.PRE_SHOW.name) {
+        Box(modifier = Modifier.padding(innerPadding)) {
+          ThemesTab()
+        }
+      }
     }
   }
 }

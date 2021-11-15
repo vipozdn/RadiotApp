@@ -2,7 +2,6 @@ package com.stelmashchuk.remark.feature.comments
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -37,7 +35,7 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.di.Graph
-import com.stelmashchuk.remark.feature.CommentViewEvent
+import com.stelmashchuk.remark.feature.root.CommentViewEvent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView

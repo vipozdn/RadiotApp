@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.radiot.presentation.common.DetailsScreen
-import com.stelmashchuk.remark.feature.RemarkView
+import com.stelmashchuk.remark.feature.root.RemarkView
 
 @Composable
 fun ThemeDetails(number: Long?) {
