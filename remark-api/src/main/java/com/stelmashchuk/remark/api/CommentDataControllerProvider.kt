@@ -1,17 +1,24 @@
 package com.stelmashchuk.remark.api
 
-import android.util.Log
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.api.repositories.UserStorage
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import kotlin.reflect.KFunction1
 
@@ -22,9 +29,9 @@ public class CommentDataControllerProvider internal constructor(
 
   private val map = HashMap<String, CommentDataController>()
 
-  fun getDataController(postUrl: String, scope: CoroutineScope): CommentDataController {
+  fun getDataController(postUrl: String): CommentDataController {
     return map.getOrPut(postUrl) {
-      CommentDataController(postUrl, scope, remarkService, userStorage)
+      CommentDataController(postUrl, remarkService)
     }
   }
 }
@@ -58,25 +65,20 @@ sealed class RemarkError {
 
 public class CommentDataController internal constructor(
     private val postUrl: String,
-    private val scope: CoroutineScope,
     private val remarkService: RemarkService,
-    private val userStorage: UserStorage,
 ) {
 
   private val flow = MutableStateFlow<List<Comment>>(emptyList())
-
-  init {
-    scope.launch {
-      flow.emit(remarkService.getCommentsPlain(postUrl).comments)
-    }
-  }
 
   private fun getReplayCount(commentId: String): Int {
     val comments = flow.value
     return comments.count { it.parentId == commentId }
   }
 
-  fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
+  suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
+    if (flow.value.isEmpty()) {
+      flow.emit(remarkService.getCommentsPlain(postUrl).comments)
+    }
     fun rootCommentFilter(comment: Comment): Boolean = comment.parentId.isBlank()
     fun notRootCommentFilter(comment: Comment): Boolean = comment.parentId == (commentRoot as CommentRoot.Comment).commentId
 
@@ -87,7 +89,7 @@ public class CommentDataController internal constructor(
 
     val rootComment: CommentInfo? = when (commentRoot) {
       is CommentRoot.Comment -> {
-        val root: Comment = flow.value.find { it.id == commentRoot.commentId }!!
+        val root: Comment = flow.filter { it.isNotEmpty() }.first().find { it.id == commentRoot.commentId }!!
         CommentInfo(root, getReplayCount(root.id))
       }
       is CommentRoot.Post -> null
@@ -107,9 +109,6 @@ public class CommentDataController internal constructor(
       postUrl: String,
       vote: VoteType,
   ): RemarkError? {
-    if (!userStorage.getCredential().isValid()) {
-      return RemarkError.NotAuthUser
-    }
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
     return handleResponse(voteResponse, commentId, vote)
   }
