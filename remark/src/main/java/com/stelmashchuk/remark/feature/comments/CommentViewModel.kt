@@ -3,6 +3,7 @@ package com.stelmashchuk.remark.feature.comments
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.R
+import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.RemarkError
@@ -12,6 +13,7 @@ import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed class CommentUiState {
@@ -22,11 +24,9 @@ sealed class CommentUiState {
 
 class CommentViewModel(
     private val commentRoot: CommentRoot,
-    private val commentDataControllerProvider: CommentDataControllerProvider,
     private val commentUiMapper: CommentUiMapper,
+    private val commentDataController : CommentDataController,
 ) : ViewModel() {
-
-  private val commentDataController = commentDataControllerProvider.getDataController(commentRoot.postUrl, viewModelScope)
 
   private val _comments = MutableStateFlow<CommentUiState>(CommentUiState.Empty)
   val comments: StateFlow<CommentUiState> = _comments
@@ -35,7 +35,7 @@ class CommentViewModel(
     _comments.value = CommentUiState.Loading
     viewModelScope.launch {
       commentDataController.observeComments(commentRoot)
-          .collect {
+          .collectLatest {
             if (it.comments.isEmpty()) {
               _comments.value = CommentUiState.Empty
             } else {

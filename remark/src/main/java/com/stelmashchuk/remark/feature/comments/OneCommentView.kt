@@ -72,7 +72,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentViewModel(commentRoot, Graph.api.commentDataControllerProvider, CommentUiMapper()) as T
+      return CommentViewModel(commentRoot, CommentUiMapper(), Graph.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
     }
   })
 
