@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.RemarkApi
-import com.stelmashchuk.remark.di.Graph
 import kotlinx.coroutines.launch
 
 data class LoginUiItem(
@@ -14,8 +13,8 @@ data class LoginUiItem(
 )
 
 class AuthViewModel(
-    private val remarkApi: RemarkApi = Graph.api,
-    private val loginItemUiMapper: AuthProvidersUiMapper = AuthProvidersUiMapper(),
+    private val remarkApi: RemarkApi,
+    private val loginItemUiMapper: AuthProvidersUiMapper,
 ) : ViewModel() {
 
   private val _loginUiItem = MutableLiveData<List<LoginUiItem>>()

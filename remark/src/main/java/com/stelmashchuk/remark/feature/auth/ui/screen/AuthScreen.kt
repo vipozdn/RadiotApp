@@ -15,11 +15,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.stelmashchuk.remark.di.RemarkComponent
 
 @Composable
 fun AuthScreen(onLoginFinish: () -> Unit) {
-  val viewModel = viewModel(AuthViewModel::class.java)
+  val viewModel: AuthViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      @Suppress("UNCHECKED_CAST")
+      return AuthViewModel(remarkApi = RemarkComponent.api, loginItemUiMapper = RemarkComponent.authProvidersUiMapper()) as T
+    }
+  })
   val loginItems by viewModel.loginUiItem.observeAsState()
   val currentProvider by viewModel.currentLoginProvider.observeAsState()
 

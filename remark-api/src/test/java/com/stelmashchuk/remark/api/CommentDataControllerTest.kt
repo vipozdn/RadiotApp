@@ -8,16 +8,11 @@ import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
-import io.kotlintest.matchers.url.haveProtocol
 import io.kotlintest.shouldBe
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
@@ -180,14 +175,14 @@ internal class CommentDataControllerTest {
               CommentInfo(comment2, 0)
           ))
 
-          dataController.vote(voteCommentId, postUrl, VoteType.UP)
+          dataController.vote(voteCommentId, VoteType.UP)
 
           awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
               CommentInfo(comment1.copy(score = 2, vote = 1), 0),
               CommentInfo(comment2, 0)
           ))
 
-          dataController.vote(voteCommentId, postUrl, VoteType.DOWN)
+          dataController.vote(voteCommentId, VoteType.DOWN)
 
           awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
               CommentInfo(comment1.copy(score = 2, vote = -1), 0),

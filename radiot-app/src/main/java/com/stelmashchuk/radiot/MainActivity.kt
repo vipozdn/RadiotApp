@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.stelmashchuk.radiot.presentation.App
-import com.stelmashchuk.remark.di.Graph as RemarkGraph
+import com.stelmashchuk.remark.RemarkSettings
+import com.stelmashchuk.remark.di.RemarkComponent
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,6 +14,6 @@ class MainActivity : AppCompatActivity() {
     setContent {
       App()
     }
-    RemarkGraph.init(applicationContext)
+    RemarkComponent.init(applicationContext, RemarkSettings("radiot", "https://remark42.radio-t.com/"))
   }
 }

@@ -20,14 +20,14 @@ jobs:
 
       - name: Build with Gradle
         id: build
-        run: ./gradlew build
+        run: ./gradlew radiot-app:build
 
       - name: Build Release AAB
         env:
           VERSION_NAME: ${{ steps.tag_name.outputs.SOURCE_TAG }}
           VERSION_CODE: ${{ github.run_id }}
         id: buildRelease
-        run: ./gradlew bundleRelease
+        run: ./gradlew radiot-app:bundleRelease
 
       - name: Sign AAB
         id: sign

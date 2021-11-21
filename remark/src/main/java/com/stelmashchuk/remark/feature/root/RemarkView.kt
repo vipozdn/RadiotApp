@@ -4,14 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,8 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.stelmashchuk.remark.ResourcesRepository
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.pojo.VoteType
-import com.stelmashchuk.remark.di.Graph
+import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
 import com.stelmashchuk.remark.feature.comments.OneLevelCommentView
 
@@ -38,7 +32,7 @@ fun RemarkView(postUrl: String) {
   val viewModel: RemarkViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return RemarkViewModel(ResourcesRepository(Graph.context)) as T
+      return RemarkViewModel(ResourcesRepository(RemarkComponent.context)) as T
     }
   })
 

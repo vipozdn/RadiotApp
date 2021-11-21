@@ -100,7 +100,6 @@ public class CommentDataController internal constructor(
 
   suspend fun vote(
       commentId: String,
-      postUrl: String,
       vote: VoteType,
   ): RemarkError? {
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }

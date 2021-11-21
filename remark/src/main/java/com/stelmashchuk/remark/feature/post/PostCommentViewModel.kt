@@ -2,18 +2,14 @@ package com.stelmashchuk.remark.feature.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.feature.comments.CommentViewEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 class PostCommentViewModel(
     private val commentRoot: CommentRoot,
