@@ -81,4 +81,6 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation "io.kotlintest:kotlintest-runner-junit5:$junit_runner_version"
     testImplementation "io.mockk:mockk:$mockk_version"
+
+    implementation 'app.cash.turbine:turbine:0.7.0'
 }

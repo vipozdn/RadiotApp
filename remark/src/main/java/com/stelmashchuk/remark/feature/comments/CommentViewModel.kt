@@ -59,10 +59,4 @@ class CommentViewModel(
       }
     }
   }
-
-  fun postComment(event: CommentViewEvent.PostComment) {
-    viewModelScope.launch {
-      commentDataController.postComment(commentRoot, event.text)
-    }
-  }
 }

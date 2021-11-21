@@ -46,6 +46,7 @@ import com.stelmashchuk.remark.di.Graph
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
+import com.stelmashchuk.remark.feature.post.PostCommentViewModel
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 data class FullCommentsUiModel(
@@ -83,10 +84,6 @@ sealed class CommentViewEvent {
       val commentId: String,
       val voteType: VoteType,
   ) : CommentViewEvent()
-
-  data class PostComment(
-      val text: String,
-  ) : CommentViewEvent()
 }
 
 @Composable
@@ -104,11 +101,10 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
     LoginButton(openLogin)
     when (val data = state.value) {
       is CommentUiState.Data -> {
-        CommentsContent(data.data) { event ->
+        CommentsContent(data.data, commentRoot) { event ->
           when (event) {
             is CommentViewEvent.OpenReply -> openReply(event.commentId)
             is CommentViewEvent.Vote -> viewModel.vote(event)
-            is CommentViewEvent.PostComment -> viewModel.postComment(event)
           }
         }
       }
@@ -127,15 +123,13 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
 }
 
 @Composable
-fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, onEvent: (CommentViewEvent) -> Unit) {
+fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, onEvent: (CommentViewEvent) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
       OneCommentView(modifier = Modifier, comment = it, onEvent = onEvent)
       Divider()
     }
-    WriteCommentView {
-      onEvent(CommentViewEvent.PostComment(it))
-    }
+    WriteCommentView(commentRoot)
     LazyColumn(modifier = Modifier
         .padding(8.dp)
         .fillMaxSize()) {
@@ -147,23 +141,27 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, onEvent: (CommentV
   }
 }
 
-@Preview
 @Composable
-fun WriteCommentView(sendComment: (String) -> Unit = {}) {
-  val text = remember { mutableStateOf("") }
+fun WriteCommentView(commentRoot: CommentRoot) {
+  val viewModel: PostCommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      @Suppress("UNCHECKED_CAST")
+      return PostCommentViewModel(commentRoot, Graph.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+    }
+  })
 
   TextField(
-      value = text.value,
+      value = viewModel.text.collectAsState().value,
       modifier = Modifier.fillMaxWidth(),
       onValueChange = {
-        text.value = it
+        viewModel.updateText(it)
       },
       placeholder = {
         Text(text = stringResource(id = R.string.leave_comment))
       },
       trailingIcon = {
-        if (text.value.isNotBlank()) {
-          IconButton(onClick = { sendComment(text.value) }) {
+        if (viewModel.isIconVisible.collectAsState().value) {
+          IconButton(onClick = { viewModel.postComment() }) {
             Icon(painter = painterResource(id = R.drawable.ic_send), contentDescription = "send comment")
           }
         }
