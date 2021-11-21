@@ -28,6 +28,24 @@ data class Comment(
 )
 
 @Serializable
+data class PostComment(
+    @SerialName("text")
+    val text: String,
+    @SerialName("pid")
+    val parentId: String? = null,
+    @SerialName("locator")
+    val locator: Locator,
+)
+
+@Serializable
+data class Locator(
+    @SerialName("site")
+    val site: String,
+    @SerialName("url")
+    val postUrl: String,
+)
+
+@Serializable
 data class User(
     @SerialName("name")
     val name: String,

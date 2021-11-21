@@ -2,17 +2,11 @@ package com.stelmashchuk.remark.feature.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.CommentDataController
-import com.stelmashchuk.remark.api.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.feature.root.CommentViewEvent
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
-import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -25,7 +19,7 @@ sealed class CommentUiState {
 class CommentViewModel(
     private val commentRoot: CommentRoot,
     private val commentUiMapper: CommentUiMapper,
-    private val commentDataController : CommentDataController,
+    private val commentDataController: CommentDataController,
 ) : ViewModel() {
 
   private val _comments = MutableStateFlow<CommentUiState>(CommentUiState.Empty)
@@ -42,24 +36,6 @@ class CommentViewModel(
               _comments.value = CommentUiState.Data(commentUiMapper.mapOneLevel(it))
             }
           }
-    }
-  }
-
-  fun vote(event: CommentViewEvent.Vote) {
-    viewModelScope.launch {
-      when (commentDataController.vote(event.commentId, commentRoot.postUrl, event.voteType)) {
-        RemarkError.NotAuthUser -> {
-
-        }
-        RemarkError.SomethingWentWrong -> {
-
-        }
-        RemarkError.TooManyRequests -> {
-          SnackBarBus.showSnackBar(R.string.too_many_request)
-        }
-        null -> {
-        }
-      }
     }
   }
 }

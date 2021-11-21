@@ -13,7 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.repositories.UserStorage
-import com.stelmashchuk.remark.di.Graph
+import com.stelmashchuk.remark.di.RemarkComponent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ fun LoginButton(openLogin: () -> Unit) {
   val viewModel: LoginButtonViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return LoginButtonViewModel(userStorage = Graph.api.userStorage) as T
+      return LoginButtonViewModel(userStorage = RemarkComponent.api.userStorage) as T
     }
   })
 

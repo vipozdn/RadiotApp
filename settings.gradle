@@ -1,4 +1,5 @@
 rootProject.name = "Radio-t"
-include ':app'
+include ':radiot-app'
 include ':remark'
 include ':remark-api'
+include ':demo-app'

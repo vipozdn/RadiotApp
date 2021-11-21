@@ -16,7 +16,9 @@ internal class ScoreUiMapperTest {
 
   @Test
   fun `Verify create score model`() {
+    val commentId = "commentId"
     val comment = mockk<Comment>(relaxed = true) {
+      every { id } answers { commentId }
       every { score } answers { 2 }
     }
 
@@ -25,6 +27,7 @@ internal class ScoreUiMapperTest {
         Color.Green.toArgb(),
         R.drawable.up_unselected,
         R.drawable.down_unselect,
+        commentId,
     )
   }
 }

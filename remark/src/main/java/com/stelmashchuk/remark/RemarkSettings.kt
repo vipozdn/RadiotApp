@@ -1,9 +1,6 @@
 package com.stelmashchuk.remark
 
-object RemarkSettings {
-  const val siteId = "radiot"
-  const val defaultSorting = "fld"
-
-  const val baseUrl = "https://remark42.radio-t.com/"
-
-}
+data class RemarkSettings(
+    val siteId: String,
+    val baseUrl: String,
+)

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,11 +33,11 @@ import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.di.Graph
-import com.stelmashchuk.remark.feature.root.CommentViewEvent
+import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
-import com.stelmashchuk.remark.feature.comments.mappers.ScoreView
+import com.stelmashchuk.remark.feature.post.WriteCommentView
+import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 data class FullCommentsUiModel(
@@ -65,14 +64,15 @@ data class ScoreUiModel(
     val color: Int,
     @DrawableRes val upRes: Int,
     @DrawableRes val downRes: Int,
+    val commentId: String,
 )
 
 @Composable
-fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.OpenReply) -> Unit, openLogin: () -> Unit) {
+fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentViewModel(commentRoot, CommentUiMapper(), Graph.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+      return CommentViewModel(commentRoot, CommentUiMapper(), RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
     }
   })
 
@@ -82,12 +82,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
     LoginButton(openLogin)
     when (val data = state.value) {
       is CommentUiState.Data -> {
-        CommentsContent(data.data) { event ->
-          when (event) {
-            is CommentViewEvent.OpenReply -> openReply(event)
-            is CommentViewEvent.Vote -> viewModel.vote(event)
-          }
-        }
+        CommentsContent(data.data, commentRoot, openReply)
       }
       CommentUiState.Empty -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -104,17 +99,18 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (CommentViewEvent.O
 }
 
 @Composable
-fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, onEvent: (CommentViewEvent) -> Unit) {
+fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openReply: (commentId: String) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
-      OneCommentView(modifier = Modifier, comment = it, onEvent = onEvent)
+      OneCommentView(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
       Divider()
     }
+    WriteCommentView(commentRoot)
     LazyColumn(modifier = Modifier
         .padding(8.dp)
         .fillMaxSize()) {
       items(fullCommentsUiModel.comments) { comment ->
-        OneCommentView(comment = comment, onEvent = onEvent)
+        OneCommentView(comment = comment, postUrl = commentRoot.postUrl, openReply = openReply)
         Divider()
       }
     }
@@ -122,7 +118,7 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, onEvent: (CommentV
 }
 
 @Composable
-fun OneCommentView(modifier: Modifier = Modifier, comment: CommentUiModel, onEvent: (CommentViewEvent) -> Unit) {
+fun OneCommentView(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit) {
   @Suppress("MagicNumber")
   Row(modifier = modifier) {
     Image(
@@ -146,12 +142,10 @@ fun OneCommentView(modifier: Modifier = Modifier, comment: CommentUiModel, onEve
       }
       MarkdownText(markdown = comment.text)
       Row {
-        ScoreView(score = comment.score) { voteType ->
-          onEvent(CommentViewEvent.Vote(comment.commentId, voteType))
-        }
+        FullScoreView(comment.score, postUrl)
         comment.replyCount?.let {
           Button(
-              onClick = { onEvent(CommentViewEvent.OpenReply(comment.commentId)) },
+              onClick = { openReply(comment.commentId) },
           ) {
             Text(text = stringResource(R.string.reply, it))
           }

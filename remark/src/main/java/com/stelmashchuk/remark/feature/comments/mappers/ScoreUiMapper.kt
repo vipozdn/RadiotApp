@@ -14,6 +14,7 @@ class ScoreUiMapper {
         getColor(comment.score),
         getUpIcon(comment),
         getDownIcon(comment),
+        comment.id,
     )
   }
 

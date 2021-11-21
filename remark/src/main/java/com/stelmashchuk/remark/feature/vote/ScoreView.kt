@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.feature.comments.mappers
+package com.stelmashchuk.remark.feature.vote
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
@@ -10,8 +10,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.api.pojo.VoteType
+import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
+
+@Composable
+fun FullScoreView(score: ScoreUiModel, postUrl: String) {
+  val viewModel: ScoreViewModel = viewModel(key = score.commentId, factory = object : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      @Suppress("UNCHECKED_CAST")
+      return ScoreViewModel(score.commentId, RemarkComponent.api.commentDataControllerProvider.getDataController(postUrl)) as T
+    }
+  })
+
+  ScoreView(score = score) { voteType ->
+    viewModel.vote(voteType)
+  }
+}
 
 @Composable
 fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit) {
