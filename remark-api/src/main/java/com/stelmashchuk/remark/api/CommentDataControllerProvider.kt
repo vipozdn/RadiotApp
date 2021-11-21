@@ -3,35 +3,28 @@ package com.stelmashchuk.remark.api
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.pojo.Locator
+import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
-import com.stelmashchuk.remark.api.repositories.UserStorage
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import kotlin.reflect.KFunction1
 
 public class CommentDataControllerProvider internal constructor(
     private val remarkService: RemarkService,
-    private val userStorage: UserStorage,
+    private val siteId: String,
 ) {
 
   private val map = HashMap<String, CommentDataController>()
 
   fun getDataController(postUrl: String): CommentDataController {
     return map.getOrPut(postUrl) {
-      CommentDataController(postUrl, remarkService)
+      CommentDataController(postUrl, siteId, remarkService)
     }
   }
 }
@@ -65,6 +58,7 @@ sealed class RemarkError {
 
 public class CommentDataController internal constructor(
     private val postUrl: String,
+    private val siteId: String,
     private val remarkService: RemarkService,
 ) {
 
@@ -87,16 +81,16 @@ public class CommentDataController internal constructor(
       is CommentRoot.Post -> ::rootCommentFilter
     }
 
-    val rootComment: CommentInfo? = when (commentRoot) {
-      is CommentRoot.Comment -> {
-        val root: Comment = flow.filter { it.isNotEmpty() }.first().find { it.id == commentRoot.commentId }!!
-        CommentInfo(root, getReplayCount(root.id))
-      }
-      is CommentRoot.Post -> null
-    }
-
     return flow
         .map { comments ->
+          val rootComment: CommentInfo? = when (commentRoot) {
+            is CommentRoot.Comment -> {
+              val root: Comment = flow.filter { it.isNotEmpty() }.first().find { it.id == commentRoot.commentId }!!
+              CommentInfo(root, getReplayCount(root.id))
+            }
+            is CommentRoot.Post -> null
+          }
+
           FullCommentInfo(rootComment = rootComment, comments = comments.filter(filterPrediction)
               .map {
                 CommentInfo(it, getReplayCount(it.id))
@@ -111,6 +105,31 @@ public class CommentDataController internal constructor(
   ): RemarkError? {
     val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
     return handleResponse(voteResponse, commentId, vote)
+  }
+
+  suspend fun postComment(
+      commentRoot: CommentRoot,
+      text: String,
+  ): RemarkError? {
+    val comment = Result.runCatching {
+      remarkService.postComment(PostComment(
+          text = text,
+          parentId = if (commentRoot is CommentRoot.Comment) commentRoot.commentId else null,
+          locator = Locator(siteId, postUrl),
+      ))
+    }
+
+    comment.getOrNull()?.let {
+      addNewCommentAndReEmit(it)
+    }
+
+    return null
+  }
+
+  private suspend fun addNewCommentAndReEmit(newComment: Comment) {
+    val comments = flow.value.toMutableList()
+    comments.add(0, newComment)
+    flow.emit(comments.toList())
   }
 
   private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: String, vote: VoteType): RemarkError? {

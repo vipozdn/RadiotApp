@@ -1,9 +1,13 @@
 package com.stelmashchuk.remark.api.network
 
+import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,6 +20,9 @@ interface RemarkService {
       @Query("sort") sort: String = "-active",
       @Query("format") format: String = "plain",
   ): CommentOneLevelRoot
+
+  @POST("api/v1/comment")
+  suspend fun postComment(@Body postComment: PostComment): Comment
 
   @PUT("/api/v1/vote/{commentId}")
   suspend fun vote(

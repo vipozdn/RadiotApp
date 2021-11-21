@@ -4,4 +4,5 @@
     <string name="reply">%d Reply</string>
     <string name="login">Login</string>
     <string name="comment_empty">Kомментариев пока нет, будь первым</string>
+    <string name="leave_comment">Оставьте здесь свой комментарий</string>
 </resources>

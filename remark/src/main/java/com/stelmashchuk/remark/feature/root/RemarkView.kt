@@ -75,17 +75,6 @@ fun RemarkView(postUrl: String) {
   }
 }
 
-sealed class CommentViewEvent(open val commentId: String) {
-  data class OpenReply(
-      override val commentId: String,
-  ) : CommentViewEvent(commentId)
-
-  data class Vote(
-      override val commentId: String,
-      val voteType: VoteType,
-  ) : CommentViewEvent(commentId)
-}
-
 private object Destinations {
   const val ROOT = "root"
   const val NOT_ROOT_TEMPLATE = "comment%s"
@@ -94,8 +83,8 @@ private object Destinations {
 }
 
 private class Actions(navController: NavHostController) {
-  val openReply: (CommentViewEvent.OpenReply) -> Unit = {
-    navController.navigate("${Destinations.NOT_ROOT_TEMPLATE}/${it.commentId}")
+  val openReply: (commentId: String) -> Unit = { commentId ->
+    navController.navigate("${Destinations.NOT_ROOT_TEMPLATE}/${commentId}")
   }
 
   val openLogin: () -> Unit = {
