@@ -38,6 +38,12 @@ data class PostComment(
 )
 
 @Serializable
+data class DeletedComment(
+    @SerialName("id")
+    val id: String,
+)
+
+@Serializable
 data class Locator(
     @SerialName("site")
     val site: String,
@@ -47,8 +53,16 @@ data class Locator(
 
 @Serializable
 data class User(
+    @SerialName("id")
+    val id: String,
     @SerialName("name")
     val name: String,
     @SerialName("picture")
     val avatar: String,
+)
+
+@Serializable
+data class DeleteCommentRequest(
+    @SerialName("delete")
+    val delete: Boolean = true,
 )

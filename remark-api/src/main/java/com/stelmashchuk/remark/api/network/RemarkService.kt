@@ -3,7 +3,10 @@ package com.stelmashchuk.remark.api.network
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.pojo.DeleteCommentRequest
+import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.PostComment
+import com.stelmashchuk.remark.api.pojo.User
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -31,8 +34,17 @@ interface RemarkService {
       @Query("vote") vote: Int,
   ): VoteResponse
 
+  @PUT("/api/v1/comment/{commentId}")
+  suspend fun delete(
+      @Path("commentId") commentId: String,
+      @Body deleteCommentRequest: DeleteCommentRequest = DeleteCommentRequest(),
+  ): DeletedComment
+
   @GET("api/v1/config")
   suspend fun getConfig(): Config
+
+  @GET("/api/v1/user")
+  suspend fun getUser(): User
 }
 
 object HttpConstants {

@@ -3,6 +3,7 @@ package com.stelmashchuk.remark.api
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
@@ -123,6 +124,18 @@ public class CommentDataController internal constructor(
     }
 
     return null
+  }
+
+  suspend fun delete(comemntId: String): Any? {
+    val deletedComment = remarkService.delete(comemntId)
+    removeNewCommentAndReEmit(deletedComment)
+    return null
+  }
+
+  private suspend fun removeNewCommentAndReEmit(deletedComment: DeletedComment) {
+    val comments = flow.value.toMutableList()
+    comments.removeAll { it.id == deletedComment.id }
+    flow.emit(comments.toList())
   }
 
   private suspend fun addNewCommentAndReEmit(newComment: Comment) {

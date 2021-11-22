@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
+import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
@@ -19,6 +20,45 @@ import org.junit.jupiter.api.Test
 internal class CommentDataControllerTest {
 
   private val siteId = "site-id"
+
+  @Test
+  fun `Verify delete 1th level comment`() = runBlocking {
+    val postUrl = "postUrl"
+    val commentToDelete = "commentToDelete"
+    val comment1 = mockComment(commentToDelete, "")
+    val comment2 = mockComment("1", "")
+
+
+    val service = mockk<RemarkService> {
+      coEvery { getCommentsPlain(postUrl) } coAnswers {
+        CommentOneLevelRoot(
+            listOf(comment1, comment2)
+        )
+      }
+
+      coEvery { delete(commentToDelete) } coAnswers {
+        DeletedComment(commentToDelete)
+      }
+    }
+
+    val dataController = CommentDataController(postUrl, siteId, service)
+
+    val root = CommentRoot.Post(postUrl)
+
+    dataController.observeComments(root)
+        .test {
+          awaitItem() shouldBe FullCommentInfo(null, listOf(
+              CommentInfo(comment1, 0),
+              CommentInfo(comment2, 0),
+          ))
+
+          dataController.delete(commentToDelete) shouldBe null
+
+          awaitItem() shouldBe FullCommentInfo(null, listOf(
+              CommentInfo(comment2, 0),
+          ))
+        }
+  }
 
   @Test
   fun `Verify add 1th level comments`() = runBlocking {

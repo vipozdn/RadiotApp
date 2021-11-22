@@ -28,6 +28,7 @@ class CommentUiMapper(
         time = timeMapper.map(comment.time),
         commentId = comment.id,
         replyCount = replyCount?.takeIf { it > 0 },
+        isDeleteAvailable = true
     )
   }
 }

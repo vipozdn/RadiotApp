@@ -6,6 +6,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.stelmashchuk.remark.api.network.RemarkInterceptor
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.repositories.CredentialCreator
 import com.stelmashchuk.remark.api.repositories.RemarkCredentials
 import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.serialization.json.Json
@@ -39,7 +40,7 @@ public class RemarkApi(
   }
 
   private val userStorage: UserStorage by lazy {
-    UserStorage(BinaryPreferencesBuilder(context).build())
+    UserStorage(BinaryPreferencesBuilder(context).build(), CredentialCreator(), remarkService)
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
@@ -48,7 +49,7 @@ public class RemarkApi(
 
   public suspend fun getConfig(): Config = remarkService.getConfig()
 
-  public fun saveByCookies(cookies: String): Boolean {
+  public suspend fun saveByCookies(cookies: String): Boolean {
     return userStorage.saveByCookies(cookies)
   }
 

@@ -9,10 +9,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
@@ -31,8 +34,14 @@ fun FullScoreView(score: ScoreUiModel, postUrl: String) {
   }
 }
 
+@Preview
 @Composable
-fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit) {
+fun ScoreViewPreview() {
+  ScoreView(score = ScoreUiModel("10", Color.Green.toArgb(), R.drawable.up, R.drawable.down, ""))
+}
+
+@Composable
+fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
   Row(verticalAlignment = Alignment.CenterVertically) {
     VoteButton(onClick = { onVote(VoteType.UP) }) {
       Image(painterResource(score.upRes), "up")
