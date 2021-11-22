@@ -33,7 +33,7 @@ jobs:
         id: sign
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/bundle/release
+          releaseDirectory: radiot-app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: Radiot
           keyStorePassword: ${{ secrets.KEY_PASSWORD }}
@@ -43,8 +43,8 @@ jobs:
         id: uploadArtifact
         uses: actions/upload-artifact@v1
         with:
-          name: app
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: radiot-app
+          path: radiot-app/build/outputs/bundle/release/radiot-app-release.aab
 
       - name: Deploy to Play Store (BETA)
         id: deploy
@@ -52,5 +52,5 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_JSON }}
           packageName: com.stelmashchuk.radio_t
-          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          releaseFile: radiot-app/build/outputs/bundle/release/radiot-app-release.aab
           track: production
