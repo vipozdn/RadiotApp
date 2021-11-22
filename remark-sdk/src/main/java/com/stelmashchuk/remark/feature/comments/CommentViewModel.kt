@@ -1,14 +1,18 @@
 package com.stelmashchuk.remark.feature.comments
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 
 sealed class CommentUiState {
   object Empty : CommentUiState()
@@ -22,20 +26,21 @@ class CommentViewModel(
     private val commentDataController: CommentDataController,
 ) : ViewModel() {
 
-  private val _comments = MutableStateFlow<CommentUiState>(CommentUiState.Empty)
-  val comments: StateFlow<CommentUiState> = _comments
-
-  init {
-    _comments.value = CommentUiState.Loading
-    viewModelScope.launch {
-      commentDataController.observeComments(commentRoot)
-          .collectLatest {
-            if (it.comments.isEmpty()) {
-              _comments.value = CommentUiState.Empty
-            } else {
-              _comments.value = CommentUiState.Data(commentUiMapper.mapOneLevel(it))
+  val comments: StateFlow<CommentUiState> = flow {
+    emitAll(
+        commentDataController.observeComments(commentRoot)
+            .map {
+              if (it.comments.isEmpty()) {
+                CommentUiState.Empty
+              } else {
+                CommentUiState.Data(commentUiMapper.mapOneLevel(it))
+              }
             }
-          }
-    }
+            .onEach {
+              Log.e("TAG_11", "comment ui state $it")
+            }
+    )
   }
+      .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), CommentUiState.Loading)
+
 }
