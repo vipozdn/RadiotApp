@@ -1,5 +1,6 @@
 package com.stelmashchuk.remark.feature.comments
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -100,6 +101,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
 
 @Composable
 fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openReply: (commentId: String) -> Unit) {
+  Log.e("TAG_12", "data ${fullCommentsUiModel.comments}")
   Column {
     fullCommentsUiModel.root?.let {
       OneCommentView(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
