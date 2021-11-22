@@ -1,10 +1,19 @@
-## РадиоТ с комментариями
+## Radiot app with comments
 
-Android приложение для подкаста Radio-t с поддержкой комментариев. На данный момент еще в разработке. Данный проект сделан автором с целю изучить новые технологии поэтому не следует ожидать от приложения быстрого развития.
+Android app for Radio-T podcast with comments support. A project in development at the moment.
+Author create the project for learn new technologies.
+
+### App has following feature:
+
+- Podcast and themes lists
+- Comments list with reply
+- Votes
+- Post new comment
+- Auth (github, twitter)
 
 <a href='https://play.google.com/store/apps/details?id=com.stelmashchuk.radio_t&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Доступно в Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ru_badge_web_generic.png'/></a>
 
-### Технологии:
+### Technologies:
 
 - UI: Jetpack compose
 - UI pattern: MVVM.
@@ -13,31 +22,62 @@ Android приложение для подкаста Radio-t с поддержк
 - Testing: Junit and [mockk](https://github.com/mockk/mockk)
 - CI: Github actions (run test, static code analysis, release app to google play)
 
-### RoadMap
+### Project structure
 
-- [x] просмотр списка подкастов
-- [x] Добавить темы слушателей
-- [x] просмотр комментариев
-- [x] Голосование за комментарии
-- [x] Авторизация через github
-- [x] Добавить картинки
-- [x] Поддержка markdown
-- [x] Переделать коментарии (как на youtube)
-- [ ] Добавить Online-вещание
-- [ ] Поправить авторизцию через Google
-- [ ] Добавление комментариев
-- [ ] Удаление комментариев
-- [ ] Редактирование комментариев
-- [x] Обработка ошибок
+#### radiot-app
 
-### Структура проекта
+Main product of this repo. App for radiot podcast. **Don't use this app for work with remark api.**
 
-Проект состоит из 3х частей:
+#### demo-app
 
-- app - приложение
-- remark - внутренняя библиотека для системы комментариев
-- remark-api - wrapper for comfort work with remark api [remark42](https://github.com/umputun/remark42)
+App for develop and testing remark sdk.
 
-### Помощь проекту
+#### remark
 
-Автор проекта будет рад любым merge request или issues.
+##### remark-api
+
+Wrapper for remark api [remark42](https://github.com/umputun/remark42)
+Provide useful interface with caching data from BE, and possibility for observable actual data.
+Handle data change after new comment and vote. Also provide middleware for work with BE apply
+query `site` for each request. Doesn't execute calls which required auth without user data.
+
+Init remark api
+
+````kotlin
+val remarkSettings = RemarkSettings("remark", "https://demo.remark42.com/")
+val api: RemarkApi by lazy { RemarkApi(context, remarkSettings.siteId, remarkSettings.baseUrl) }
+````
+
+RemarkApi:
+
+- `val commentDataControllerProvider: CommentDataControllerProvider`
+- `fun saveByCookies(cookies: String): Boolean`
+- `fun addLoginStateListener(onLoginChange: (RemarkCredentials) -> Unit)`
+- `suspend fun getConfig(): Config`
+
+CommentDataControllerProvider:
+
+- `fun getDataController(postUrl: String): CommentDataController`
+
+CommentDataController:
+
+- `suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo>`
+- `suspend fun vote(commentId: String, vote: VoteType): RemarkError?`
+- `suspend fun postComment(commentRoot: CommentRoot, text: String): RemarkError?`
+
+##### Remark sdk
+
+Software development kit for integrate comment widget into your app.
+
+Init remark sdk
+
+```kotlin
+RemarkComponent.init(applicationContext, RemarkSettings("remark", "https://demo.remark42.com/"))
+```
+
+Add comment widget:
+Just call RemarkView compose fun into your compose fun.
+
+```kotlin
+RemarkView(postUrl = "https://remark42.com/demo/")
+```
