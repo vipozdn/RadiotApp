@@ -76,6 +76,7 @@ RemarkComponent.init(applicationContext, RemarkSettings("remark", "https://demo.
 ```
 
 Add comment widget:
+
 Just call RemarkView compose fun into your compose fun.
 
 ```kotlin
