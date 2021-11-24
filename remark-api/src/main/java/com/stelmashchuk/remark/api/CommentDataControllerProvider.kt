@@ -1,31 +1,34 @@
 package com.stelmashchuk.remark.api
 
+import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
-import com.stelmashchuk.remark.api.pojo.Comment
-import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
+import com.stelmashchuk.remark.api.repositories.CommentRepository
+import com.stelmashchuk.remark.api.repositories.FullComment
+import com.stelmashchuk.remark.api.repositories.UserStorage
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
-import kotlin.reflect.KFunction1
 
 public class CommentDataControllerProvider internal constructor(
     private val remarkService: RemarkService,
     private val siteId: String,
+    private val userStorage: UserStorage,
 ) {
 
   private val map = HashMap<String, CommentDataController>()
 
+  private val commentMapper: CommentMapper by lazy {
+    CommentMapper(userStorage)
+  }
+
   fun getDataController(postUrl: String): CommentDataController {
     return map.getOrPut(postUrl) {
-      CommentDataController(postUrl, siteId, remarkService)
+      CommentDataController(postUrl, siteId, remarkService, CommentRepository(remarkService, commentMapper), commentMapper, CommentStorage())
     }
   }
 }
@@ -42,13 +45,8 @@ sealed class CommentRoot(open val postUrl: String) {
 }
 
 data class FullCommentInfo(
-    val rootComment: CommentInfo?,
-    val comments: List<CommentInfo>,
-)
-
-data class CommentInfo(
-    val comment: Comment,
-    val replayCount: Int,
+    val rootComment: FullComment?,
+    val comments: List<FullComment>,
 )
 
 sealed class RemarkError {
@@ -61,41 +59,27 @@ public class CommentDataController internal constructor(
     private val postUrl: String,
     private val siteId: String,
     private val remarkService: RemarkService,
+    private val commentRepository: CommentRepository,
+    private val commentMapper: CommentMapper,
+    private val commentStorage: CommentStorage,
 ) {
 
-  private val flow = MutableStateFlow<List<Comment>>(emptyList())
-
-  private fun getReplayCount(commentId: String): Int {
-    val comments = flow.value
-    return comments.count { it.parentId == commentId }
-  }
-
   suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
-    if (flow.value.isEmpty()) {
-      flow.emit(remarkService.getCommentsPlain(postUrl).comments)
-    }
-    fun rootCommentFilter(comment: Comment): Boolean = comment.parentId.isBlank()
-    fun notRootCommentFilter(comment: Comment): Boolean = comment.parentId == (commentRoot as CommentRoot.Comment).commentId
-
-    val filterPrediction: KFunction1<Comment, Boolean> = when (commentRoot) {
-      is CommentRoot.Comment -> ::notRootCommentFilter
-      is CommentRoot.Post -> ::rootCommentFilter
+    if (!commentStorage.hasData()) {
+      commentStorage.setup(commentMapper.mapCommentsFullComments(commentRepository.getCommentsPlain(postUrl)))
     }
 
-    return flow
+    return commentStorage
+        .observableComment(commentRoot)
         .map { comments ->
-          val rootComment: CommentInfo? = when (commentRoot) {
+          val rootComment: FullComment? = when (commentRoot) {
             is CommentRoot.Comment -> {
-              val root: Comment = flow.filter { it.isNotEmpty() }.first().find { it.id == commentRoot.commentId }!!
-              CommentInfo(root, getReplayCount(root.id))
+              commentStorage.waitForComment(commentRoot.commentId)
             }
             is CommentRoot.Post -> null
           }
 
-          FullCommentInfo(rootComment = rootComment, comments = comments.filter(filterPrediction)
-              .map {
-                CommentInfo(it, getReplayCount(it.id))
-              })
+          FullCommentInfo(rootComment, comments)
         }
   }
 
@@ -120,28 +104,16 @@ public class CommentDataController internal constructor(
     }
 
     comment.getOrNull()?.let {
-      addNewCommentAndReEmit(it)
+      commentStorage.add(commentMapper.mapOneCommentToFullComment(it))
     }
 
     return null
   }
 
-  suspend fun delete(comemntId: String): Any? {
-    val deletedComment = remarkService.delete(comemntId)
-    removeNewCommentAndReEmit(deletedComment)
+  suspend fun delete(commentId: String): Any? {
+    val deletedComment = remarkService.delete(commentId)
+    commentStorage.remote(deletedComment.id)
     return null
-  }
-
-  private suspend fun removeNewCommentAndReEmit(deletedComment: DeletedComment) {
-    val comments = flow.value.toMutableList()
-    comments.removeAll { it.id == deletedComment.id }
-    flow.emit(comments.toList())
-  }
-
-  private suspend fun addNewCommentAndReEmit(newComment: Comment) {
-    val comments = flow.value.toMutableList()
-    comments.add(0, newComment)
-    flow.emit(comments.toList())
   }
 
   private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: String, vote: VoteType): RemarkError? {
@@ -165,15 +137,10 @@ public class CommentDataController internal constructor(
   }
 
   private suspend fun handleSuccessVote(commentId: String, voteResponse: Result<VoteResponse>, vote: VoteType): Nothing? {
-    val comments = flow.value.toMutableList()
-    comments.replaceAll {
-      if (it.id == commentId) {
-        it.copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
-      } else {
-        it
-      }
-    }
-    flow.emit(comments.toList())
+    val comment = commentStorage.waitForComment(commentId)
+        .copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
+
+    commentStorage.replace(commentId, comment)
     return null
   }
 }

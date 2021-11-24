@@ -44,7 +44,7 @@ public class RemarkApi(
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(remarkService, siteId)
+    CommentDataControllerProvider(remarkService, siteId, userStorage)
   }
 
   public suspend fun getConfig(): Config = remarkService.getConfig()

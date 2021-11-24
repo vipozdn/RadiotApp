@@ -52,16 +52,6 @@ data class Locator(
 )
 
 @Serializable
-data class User(
-    @SerialName("id")
-    val id: String,
-    @SerialName("name")
-    val name: String,
-    @SerialName("picture")
-    val avatar: String,
-)
-
-@Serializable
 data class DeleteCommentRequest(
     @SerialName("delete")
     val delete: Boolean = true,
