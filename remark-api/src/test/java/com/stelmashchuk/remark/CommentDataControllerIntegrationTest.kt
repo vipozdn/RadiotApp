@@ -261,7 +261,7 @@ internal class CommentDataControllerIntegrationTest {
   }
 
   private fun createCommentDataController(postUrl: String, service: RemarkService): CommentDataController {
-    return CommentDataControllerProvider(service, siteId, mockk()).getDataController(postUrl)
+    return CommentDataControllerProvider(service, siteId, mockk(relaxed = true)).getDataController(postUrl)
   }
 
   private fun mockComment(

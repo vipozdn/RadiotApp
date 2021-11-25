@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.api
 
+import com.stelmashchuk.remark.api.comment.CommentMapper
 import com.stelmashchuk.remark.api.pojo.Comment
-import com.stelmashchuk.remark.api.repositories.UserStorage
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -11,8 +11,7 @@ internal class CommentMapperTest {
 
   @Test
   fun `Verify create full comment`() {
-    val userStorage = mockk<UserStorage>()
-    val commentMapper = CommentMapper(userStorage)
+    val commentMapper = CommentMapper(mockk(relaxed = true))
 
     val rootCommentId = "rootCommentId"
 

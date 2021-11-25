@@ -3,16 +3,13 @@ package com.stelmashchuk.remark.api.comment
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.RemarkError
 import com.stelmashchuk.remark.api.network.RemarkService
-import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
-import com.stelmashchuk.remark.api.repositories.FullComment
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 internal class PostCommentUseCase(
     private val commentStorage: CommentStorage,
     private val remarkService: RemarkService,
+    private val commentMapper: CommentMapper,
 ) {
 
   suspend fun postComment(
@@ -31,7 +28,7 @@ internal class PostCommentUseCase(
 
     commentResult.getOrNull()?.let { comment ->
       commentStorage.transaction {
-        add(mapOneCommentToFullComment(comment))
+        add(commentMapper.map(comment))
 
         val parentId = comment.parentId
         if (parentId.isNotBlank()) {
@@ -42,19 +39,5 @@ internal class PostCommentUseCase(
     }
 
     return null
-  }
-
-  private fun mapOneCommentToFullComment(comment: Comment): FullComment {
-    return FullComment(
-        id = comment.id,
-        parentId = comment.parentId,
-        text = comment.text,
-        score = comment.score,
-        user = comment.user,
-        time = LocalDateTime.parse(comment.time, DateTimeFormatter.ISO_ZONED_DATE_TIME),
-        vote = comment.vote,
-        replyCount = 0,
-        isCurrentUserAuthor = true
-    )
   }
 }

@@ -3,6 +3,7 @@ package com.stelmashchuk.remark.api
 import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.stelmashchuk.remark.api.comment.CommentTimeMapper
 import com.stelmashchuk.remark.api.network.RemarkInterceptor
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Config
@@ -44,7 +45,7 @@ public class RemarkApi(
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(remarkService, siteId, userStorage)
+    CommentDataControllerProvider(remarkService, siteId, CommentTimeMapper())
   }
 
   public suspend fun getConfig(): Config = remarkService.getConfig()
