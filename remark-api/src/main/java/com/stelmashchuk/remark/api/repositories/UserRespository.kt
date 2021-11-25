@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.webkit.CookieManager
-import com.stelmashchuk.remark.api.network.RemarkService
 
 data class RemarkCredentials(
     val jwtToken: String,
@@ -17,32 +16,20 @@ data class RemarkCredentials(
 
 public class UserStorage internal constructor(
     private val sharedPreferences: SharedPreferences,
-    private val credentialCreator: CredentialCreator,
-    private val remarkService: RemarkService,
+    private val credentialCreator: CredentialCreator = CredentialCreator(),
 ) {
 
   /**
    * @return true if credential save success
    */
-  suspend fun saveByCookies(cookies: String): Boolean {
+  fun saveByCookies(cookies: String): Boolean {
     credentialCreator.tryCreate(cookies)?.let {
       save(it)
-      val result = Result.runCatching { remarkService.getUser() }
-      return result.getOrNull()?.let { user ->
-        sharedPreferences.edit()
-            .putString(KEY_USER_ID, user.id)
-            .apply()
-        true
-      } ?: let {
-        logout()
-        false
-      }
+      return true
     } ?: let {
       return false
     }
   }
-
-  fun getUserId(): String = sharedPreferences.getString(KEY_USER_ID, "").orEmpty()
 
   private fun save(remarkCredentials: RemarkCredentials) {
     sharedPreferences.edit()

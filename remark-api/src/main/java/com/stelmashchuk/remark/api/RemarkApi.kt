@@ -40,7 +40,7 @@ public class RemarkApi(
   }
 
   private val userStorage: UserStorage by lazy {
-    UserStorage(BinaryPreferencesBuilder(context).build(), CredentialCreator(), remarkService)
+    UserStorage(BinaryPreferencesBuilder(context).build(), CredentialCreator())
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
