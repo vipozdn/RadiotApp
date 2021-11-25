@@ -14,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import java.util.*
 
 internal class PostCommentUseCaseTest {
 
@@ -43,7 +44,7 @@ internal class PostCommentUseCaseTest {
       }
     }
 
-    commentStorage.add(FullComment(rootId, "", "text", 0L, mockk(), "time", 0, 0, true))
+    commentStorage.add(FullComment(rootId, "", "text", 0L, mockk(), Date(), 0, 0, true))
 
     val userCase = PostCommentUseCase(commentStorage, remarkService)
     userCase.postComment(CommentRoot.Comment(postUrl, rootId), newText, postUrl, siteId)

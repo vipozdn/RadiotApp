@@ -1,6 +1,5 @@
 package com.stelmashchuk.remark.feature.comments
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.CommentDataController
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 
 sealed class CommentUiState {
@@ -35,9 +33,6 @@ class CommentViewModel(
               } else {
                 CommentUiState.Data(commentUiMapper.mapOneLevel(it))
               }
-            }
-            .onEach {
-              Log.e("TAG_11", "comment ui state $it")
             }
     )
   }

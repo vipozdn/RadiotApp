@@ -22,7 +22,7 @@ public class CommentDataControllerProvider internal constructor(
   private val map = HashMap<String, CommentDataController>()
 
   private val commentMapper: CommentMapper by lazy {
-    CommentMapper(userStorage)
+    CommentMapper()
   }
 
   fun getDataController(postUrl: String): CommentDataController {

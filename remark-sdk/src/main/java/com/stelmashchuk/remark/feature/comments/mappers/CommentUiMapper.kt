@@ -10,7 +10,7 @@ class CommentUiMapper(
   fun mapOneLevel(fullCommentInfo: FullCommentInfo): FullCommentsUiModel {
     return FullCommentsUiModel(
         root = fullCommentInfo.rootComment?.let { singleCommentMapper.map(it) },
-        comments = fullCommentInfo.comments.map {
+        comments = fullCommentInfo.comments.sortedByDescending { it.time }.map {
           singleCommentMapper.map(it)
         }
     )

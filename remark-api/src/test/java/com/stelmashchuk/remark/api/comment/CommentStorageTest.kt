@@ -7,6 +7,7 @@ import io.kotlintest.matchers.collections.shouldContain
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 internal class CommentStorageTest {
 
@@ -55,7 +56,7 @@ internal class CommentStorageTest {
         text = "",
         score = 0L,
         user = mockk(),
-        time = "time",
+        time = LocalDateTime.MAX,
         vote = 0,
         replyCount = replyCount,
         isCurrentUserAuthor = true,

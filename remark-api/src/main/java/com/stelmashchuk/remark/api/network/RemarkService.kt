@@ -20,7 +20,7 @@ interface RemarkService {
   @GET("/api/v1/find")
   suspend fun getCommentsPlain(
       @Query("url") postUrl: String,
-      @Query("sort") sort: String = "-active",
+      @Query("sort") sort: String = "-time",
       @Query("format") format: String = "plain",
   ): CommentOneLevelRoot
 

@@ -7,6 +7,8 @@ import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.repositories.FullComment
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 internal class PostCommentUseCase(
     private val commentStorage: CommentStorage,
@@ -49,7 +51,7 @@ internal class PostCommentUseCase(
         text = comment.text,
         score = comment.score,
         user = comment.user,
-        time = comment.time,
+        time = LocalDateTime.parse(comment.time, DateTimeFormatter.ISO_ZONED_DATE_TIME),
         vote = comment.vote,
         replyCount = 0,
         isCurrentUserAuthor = true

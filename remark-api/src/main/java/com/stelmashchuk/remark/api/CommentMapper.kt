@@ -2,9 +2,13 @@ package com.stelmashchuk.remark.api
 
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.repositories.FullComment
-import com.stelmashchuk.remark.api.repositories.UserStorage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class CommentMapper(private val userStorage: UserStorage) {
+class CommentMapper {
+
+  private val backendFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
+
   fun mapCommentsFullComments(comments: List<Comment>): List<FullComment> {
     return comments.map { comment ->
       FullComment(
@@ -13,7 +17,7 @@ class CommentMapper(private val userStorage: UserStorage) {
           text = comment.text,
           score = comment.score,
           user = comment.user,
-          time = comment.time,
+          time = LocalDateTime.parse(comment.time, backendFormatter),
           vote = comment.vote,
           replyCount = comments.count { it.parentId == comment.id },
           isCurrentUserAuthor = false
