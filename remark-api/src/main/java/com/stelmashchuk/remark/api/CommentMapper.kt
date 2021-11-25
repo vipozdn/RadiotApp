@@ -20,19 +20,5 @@ class CommentMapper(private val userStorage: UserStorage) {
       )
     }
   }
-
-  fun mapOneCommentToFullComment(comment: Comment): FullComment {
-    return FullComment(
-        id = comment.id,
-        parentId = comment.parentId,
-        text = comment.text,
-        score = comment.score,
-        user = comment.user,
-        time = comment.time,
-        vote = comment.vote,
-        replyCount = 0,
-        isCurrentUserAuthor = true
-    )
-  }
 }
 

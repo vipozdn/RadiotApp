@@ -1,7 +1,9 @@
-package com.stelmashchuk.remark.api
+package com.stelmashchuk.remark
 
 import app.cash.turbine.test
-import com.stelmashchuk.remark.api.comment.CommentStorage
+import com.stelmashchuk.remark.api.CommentDataController
+import com.stelmashchuk.remark.api.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
@@ -10,10 +12,6 @@ import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
-import com.stelmashchuk.remark.api.repositories.CommentRepository
-import com.stelmashchuk.remark.api.repositories.FullComment
-import io.kotlintest.Matcher
-import io.kotlintest.MatcherResult
 import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.mockk.coEvery
@@ -23,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class CommentDataControllerTest {
+internal class CommentDataControllerIntegrationTest {
 
   private val siteId = "site-id"
 
@@ -54,8 +52,8 @@ internal class CommentDataControllerTest {
         .test {
           awaitItem().run {
             rootComment shouldBe null
-            comments[0] should idMatch(commentToDelete)
-            comments[1] should idMatch("1")
+            comments.any { it.id == commentToDelete } shouldBe true
+            comments.any { it.id == "1" } shouldBe true
           }
 
 
@@ -263,48 +261,7 @@ internal class CommentDataControllerTest {
   }
 
   private fun createCommentDataController(postUrl: String, service: RemarkService): CommentDataController {
-    val mapper = CommentMapper(mockk(relaxed = true))
-    return CommentDataController(postUrl, siteId, service, CommentRepository(service, mapper), mapper, CommentStorage())
-  }
-
-  private fun idMatch(id: String): Matcher<FullComment> {
-    return object : Matcher<FullComment> {
-      override fun test(value: FullComment): MatcherResult {
-        return MatcherResult.invoke(value.id == id, { "id should be $id but was ${value.id}" }, { "id should not be $id but was ${value.id}" })
-      }
-    }
-  }
-
-  private fun textMatch(text: String): Matcher<FullComment> {
-    return object : Matcher<FullComment> {
-      override fun test(value: FullComment): MatcherResult {
-        return MatcherResult.invoke(value.text == text, { "text should be $text but was ${value.text}" }, { "text should not be $text but was ${value.text}" })
-      }
-    }
-  }
-
-  private fun scoreMatch(score: Long): Matcher<FullComment> {
-    return object : Matcher<FullComment> {
-      override fun test(value: FullComment): MatcherResult {
-        return MatcherResult.invoke(value.score == score, { "score should be $score but was ${value.score}" }, { "score should not be $score but was ${value.score}" })
-      }
-    }
-  }
-
-  private fun voteMatch(vote: Int): Matcher<FullComment> {
-    return object : Matcher<FullComment> {
-      override fun test(value: FullComment): MatcherResult {
-        return MatcherResult.invoke(value.vote == vote, { "vote should be $vote but was ${value.vote}" }, { "vote should not be $vote but was ${value.vote}" })
-      }
-    }
-  }
-
-  private fun replyCountMatch(replyCount: Int): Matcher<FullComment> {
-    return object : Matcher<FullComment> {
-      override fun test(value: FullComment): MatcherResult {
-        return MatcherResult.invoke(value.replyCount == replyCount, { "" }, { "" })
-      }
-    }
+    return CommentDataControllerProvider(service, siteId, mockk()).getDataController(postUrl)
   }
 
   private fun mockComment(

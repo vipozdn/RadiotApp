@@ -3,12 +3,12 @@ package com.stelmashchuk.remark.feature.comments.mappers
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.repositories.FullComment
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 class ScoreUiMapper {
 
-  fun map(comment: Comment): ScoreUiModel {
+  fun map(comment: FullComment): ScoreUiModel {
     return ScoreUiModel(
         comment.score.toString(),
         getColor(comment.score),
@@ -18,7 +18,7 @@ class ScoreUiMapper {
     )
   }
 
-  private fun getUpIcon(comment: Comment): Int {
+  private fun getUpIcon(comment: FullComment): Int {
     return if (comment.vote == 1) {
       R.drawable.up
     } else {
@@ -26,7 +26,7 @@ class ScoreUiMapper {
     }
   }
 
-  private fun getDownIcon(comment: Comment): Int {
+  private fun getDownIcon(comment: FullComment): Int {
     return if (comment.vote == -1) {
       R.drawable.down
     } else {

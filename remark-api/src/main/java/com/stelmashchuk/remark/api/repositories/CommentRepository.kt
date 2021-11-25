@@ -1,6 +1,5 @@
 package com.stelmashchuk.remark.api.repositories
 
-import com.stelmashchuk.remark.api.CommentMapper
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.User
@@ -19,7 +18,6 @@ data class FullComment(
 
 class CommentRepository(
     private val remarkService: RemarkService,
-    private val commentMapper: CommentMapper,
 ) {
 
   suspend fun getCommentsPlain(

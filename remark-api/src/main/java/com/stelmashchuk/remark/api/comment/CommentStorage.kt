@@ -9,38 +9,39 @@ import kotlinx.coroutines.flow.map
 
 internal class CommentStorage {
 
+  private val data = HashMap<String, FullComment>()
+
   private val flow = MutableStateFlow(emptyList<FullComment>())
 
-  suspend fun hasData(): Boolean {
-    return flow.value.isNotEmpty()
+  private val editor = Editor(data)
+
+  suspend fun transaction(block: suspend Editor.() -> Unit) {
+    editor.block()
+    reEmit()
+  }
+
+  fun hasData(): Boolean {
+    return data.isNotEmpty()
   }
 
   suspend fun setup(comments: List<FullComment>) {
-    flow.emit(comments)
+    data.putAll(comments.map { Pair(it.id, it) })
+    reEmit()
   }
 
   suspend fun add(comment: FullComment) {
-    flow.emit(flow.value.plus(comment))
+    editor.add(comment)
+    reEmit()
   }
 
-  suspend fun remote(id: String) {
-    flow.emit(flow.value.filter { comment -> comment.id != id })
-  }
-
-  suspend fun replace(map : Map<String, FullComment>) {
-
+  suspend fun remove(id: String) {
+    editor.remove(id)
+    reEmit()
   }
 
   suspend fun replace(commentId: String, comment: FullComment) {
-    val comments = flow.value.toMutableList()
-    comments.replaceAll {
-      if (it.id == commentId) {
-        comment
-      } else {
-        it
-      }
-    }
-    flow.emit(comments.toList())
+    editor.replace(commentId, comment)
+    reEmit()
   }
 
   suspend fun waitForComment(id: String): FullComment {
@@ -58,10 +59,29 @@ internal class CommentStorage {
         }
   }
 
+  private suspend fun reEmit() {
+    flow.emit(data.values.toList())
+  }
+
   private fun checkIsCommented(commentRoot: CommentRoot, comment: FullComment): Boolean {
     return when (commentRoot) {
       is CommentRoot.Comment -> commentRoot.commentId == comment.parentId
       is CommentRoot.Post -> comment.parentId.isBlank()
+    }
+  }
+
+  inner class Editor(private val data: HashMap<String, FullComment>) {
+
+    fun add(comment: FullComment) {
+      data[comment.id] = comment
+    }
+
+    fun remove(id: String) {
+      data.remove(id)
+    }
+
+    fun replace(commentId: String, comment: FullComment) {
+      data[commentId] = comment
     }
   }
 }

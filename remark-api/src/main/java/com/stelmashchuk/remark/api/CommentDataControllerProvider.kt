@@ -1,10 +1,9 @@
 package com.stelmashchuk.remark.api
 
 import com.stelmashchuk.remark.api.comment.CommentStorage
+import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.network.HttpConstants
 import com.stelmashchuk.remark.api.network.RemarkService
-import com.stelmashchuk.remark.api.pojo.Locator
-import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
 import com.stelmashchuk.remark.api.repositories.CommentRepository
@@ -28,7 +27,8 @@ public class CommentDataControllerProvider internal constructor(
 
   fun getDataController(postUrl: String): CommentDataController {
     return map.getOrPut(postUrl) {
-      CommentDataController(postUrl, siteId, remarkService, CommentRepository(remarkService, commentMapper), commentMapper, CommentStorage())
+      val commentStorage = CommentStorage()
+      CommentDataController(postUrl, siteId, remarkService, CommentRepository(remarkService), commentMapper, commentStorage, PostCommentUseCase(commentStorage, remarkService))
     }
   }
 }
@@ -62,6 +62,7 @@ public class CommentDataController internal constructor(
     private val commentRepository: CommentRepository,
     private val commentMapper: CommentMapper,
     private val commentStorage: CommentStorage,
+    private val postCommentUseCase: PostCommentUseCase,
 ) {
 
   suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
@@ -95,24 +96,12 @@ public class CommentDataController internal constructor(
       commentRoot: CommentRoot,
       text: String,
   ): RemarkError? {
-    val comment = Result.runCatching {
-      remarkService.postComment(PostComment(
-          text = text,
-          parentId = if (commentRoot is CommentRoot.Comment) commentRoot.commentId else null,
-          locator = Locator(siteId, postUrl),
-      ))
-    }
-
-    comment.getOrNull()?.let {
-      commentStorage.add(commentMapper.mapOneCommentToFullComment(it))
-    }
-
-    return null
+    return postCommentUseCase.postComment(commentRoot, text, postUrl, siteId)
   }
 
   suspend fun delete(commentId: String): Any? {
     val deletedComment = remarkService.delete(commentId)
-    commentStorage.remote(deletedComment.id)
+    commentStorage.remove(deletedComment.id)
     return null
   }
 
