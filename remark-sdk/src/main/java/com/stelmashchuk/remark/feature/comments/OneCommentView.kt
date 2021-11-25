@@ -38,6 +38,10 @@ import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
+import com.stelmashchuk.remark.feature.comments.mappers.ScoreUiMapper
+import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
+import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
+import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
 import com.stelmashchuk.remark.feature.delete.DeleteButton
 import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
@@ -76,7 +80,17 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentViewModel(commentRoot, CommentUiMapper(), RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+      return CommentViewModel(
+          commentRoot,
+          CommentUiMapper(
+              SingleCommentMapper(
+                  ScoreUiMapper(),
+                  TimeMapper(),
+                  UserUiMapper(),
+              ),
+          ),
+          RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl),
+      ) as T
     }
   })
 
