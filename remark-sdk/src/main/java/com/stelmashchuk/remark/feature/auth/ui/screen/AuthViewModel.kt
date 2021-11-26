@@ -42,8 +42,10 @@ class AuthViewModel(
   }
 
   fun cookiesChange(cookies: String) {
-    if (remarkApi.saveByCookies(cookies)) {
-      _loginFinishEvent.postValue(true)
+    viewModelScope.launch {
+      if (remarkApi.saveByCookies(cookies)) {
+        _loginFinishEvent.postValue(true)
+      }
     }
   }
 }

@@ -1,14 +1,15 @@
 package com.stelmashchuk.remark.feature.comments
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +38,11 @@ import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
+import com.stelmashchuk.remark.feature.comments.mappers.ScoreUiMapper
+import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
+import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
+import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
+import com.stelmashchuk.remark.feature.delete.DeleteButton
 import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -53,6 +59,7 @@ data class CommentUiModel(
     val time: String,
     val commentId: String,
     val replyCount: Int?,
+    val isDeleteAvailable: Boolean,
 )
 
 data class CommentAuthorUiModel(
@@ -73,7 +80,17 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return CommentViewModel(commentRoot, CommentUiMapper(), RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+      return CommentViewModel(
+          commentRoot,
+          CommentUiMapper(
+              SingleCommentMapper(
+                  ScoreUiMapper(),
+                  TimeMapper(),
+                  UserUiMapper(),
+              ),
+          ),
+          RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl),
+      ) as T
     }
   })
 
@@ -101,10 +118,9 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
 
 @Composable
 fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openReply: (commentId: String) -> Unit) {
-  Log.e("TAG_12", "data ${fullCommentsUiModel.comments}")
   Column {
     fullCommentsUiModel.root?.let {
-      OneCommentView(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
+      OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
       Divider()
     }
     WriteCommentView(commentRoot)
@@ -112,7 +128,7 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
         .padding(8.dp)
         .fillMaxSize()) {
       items(fullCommentsUiModel.comments) { comment ->
-        OneCommentView(comment = comment, postUrl = commentRoot.postUrl, openReply = openReply)
+        OneCommentViewWithImage(comment = comment, postUrl = commentRoot.postUrl, openReply = openReply)
         Divider()
       }
     }
@@ -120,9 +136,10 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
 }
 
 @Composable
-fun OneCommentView(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit) {
+fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit) {
   @Suppress("MagicNumber")
-  Row(modifier = modifier) {
+  Row(modifier = modifier
+      .fillMaxWidth()) {
     Image(
         painter = rememberCoilPainter(
             request = comment.author.avatar,
@@ -136,23 +153,31 @@ fun OneCommentView(modifier: Modifier = Modifier, comment: CommentUiModel, postU
             .padding(8.dp)
             .size(40.dp),
     )
-    Column {
-      Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
-        Text(text = comment.author.name, fontSize = 14.sp)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = comment.time, fontSize = 14.sp)
-      }
-      MarkdownText(markdown = comment.text)
-      Row {
-        FullScoreView(comment.score, postUrl)
-        comment.replyCount?.let {
-          Button(
-              onClick = { openReply(comment.commentId) },
-          ) {
-            Text(text = stringResource(R.string.reply, it))
-          }
+    CommentWithoutAvatar(comment, postUrl, openReply)
+  }
+}
+
+@Composable
+private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit = {}) {
+  Column {
+    Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
+      Text(text = comment.author.name, fontSize = 14.sp)
+      Spacer(modifier = Modifier.width(4.dp))
+      Text(text = comment.time, fontSize = 14.sp)
+    }
+    MarkdownText(markdown = comment.text)
+    Row(
+        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+      FullScoreView(comment.score, postUrl)
+      comment.replyCount?.let {
+        Button(
+            onClick = { openReply(comment.commentId) },
+        ) {
+          Text(text = stringResource(R.string.reply, it))
         }
       }
+      DeleteButton(comment, postUrl)
     }
   }
 }

@@ -1,13 +1,18 @@
-package com.stelmashchuk.remark.api
+package com.stelmashchuk.remark
 
 import app.cash.turbine.test
+import com.stelmashchuk.remark.api.CommentDataController
+import com.stelmashchuk.remark.api.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
+import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
+import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -16,21 +21,62 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class CommentDataControllerTest {
+internal class CommentDataControllerIntegrationTest {
 
   private val siteId = "site-id"
 
   @Test
+  fun `Verify delete 1th level comment`() = runBlocking {
+    val postUrl = "postUrl"
+    val commentToDelete = "commentToDelete"
+    val comment1 = mockComment(commentToDelete, "")
+    val comment2 = mockComment("1", "")
+
+    val service = mockk<RemarkService> {
+      coEvery { getCommentsPlain(postUrl) } coAnswers {
+        CommentOneLevelRoot(
+            listOf(comment1, comment2)
+        )
+      }
+
+      coEvery { delete(commentToDelete) } coAnswers {
+        DeletedComment(id = commentToDelete)
+      }
+    }
+
+    val dataController = createCommentDataController(postUrl, service)
+
+    val root = CommentRoot.Post(postUrl)
+
+    dataController.observeComments(root)
+        .test {
+          awaitItem().run {
+            rootComment shouldBe null
+            comments.any { it.id == commentToDelete } shouldBe true
+            comments.any { it.id == "1" } shouldBe true
+          }
+
+
+          dataController.delete(commentToDelete) shouldBe null
+
+          awaitItem().run {
+            comments[0] should idMatch("1")
+          }
+        }
+  }
+
+  @Test
   fun `Verify add 1th level comments`() = runBlocking {
     val postUrl = "postUrl"
-    val comment1 = mockComment("1", "")
+
+    val oldComment = mockComment("1", "")
     val newText = "newText"
     val newComment = mockComment("2", "", text = newText)
 
     val service = mockk<RemarkService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
-            listOf(comment1)
+            listOf(oldComment)
         )
       }
 
@@ -39,22 +85,23 @@ internal class CommentDataControllerTest {
       }
     }
 
-    val dataController = CommentDataController(postUrl, siteId, service)
+    val dataController = createCommentDataController(postUrl, service)
 
     val root = CommentRoot.Post(postUrl)
 
     dataController.observeComments(root)
         .test {
-          awaitItem() shouldBe FullCommentInfo(null, listOf(
-              CommentInfo(comment1, 0),
-          ))
+          awaitItem().run {
+            rootComment shouldBe null
+            comments[0] should idMatch(oldComment.id)
+          }
 
           dataController.postComment(root, newText) shouldBe null
 
-          awaitItem() shouldBe FullCommentInfo(null, listOf(
-              CommentInfo(newComment, 0),
-              CommentInfo(comment1, 0),
-          ))
+          awaitItem().run {
+            rootComment shouldBe null
+            comments.find { it.id == newComment.id }?.text shouldBe newComment.text
+          }
         }
   }
 
@@ -80,22 +127,28 @@ internal class CommentDataControllerTest {
       }
     }
 
-    val dataController = CommentDataController(postUrl, siteId, service)
+    val dataController = createCommentDataController(postUrl, service)
 
     val root = CommentRoot.Comment(postUrl, rootCommentId)
 
     dataController.observeComments(root)
         .test {
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 1), listOf(
-              CommentInfo(comment1, 0),
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 1
+
+            this.comments[0] should idMatch("1")
+          }
 
           dataController.postComment(root, newText) shouldBe null
 
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
-              CommentInfo(newComment, 0),
-              CommentInfo(comment1, 0),
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 2
+
+            this.comments[0] should idMatch("1").and(replyCountMatch(0))
+            this.comments[1] should idMatch("2").and(replyCountMatch(0)).and(textMatch(newText))
+          }
         }
   }
 
@@ -112,13 +165,13 @@ internal class CommentDataControllerTest {
       }
     }
 
-    CommentDataController(postUrl, siteId, service)
+    createCommentDataController(postUrl, service)
         .observeComments(CommentRoot.Post(postUrl))
         .test {
-          awaitItem() shouldBe FullCommentInfo(null, listOf(
-              CommentInfo(postComment1, 0),
-              CommentInfo(postComment2, 1)
-          ))
+          awaitItem().run {
+            comments[0] should idMatch("1")
+            comments[1] should idMatch("2")
+          }
         }
   }
 
@@ -137,15 +190,19 @@ internal class CommentDataControllerTest {
       }
     }
 
-    CommentDataController(postUrl, siteId, service)
+    createCommentDataController(postUrl, service)
         .observeComments(CommentRoot.Comment(postUrl, rootCommentId))
         .test {
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
-              CommentInfo(comment1, 0),
-              CommentInfo(comment2, 0)
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 2
+
+            this.comments[0] should idMatch("1")
+            this.comments[1] should idMatch("2")
+          }
         }
   }
+
 
   @Test
   fun `Verify vote apply for 2th level comment`(): Unit = runBlocking {
@@ -161,36 +218,51 @@ internal class CommentDataControllerTest {
             listOf(rootComment, comment1, comment2)
         )
       }
-      coEvery { vote(voteCommentId, postUrl, match { it in VoteType.values().map { voteType -> voteType.backendCode } }) } coAnswers {
+      coEvery { vote(voteCommentId, postUrl, VoteType.UP.backendCode) } coAnswers {
         VoteResponse(voteCommentId, 2)
+      }
+      coEvery { vote(voteCommentId, postUrl, VoteType.DOWN.backendCode) } coAnswers {
+        VoteResponse(voteCommentId, 1)
       }
     }
 
-    val dataController = CommentDataController(postUrl, siteId, service)
+    val dataController = createCommentDataController(postUrl, service)
 
     dataController.observeComments(CommentRoot.Comment(postUrl, rootCommentId))
         .test {
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
-              CommentInfo(comment1, 0),
-              CommentInfo(comment2, 0)
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 2
+
+            this.comments[0] should idMatch(voteCommentId).and(replyCountMatch(0)).and(scoreMatch(1)).and(voteMatch(0))
+            this.comments[1] should idMatch("2")
+          }
 
           dataController.vote(voteCommentId, VoteType.UP)
 
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
-              CommentInfo(comment1.copy(score = 2, vote = 1), 0),
-              CommentInfo(comment2, 0)
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 2
+
+            this.comments[0] should idMatch(voteCommentId).and(replyCountMatch(0)).and(scoreMatch(2)).and(voteMatch(1))
+            this.comments[1] should idMatch("2")
+          }
 
           dataController.vote(voteCommentId, VoteType.DOWN)
 
-          awaitItem() shouldBe FullCommentInfo(CommentInfo(rootComment, 2), listOf(
-              CommentInfo(comment1.copy(score = 2, vote = -1), 0),
-              CommentInfo(comment2, 0)
-          ))
+          awaitItem().run {
+            this.rootComment?.id shouldBe rootCommentId
+            this.rootComment?.replyCount shouldBe 2
+
+            this.comments[0] should idMatch(voteCommentId).and(replyCountMatch(0)).and(scoreMatch(1)).and(voteMatch(-1))
+            this.comments[1] should idMatch("2")
+          }
         }
   }
 
+  private fun createCommentDataController(postUrl: String, service: RemarkService): CommentDataController {
+    return CommentDataControllerProvider(service, siteId, mockk(relaxed = true)).getDataController(postUrl)
+  }
 
   private fun mockComment(
       mockId: String, mockParentId: String, mockScore: Int = 0, mockVote: Int = 0, text: String = "",
