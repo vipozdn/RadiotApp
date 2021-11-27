@@ -75,7 +75,7 @@ data class ScoreUiModel(
 )
 
 @Composable
-fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String) -> Unit, openLogin: () -> Unit) {
+fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -99,7 +99,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
     LoginButton(openLogin)
     when (val data = state.value) {
       is CommentUiState.Data -> {
-        CommentsContent(data.data, commentRoot, openReply)
+        CommentsContent(data.data, commentRoot, openCommentDetails)
       }
       CommentUiState.Empty -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -116,10 +116,10 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
 }
 
 @Composable
-fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openReply: (commentId: String) -> Unit) {
+fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
-      OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
+      OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
       Divider()
     }
     WriteCommentView(commentRoot)
@@ -127,7 +127,7 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
         .padding(8.dp)
         .fillMaxSize()) {
       items(fullCommentsUiModel.comments) { comment ->
-        OneCommentViewWithImage(comment = comment, postUrl = commentRoot.postUrl, openReply = openReply)
+        OneCommentViewWithImage(comment = comment, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
         Divider()
       }
     }
@@ -135,10 +135,10 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
 }
 
 @Composable
-fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit) {
+fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: String) -> Unit) {
   @Suppress("MagicNumber")
   Row(modifier = modifier
-      .clickable { openReply(comment.commentId) }
+      .clickable { openCommentDetails(comment.commentId) }
       .fillMaxWidth()) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
