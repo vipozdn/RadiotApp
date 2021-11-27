@@ -2,6 +2,7 @@ package com.stelmashchuk.remark.feature.comments
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -42,7 +42,6 @@ import com.stelmashchuk.remark.feature.comments.mappers.ScoreUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
 import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
 import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
-import com.stelmashchuk.remark.feature.delete.DeleteButton
 import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -76,7 +75,7 @@ data class ScoreUiModel(
 )
 
 @Composable
-fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String) -> Unit, openLogin: () -> Unit) {
+fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -100,7 +99,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
     LoginButton(openLogin)
     when (val data = state.value) {
       is CommentUiState.Data -> {
-        CommentsContent(data.data, commentRoot, openReply)
+        CommentsContent(data.data, commentRoot, openCommentDetails)
       }
       CommentUiState.Empty -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -117,10 +116,10 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openReply: (commentId: String)
 }
 
 @Composable
-fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openReply: (commentId: String) -> Unit) {
+fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
-      OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openReply = openReply)
+      OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
       Divider()
     }
     WriteCommentView(commentRoot)
@@ -128,7 +127,7 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
         .padding(8.dp)
         .fillMaxSize()) {
       items(fullCommentsUiModel.comments) { comment ->
-        OneCommentViewWithImage(comment = comment, postUrl = commentRoot.postUrl, openReply = openReply)
+        OneCommentViewWithImage(comment = comment, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
         Divider()
       }
     }
@@ -136,48 +135,50 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
 }
 
 @Composable
-fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit) {
+fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: String) -> Unit) {
   @Suppress("MagicNumber")
   Row(modifier = modifier
+      .clickable { openCommentDetails(comment.commentId) }
       .fillMaxWidth()) {
-    Image(
-        painter = rememberCoilPainter(
-            request = comment.author.avatar,
-            requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
-              return transformations(CircleCropTransformation())
-            },
-            shouldRefetchOnSizeChange = { _, _ -> true },
-        ),
-        contentDescription = "Avatar ${comment.author.name}",
-        modifier = Modifier
-            .padding(8.dp)
-            .size(40.dp),
-    )
-    CommentWithoutAvatar(comment, postUrl, openReply)
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      Image(
+          painter = rememberCoilPainter(
+              request = comment.author.avatar,
+              requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
+                return transformations(CircleCropTransformation())
+              },
+              shouldRefetchOnSizeChange = { _, _ -> true },
+          ),
+          contentDescription = "Avatar ${comment.author.name}",
+          modifier = Modifier
+              .padding(8.dp)
+              .size(40.dp),
+      )
+      comment.replyCount?.let {
+        Text(text = stringResource(R.string.reply, it), fontSize = 18.sp)
+      }
+    }
+    CommentWithoutAvatar(comment, postUrl)
   }
 }
 
 @Composable
-private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String, openReply: (commentId: String) -> Unit = {}) {
-  Column {
-    Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
-      Text(text = comment.author.name, fontSize = 14.sp)
-      Spacer(modifier = Modifier.width(4.dp))
-      Text(text = comment.time, fontSize = 14.sp)
-    }
-    MarkdownText(markdown = comment.text)
-    Row(
-        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-      FullScoreView(comment.score, postUrl)
-      comment.replyCount?.let {
-        Button(
-            onClick = { openReply(comment.commentId) },
-        ) {
-          Text(text = stringResource(R.string.reply, it))
-        }
+private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String) {
+  Row(
+      Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+  ) {
+    Column {
+      Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
+        Text(text = comment.author.name, fontSize = 14.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = comment.time, fontSize = 14.sp)
       }
-      DeleteButton(comment, postUrl)
+      MarkdownText(markdown = comment.text)
     }
+    FullScoreView(comment.score, postUrl)
   }
 }
