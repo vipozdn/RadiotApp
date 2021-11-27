@@ -26,6 +26,48 @@ internal class CommentDataControllerIntegrationTest {
   private val siteId = "site-id"
 
   @Test
+  fun `Verify return just root without reply and root with reply`() = runBlocking {
+    val postUrl = "postUrl"
+    val rootCommentId = "rootCommentId"
+    val rootComment = mockComment(rootCommentId, "")
+    val newCommentId = "newCommentId"
+    val newText = "newText"
+    val newComment = mockComment(newCommentId, rootCommentId, text = newText)
+
+    val service = mockk<RemarkService> {
+      coEvery { getCommentsPlain(postUrl) } coAnswers {
+        CommentOneLevelRoot(
+            listOf(rootComment)
+        )
+      }
+
+      coEvery { postComment(PostComment(text = newText, parentId = rootCommentId, Locator(siteId, postUrl))) } coAnswers {
+        newComment
+      }
+    }
+
+    val dataController = createCommentDataController(postUrl, service)
+
+    val commentRoot = CommentRoot.Comment(postUrl, rootCommentId)
+
+    dataController.observeComments(commentRoot)
+        .test {
+          awaitItem().run {
+            this.rootComment should idMatch(rootCommentId).and(replyCountMatch(0))
+            this.comments shouldBe emptyList()
+          }
+
+          dataController.postComment(commentRoot, newText) shouldBe null
+
+          awaitItem().run {
+            this.rootComment should idMatch(rootCommentId).and(replyCountMatch(1))
+            this.comments[0] should idMatch(newCommentId).and(replyCountMatch(0)).and(textMatch(newText))
+          }
+        }
+  }
+
+
+  @Test
   fun `Verify delete 1th level comment`() = runBlocking {
     val postUrl = "postUrl"
     val commentToDelete = "commentToDelete"

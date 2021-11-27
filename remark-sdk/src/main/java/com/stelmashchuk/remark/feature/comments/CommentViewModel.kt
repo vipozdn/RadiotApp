@@ -27,11 +27,11 @@ class CommentViewModel(
   val comments: StateFlow<CommentUiState> = flow {
     emitAll(
         commentDataController.observeComments(commentRoot)
-            .map {
-              if (it.comments.isEmpty()) {
+            .map { fullCommentInfo ->
+              if (fullCommentInfo.comments.isEmpty() && fullCommentInfo.rootComment == null) {
                 CommentUiState.Empty
               } else {
-                CommentUiState.Data(commentUiMapper.mapOneLevel(it))
+                CommentUiState.Data(commentUiMapper.mapOneLevel(fullCommentInfo))
               }
             }
     )
