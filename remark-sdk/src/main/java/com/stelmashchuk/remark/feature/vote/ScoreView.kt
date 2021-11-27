@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.feature.vote
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -42,7 +42,7 @@ fun ScoreViewPreview() {
 
 @Composable
 fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
-  Row(verticalAlignment = Alignment.CenterVertically) {
+  Column(horizontalAlignment = Alignment.CenterHorizontally) {
     VoteButton(onClick = { onVote(VoteType.UP) }) {
       Image(painterResource(score.upRes), "up")
     }
