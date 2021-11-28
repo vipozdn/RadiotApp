@@ -26,11 +26,6 @@ internal class CommentDataControllerIntegrationTest {
   private val siteId = "site-id"
 
   @Test
-  fun `Fail test`() {
-    1 shouldBe 2
-  }
-
-  @Test
   fun `Verify return just root without reply and root with reply`() = runBlocking {
     val postUrl = "postUrl"
     val rootCommentId = "rootCommentId"
