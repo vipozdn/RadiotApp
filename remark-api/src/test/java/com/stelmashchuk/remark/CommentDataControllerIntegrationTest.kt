@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.network.RemarkService
+import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.pojo.DeletedComment
@@ -34,7 +34,7 @@ internal class CommentDataControllerIntegrationTest {
     val newText = "newText"
     val newComment = mockComment(newCommentId, rootCommentId, text = newText)
 
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(rootComment)
@@ -74,7 +74,7 @@ internal class CommentDataControllerIntegrationTest {
     val comment1 = mockComment(commentToDelete, "")
     val comment2 = mockComment("1", "")
 
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(comment1, comment2)
@@ -115,7 +115,7 @@ internal class CommentDataControllerIntegrationTest {
     val newText = "newText"
     val newComment = mockComment("2", "", text = newText)
 
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(oldComment)
@@ -157,7 +157,7 @@ internal class CommentDataControllerIntegrationTest {
     val newText = "newText"
     val newComment = mockComment("2", rootCommentId, text = newText)
 
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(rootComment, comment1)
@@ -199,7 +199,7 @@ internal class CommentDataControllerIntegrationTest {
     val postUrl = "postUrl"
     val postComment1 = mockComment("1", "")
     val postComment2 = mockComment("2", "")
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(postComment1, mockComment("3", "2"), postComment2)
@@ -224,7 +224,7 @@ internal class CommentDataControllerIntegrationTest {
     val rootComment = mockComment(rootCommentId, "")
     val comment1 = mockComment("1", rootCommentId)
     val comment2 = mockComment("2", rootCommentId)
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(rootComment, comment1, comment2)
@@ -254,7 +254,7 @@ internal class CommentDataControllerIntegrationTest {
     val rootComment = mockComment(rootCommentId, "")
     val comment1 = mockComment(voteCommentId, rootCommentId, 1, 0)
     val comment2 = mockComment("2", rootCommentId)
-    val service = mockk<RemarkService> {
+    val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
             listOf(rootComment, comment1, comment2)
@@ -302,7 +302,7 @@ internal class CommentDataControllerIntegrationTest {
         }
   }
 
-  private fun createCommentDataController(postUrl: String, service: RemarkService): CommentDataController {
+  private fun createCommentDataController(postUrl: String, service: CommentService): CommentDataController {
     return CommentDataControllerProvider(service, siteId, mockk(relaxed = true)).getDataController(postUrl)
   }
 

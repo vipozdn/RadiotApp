@@ -1,5 +1,8 @@
 package com.stelmashchuk.remark.feature.auth.ui.screen
 
+import android.os.Handler
+import android.os.Looper
+import android.webkit.CookieManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,9 +46,16 @@ class AuthViewModel(
 
   fun cookiesChange(cookies: String) {
     viewModelScope.launch {
-      if (remarkApi.saveByCookies(cookies)) {
+      if (remarkApi.tryLogin(cookies)) {
+        clearCookies()
         _loginFinishEvent.postValue(true)
       }
+    }
+  }
+
+  private fun clearCookies() {
+    Handler(Looper.getMainLooper()).post {
+      CookieManager.getInstance().removeAllCookies { }
     }
   }
 }

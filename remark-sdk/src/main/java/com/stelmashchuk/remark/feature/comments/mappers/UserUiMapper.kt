@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark.feature.comments.mappers
 
-import com.stelmashchuk.remark.api.pojo.User
+import com.stelmashchuk.remark.api.user.User
 import com.stelmashchuk.remark.feature.comments.CommentAuthorUiModel
 
 class UserUiMapper {

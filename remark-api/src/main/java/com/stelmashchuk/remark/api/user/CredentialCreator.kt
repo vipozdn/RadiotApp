@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.repositories
+package com.stelmashchuk.remark.api.user
 
 internal class CredentialCreator {
 

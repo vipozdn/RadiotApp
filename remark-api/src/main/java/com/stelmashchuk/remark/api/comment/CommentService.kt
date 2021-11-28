@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.network
+package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
@@ -6,7 +6,6 @@ import com.stelmashchuk.remark.api.pojo.Config
 import com.stelmashchuk.remark.api.pojo.DeleteCommentRequest
 import com.stelmashchuk.remark.api.pojo.DeletedComment
 import com.stelmashchuk.remark.api.pojo.PostComment
-import com.stelmashchuk.remark.api.pojo.User
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,7 +14,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface RemarkService {
+interface CommentService {
 
   @GET("/api/v1/find")
   suspend fun getCommentsPlain(
@@ -43,8 +42,6 @@ interface RemarkService {
   @GET("api/v1/config")
   suspend fun getConfig(): Config
 
-  @GET("/api/v1/user")
-  suspend fun getUser(): User
 }
 
 object HttpConstants {
