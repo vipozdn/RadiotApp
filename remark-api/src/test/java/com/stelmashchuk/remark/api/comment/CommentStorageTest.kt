@@ -2,7 +2,7 @@ package com.stelmashchuk.remark.api.comment
 
 import app.cash.turbine.test
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.repositories.FullComment
+import com.stelmashchuk.remark.api.FullComment
 import io.kotlintest.matchers.collections.shouldContain
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
