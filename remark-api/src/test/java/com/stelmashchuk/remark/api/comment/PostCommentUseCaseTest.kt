@@ -1,11 +1,10 @@
 package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.network.RemarkService
+import com.stelmashchuk.remark.api.FullComment
 import com.stelmashchuk.remark.api.pojo.Comment
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
-import com.stelmashchuk.remark.api.repositories.FullComment
 import com.stelmashchuk.remark.idMatch
 import com.stelmashchuk.remark.replyCountMatch
 import com.stelmashchuk.remark.textMatch
@@ -30,7 +29,7 @@ internal class PostCommentUseCaseTest {
     val siteId = "siteId"
     val newId = "newId"
 
-    val remarkService = mockk<RemarkService> {
+    val remarkService = mockk<CommentService> {
       coEvery { postComment(PostComment(newText, rootId, Locator(siteId, postUrl))) } answers {
         Comment(
             id = newId,

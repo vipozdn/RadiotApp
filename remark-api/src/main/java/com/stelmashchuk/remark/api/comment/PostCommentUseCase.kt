@@ -2,13 +2,12 @@ package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Locator
 import com.stelmashchuk.remark.api.pojo.PostComment
 
 internal class PostCommentUseCase(
     private val commentStorage: CommentStorage,
-    private val remarkService: RemarkService,
+    private val commentService: CommentService,
     private val commentMapper: CommentMapper,
 ) {
 
@@ -19,7 +18,7 @@ internal class PostCommentUseCase(
       siteId: String,
   ): RemarkError? {
     val commentResult = Result.runCatching {
-      remarkService.postComment(PostComment(
+      commentService.postComment(PostComment(
           text = text,
           parentId = if (commentRoot is CommentRoot.Comment) commentRoot.commentId else null,
           locator = Locator(siteId, postUrl),

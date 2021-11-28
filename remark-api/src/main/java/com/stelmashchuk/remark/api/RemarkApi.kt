@@ -1,60 +1,79 @@
 package com.stelmashchuk.remark.api
 
-import android.content.Context
-import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
 import com.stelmashchuk.remark.api.network.RemarkInterceptor
-import com.stelmashchuk.remark.api.network.RemarkService
 import com.stelmashchuk.remark.api.pojo.Config
-import com.stelmashchuk.remark.api.repositories.CredentialCreator
-import com.stelmashchuk.remark.api.repositories.RemarkCredentials
-import com.stelmashchuk.remark.api.repositories.UserStorage
+import com.stelmashchuk.remark.api.user.CredentialCreator
+import com.stelmashchuk.remark.api.user.RemarkCredentials
+import com.stelmashchuk.remark.api.user.UserRepository
+import com.stelmashchuk.remark.api.user.UserService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
+public interface SystemStorage {
+  fun putString(key: String, value: String)
+  fun putStrings(values: Map<String, String>)
+  fun getString(key: String): String
+  fun onValueChanges(onChange: () -> Unit)
+}
+
 public class RemarkApi(
-    context: Context,
     siteId: String,
     baseUrl: String,
+    systemStorage: SystemStorage,
 ) {
 
-  private val remarkService: RemarkService by lazy {
+  private val commentService: CommentService by lazy {
     Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(
             OkHttpClient.Builder()
-                .addInterceptor(RemarkInterceptor(userStorage, siteId))
+                .addInterceptor(RemarkInterceptor(userRepository, siteId))
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build()
         )
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
-        .create(RemarkService::class.java)
+        .create(CommentService::class.java)
+  }
+
+  private val userService: UserService by lazy {
+    Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(
+            OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                .build()
+        )
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+        .create(UserService::class.java)
   }
 
   private val json: Json = Json {
     ignoreUnknownKeys = true
   }
 
-  private val userStorage: UserStorage by lazy {
-    UserStorage(BinaryPreferencesBuilder(context).build(), CredentialCreator())
+  private val userRepository: UserRepository by lazy {
+    UserRepository(systemStorage, CredentialCreator(), userService)
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(remarkService, siteId, CommentTimeMapper())
+    CommentDataControllerProvider(commentService, siteId, CommentTimeMapper())
   }
 
-  public suspend fun getConfig(): Config = remarkService.getConfig()
+  public suspend fun getConfig(): Config = commentService.getConfig()
 
-  public suspend fun saveByCookies(cookies: String): Boolean {
-    return userStorage.saveByCookies(cookies)
+  public suspend fun tryLogin(cookies: String): Boolean {
+    return userRepository.loginUser(cookies).isSuccess
   }
 
   public fun addLoginStateListener(onLoginChange: (RemarkCredentials) -> Unit) {
-    return userStorage.addListener(onLoginChange)
+    return userRepository.addListener(onLoginChange)
   }
 }

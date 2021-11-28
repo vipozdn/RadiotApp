@@ -3,8 +3,8 @@ package com.stelmashchuk.remark.feature.comments
 import app.cash.turbine.test
 import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.FullComment
 import com.stelmashchuk.remark.api.FullCommentInfo
-import com.stelmashchuk.remark.api.repositories.FullComment
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
 import io.kotlintest.shouldBe

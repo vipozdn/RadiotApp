@@ -4,18 +4,18 @@ import com.stelmashchuk.remark.api.comment.CommentMapper
 import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
 import com.stelmashchuk.remark.api.comment.PostCommentUseCase
-import com.stelmashchuk.remark.api.network.HttpConstants
-import com.stelmashchuk.remark.api.network.RemarkService
+import com.stelmashchuk.remark.api.comment.HttpConstants
+import com.stelmashchuk.remark.api.comment.CommentService
+import com.stelmashchuk.remark.api.user.User
 import com.stelmashchuk.remark.api.pojo.VoteResponse
 import com.stelmashchuk.remark.api.pojo.VoteType
-import com.stelmashchuk.remark.api.repositories.CommentRepository
-import com.stelmashchuk.remark.api.repositories.FullComment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
+import java.time.LocalDateTime
 
 public class CommentDataControllerProvider internal constructor(
-    private val remarkService: RemarkService,
+    private val commentService: CommentService,
     private val siteId: String,
     private val timeMapper: CommentTimeMapper,
 ) {
@@ -29,7 +29,7 @@ public class CommentDataControllerProvider internal constructor(
   fun getDataController(postUrl: String): CommentDataController {
     return map.getOrPut(postUrl) {
       val commentStorage = CommentStorage()
-      CommentDataController(postUrl, siteId, remarkService, CommentRepository(remarkService), commentMapper, commentStorage, PostCommentUseCase(commentStorage, remarkService, commentMapper))
+      CommentDataController(postUrl, siteId, commentService, commentMapper, commentStorage, PostCommentUseCase(commentStorage, commentService, commentMapper))
     }
   }
 }
@@ -56,11 +56,22 @@ sealed class RemarkError {
   object TooManyRequests : RemarkError()
 }
 
+data class FullComment(
+    val id: String,
+    val parentId: String,
+    val text: String = "",
+    val score: Long,
+    val user: User,
+    val time: LocalDateTime,
+    val vote: Int,
+    val replyCount: Int,
+    val isCurrentUserAuthor: Boolean,
+)
+
 public class CommentDataController internal constructor(
     private val postUrl: String,
     private val siteId: String,
-    private val remarkService: RemarkService,
-    private val commentRepository: CommentRepository,
+    private val commentService: CommentService,
     private val commentMapper: CommentMapper,
     private val commentStorage: CommentStorage,
     private val postCommentUseCase: PostCommentUseCase,
@@ -68,7 +79,7 @@ public class CommentDataController internal constructor(
 
   suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
     if (!commentStorage.hasData()) {
-      commentStorage.setup(commentMapper.mapCommentsFullComments(commentRepository.getCommentsPlain(postUrl)))
+      commentStorage.setup(commentMapper.mapCommentsFullComments(commentService.getCommentsPlain(postUrl).comments))
     }
 
     return commentStorage
@@ -78,7 +89,7 @@ public class CommentDataController internal constructor(
             is CommentRoot.Comment -> {
               commentStorage.waitForComment(commentRoot.commentId)
             }
-            is CommentRoot.Post -> null
+            else -> null
           }
 
           FullCommentInfo(rootComment, comments)
@@ -89,7 +100,7 @@ public class CommentDataController internal constructor(
       commentId: String,
       vote: VoteType,
   ): RemarkError? {
-    val voteResponse = Result.runCatching { remarkService.vote(commentId, postUrl, vote.backendCode) }
+    val voteResponse = Result.runCatching { commentService.vote(commentId, postUrl, vote.backendCode) }
     return handleResponse(voteResponse, commentId, vote)
   }
 
@@ -101,7 +112,7 @@ public class CommentDataController internal constructor(
   }
 
   suspend fun delete(commentId: String): Any? {
-    val deletedComment = remarkService.delete(commentId)
+    val deletedComment = commentService.delete(commentId)
     commentStorage.remove(deletedComment.id)
     return null
   }

@@ -63,6 +63,7 @@ fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
 fun WebPageScreen(urlToRender: String, onCookieChange: (String) -> Unit) {
   AndroidView(factory = { context ->
     val webView = WebView(context)
+    CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
     CookieManager.getInstance().acceptThirdPartyCookies(webView)
     CookieManager.getInstance().setAcceptCookie(true)
     webView.apply {
@@ -75,9 +76,6 @@ fun WebPageScreen(urlToRender: String, onCookieChange: (String) -> Unit) {
         javaScriptEnabled = true
         javaScriptCanOpenWindowsAutomatically = true
       }
-
-      CookieManager.getInstance().setAcceptCookie(true)
-      CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
 
       this.webChromeClient = WebChromeClient()
       webViewClient = object : WebViewClient() {

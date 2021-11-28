@@ -5,7 +5,6 @@ import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.CommentRoot
 import io.kotlintest.shouldBe
 import io.mockk.mockk
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 

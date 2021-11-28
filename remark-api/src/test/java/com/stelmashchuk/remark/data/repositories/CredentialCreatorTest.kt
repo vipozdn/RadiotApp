@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.data.repositories
 
-import com.stelmashchuk.remark.api.repositories.CredentialCreator
-import com.stelmashchuk.remark.api.repositories.RemarkCredentials
+import com.stelmashchuk.remark.api.user.CredentialCreator
+import com.stelmashchuk.remark.api.user.RemarkCredentials
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory

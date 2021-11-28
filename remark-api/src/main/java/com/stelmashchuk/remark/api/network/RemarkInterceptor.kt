@@ -1,16 +1,17 @@
 package com.stelmashchuk.remark.api.network
 
-import com.stelmashchuk.remark.api.repositories.UserStorage
+import com.stelmashchuk.remark.api.comment.HttpConstants
+import com.stelmashchuk.remark.api.user.UserRepository
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-private const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
-private const val KEY_COOKIE = "Cookie"
-private const val JWT_PREFIX = "JWT="
+const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
+const val KEY_COOKIE = "Cookie"
+const val JWT_PREFIX = "JWT="
 
 internal class RemarkInterceptor(
-    private val userStorage: UserStorage,
+    private val userRepository: UserRepository,
     private val siteId: String,
 ) : Interceptor {
 
@@ -27,15 +28,15 @@ internal class RemarkInterceptor(
     val response = chain.proceed(request.build())
 
     if (response.code == HttpConstants.UN_AUTH) {
-      userStorage.logout()
+      userRepository.logout()
     }
 
     return response
   }
 
   private fun addAuthHeaders(request: Request.Builder) {
-    if (userStorage.getCredential().isValid()) {
-      val user = userStorage.getCredential()
+    if (userRepository.getCredential().isValid()) {
+      val user = userRepository.getCredential()
       request.header(KEY_HEADER_XSRF, user.xsrfToken)
       request.header(KEY_COOKIE, "$JWT_PREFIX${user.jwtToken}")
     }
