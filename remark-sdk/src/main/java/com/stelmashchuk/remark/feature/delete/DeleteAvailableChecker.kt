@@ -5,7 +5,6 @@ import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.os.OsDateTime
 import java.time.Duration
 
-//2021-11-30T13:57:23.308974867-06:00
 internal class DeleteAvailableChecker(
     private val configRepository: ConfigRepository,
     private val osDateTime: OsDateTime,
@@ -17,7 +16,7 @@ internal class DeleteAvailableChecker(
     }
 
     val commentTime = comment.time
-    val osTime = osDateTime.now()
+    val osTime = osDateTime.nowUTC()
 
     return (Duration.between(commentTime, osTime).seconds <= configRepository.getConfig().editDuration)
   }

@@ -10,4 +10,5 @@ data class Config(
 
     @SerialName("edit_duration")
     val editDuration: Long,
+
 )

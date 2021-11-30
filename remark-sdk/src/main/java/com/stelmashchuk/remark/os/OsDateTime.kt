@@ -1,11 +1,12 @@
 package com.stelmashchuk.remark.os
 
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class OsDateTime {
 
-  fun now(): LocalDateTime {
-    return LocalDateTime.now()
+  fun nowUTC(): LocalDateTime {
+    return LocalDateTime.now(ZoneOffset.UTC)
   }
 
 }

@@ -79,7 +79,7 @@ internal class DeleteAvailableCheckerTest {
     val configRepository = getConfigRepository(editDuration)
 
     val osDateTime = mockk<OsDateTime> {
-      every { now() } returns systemTime
+      every { nowUTC() } returns systemTime
     }
 
     return DeleteAvailableChecker(configRepository, osDateTime)
