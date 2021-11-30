@@ -3,8 +3,8 @@ package com.stelmashchuk.remark.api.comment
 import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.config.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.config.Config
-import com.stelmashchuk.remark.api.config.DeleteCommentRequest
 import com.stelmashchuk.remark.api.config.DeletedComment
+import com.stelmashchuk.remark.api.config.EditCommentRequest
 import com.stelmashchuk.remark.api.config.PostComment
 import com.stelmashchuk.remark.api.config.VoteResponse
 import retrofit2.http.Body
@@ -34,9 +34,10 @@ internal interface CommentService {
   ): VoteResponse
 
   @PUT("/api/v1/comment/{commentId}")
-  suspend fun delete(
+  suspend fun edit(
       @Path("commentId") commentId: String,
-      @Body deleteCommentRequest: DeleteCommentRequest = DeleteCommentRequest(),
+      @Body editCommentRequest: EditCommentRequest,
+      @Query("url") postUrl: String,
   ): DeletedComment
 
   @GET("api/v1/config")

@@ -58,7 +58,7 @@ public class UseCases internal constructor(
       CommentStorage()
     }
 
-    return DeleteCommentUseCase(storage, commentService)
+    return DeleteCommentUseCase(storage, commentService, postUrl)
   }
 
 }

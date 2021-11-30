@@ -53,9 +53,9 @@ data class Locator(
 )
 
 @Serializable
-data class DeleteCommentRequest(
+data class EditCommentRequest(
     @SerialName("delete")
-    val delete: Boolean = true,
+    val delete: Boolean,
 )
 
 @Serializable

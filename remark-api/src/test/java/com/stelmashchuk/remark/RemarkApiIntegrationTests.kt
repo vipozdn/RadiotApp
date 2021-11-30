@@ -7,6 +7,7 @@ import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.config.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.config.DeletedComment
+import com.stelmashchuk.remark.api.config.EditCommentRequest
 import com.stelmashchuk.remark.api.config.Locator
 import com.stelmashchuk.remark.api.config.PostComment
 import com.stelmashchuk.remark.api.config.VoteResponse
@@ -82,7 +83,7 @@ internal class RemarkApiIntegrationTests {
         )
       }
 
-      coEvery { delete(commentToDelete) } coAnswers {
+      coEvery { edit(commentToDelete, EditCommentRequest(true), postUrl) } coAnswers {
         DeletedComment(id = commentToDelete)
       }
     }
@@ -101,7 +102,7 @@ internal class RemarkApiIntegrationTests {
             comments.any { it.id == "1" } shouldBe true
           }
 
-          deleteCommentUseCases.delete(commentToDelete) shouldBe null
+          deleteCommentUseCases.delete(commentToDelete) shouldBe Result.success(Unit)
 
           awaitItem().run {
             comments[0] should idMatch("1")
