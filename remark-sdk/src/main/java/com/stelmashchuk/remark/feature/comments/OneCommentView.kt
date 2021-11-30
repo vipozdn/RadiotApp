@@ -34,7 +34,7 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
 import com.stelmashchuk.remark.feature.comments.mappers.CommentUiMapper

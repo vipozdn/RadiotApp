@@ -2,7 +2,7 @@ package com.stelmashchuk.remark.feature.delete
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.api.CommentDataController
+import com.stelmashchuk.remark.api.comment.CommentDataController
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow

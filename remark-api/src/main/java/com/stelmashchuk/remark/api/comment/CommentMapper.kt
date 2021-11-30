@@ -1,9 +1,12 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.FullComment
 import com.stelmashchuk.remark.api.config.Comment
+import com.stelmashchuk.remark.api.user.UserRepository
 
-class CommentMapper(private val commentTimeMapper: CommentTimeMapper) {
+class CommentMapper(
+    private val commentTimeMapper: CommentTimeMapper,
+    private val userRepository: UserRepository,
+) {
 
   fun mapCommentsFullComments(comments: List<Comment>): List<FullComment> {
     return comments.map { comment ->
@@ -16,7 +19,7 @@ class CommentMapper(private val commentTimeMapper: CommentTimeMapper) {
           time = commentTimeMapper.map(comment.time),
           vote = comment.vote,
           replyCount = comments.count { it.parentId == comment.id },
-          isCurrentUserAuthor = false
+          isCurrentUserAuthor = userRepository.user?.id == comment.user.id
       )
     }
   }

@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark.feature.delete
 
-import com.stelmashchuk.remark.api.FullComment
+import com.stelmashchuk.remark.api.comment.FullComment
 import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.os.OsDateTime
 import java.time.Duration

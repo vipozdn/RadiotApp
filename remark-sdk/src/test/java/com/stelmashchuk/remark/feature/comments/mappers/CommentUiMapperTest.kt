@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark.feature.comments.mappers
 
-import com.stelmashchuk.remark.api.FullComment
+import com.stelmashchuk.remark.api.comment.FullComment
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk

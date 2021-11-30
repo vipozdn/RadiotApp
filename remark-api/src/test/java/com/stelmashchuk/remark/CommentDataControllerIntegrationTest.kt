@@ -1,9 +1,9 @@
 package com.stelmashchuk.remark
 
 import app.cash.turbine.test
-import com.stelmashchuk.remark.api.CommentDataController
-import com.stelmashchuk.remark.api.CommentDataControllerProvider
-import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.comment.CommentDataController
+import com.stelmashchuk.remark.api.comment.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.config.CommentOneLevelRoot
@@ -303,7 +303,7 @@ internal class CommentDataControllerIntegrationTest {
   }
 
   private fun createCommentDataController(postUrl: String, service: CommentService): CommentDataController {
-    return CommentDataControllerProvider(service, siteId, mockk(relaxed = true)).getDataController(postUrl)
+    return CommentDataControllerProvider(service, siteId, mockk(relaxed = true), mockk(relaxed = true)).getDataController(postUrl)
   }
 
   private fun mockComment(
@@ -315,7 +315,7 @@ internal class CommentDataControllerIntegrationTest {
         text = text,
         score = mockScore.toLong(),
         vote = mockVote,
-        user = mockk(),
+        user = mockk(relaxed = true),
         time = ""
     )
   }

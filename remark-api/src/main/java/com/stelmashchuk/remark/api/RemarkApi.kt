@@ -1,6 +1,7 @@
 package com.stelmashchuk.remark.api
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.stelmashchuk.remark.api.comment.CommentDataControllerProvider
 import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
 import com.stelmashchuk.remark.api.config.ConfigRepository
@@ -67,7 +68,7 @@ public class RemarkApi(
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(commentService, siteId, CommentTimeMapper())
+    CommentDataControllerProvider(commentService, siteId, CommentTimeMapper(), userRepository)
   }
 
   public suspend fun tryLogin(cookies: String): Boolean {

@@ -1,14 +1,9 @@
-package com.stelmashchuk.remark.api
+package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.comment.CommentMapper
-import com.stelmashchuk.remark.api.comment.CommentService
-import com.stelmashchuk.remark.api.comment.CommentStorage
-import com.stelmashchuk.remark.api.comment.CommentTimeMapper
-import com.stelmashchuk.remark.api.comment.HttpConstants
-import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.config.VoteResponse
 import com.stelmashchuk.remark.api.config.VoteType
 import com.stelmashchuk.remark.api.user.User
+import com.stelmashchuk.remark.api.user.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
@@ -18,12 +13,13 @@ public class CommentDataControllerProvider internal constructor(
     private val commentService: CommentService,
     private val siteId: String,
     private val timeMapper: CommentTimeMapper,
+    private val userRepository: UserRepository,
 ) {
 
   private val map = HashMap<String, CommentDataController>()
 
   private val commentMapper: CommentMapper by lazy {
-    CommentMapper(timeMapper)
+    CommentMapper(timeMapper, userRepository)
   }
 
   fun getDataController(postUrl: String): CommentDataController {

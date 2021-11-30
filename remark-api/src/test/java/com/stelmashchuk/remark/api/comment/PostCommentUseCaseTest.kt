@@ -1,7 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.FullComment
 import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.config.Locator
 import com.stelmashchuk.remark.api.config.PostComment
@@ -45,7 +43,7 @@ internal class PostCommentUseCaseTest {
 
     commentStorage.add(FullComment(rootId, "", "text", 0L, mockk(), LocalDateTime.MAX, 0, 0, true))
 
-    val userCase = PostCommentUseCase(commentStorage, remarkService, CommentMapper(mockk(relaxed = true)))
+    val userCase = PostCommentUseCase(commentStorage, remarkService, CommentMapper(mockk(relaxed = true), mockk(relaxed = true)))
     userCase.postComment(CommentRoot.Comment(postUrl, rootId), newText, postUrl, siteId)
 
     commentStorage.waitForComment(newId) should idMatch(newId).and(textMatch(newText)).and(replyCountMatch(0))

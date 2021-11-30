@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 
 @Composable
