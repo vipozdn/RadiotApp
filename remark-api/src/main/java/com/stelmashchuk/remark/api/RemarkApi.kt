@@ -3,8 +3,7 @@ package com.stelmashchuk.remark.api
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
-import com.stelmashchuk.remark.api.network.RemarkInterceptor
-import com.stelmashchuk.remark.api.pojo.Config
+import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.api.user.CredentialCreator
 import com.stelmashchuk.remark.api.user.RemarkCredentials
 import com.stelmashchuk.remark.api.user.UserRepository
@@ -59,15 +58,17 @@ public class RemarkApi(
     ignoreUnknownKeys = true
   }
 
-  private val userRepository: UserRepository by lazy {
+  public val userRepository: UserRepository by lazy {
     UserRepository(systemStorage, CredentialCreator(), userService)
+  }
+
+  public val configRepository: ConfigRepository by lazy {
+    ConfigRepository(commentService)
   }
 
   public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
     CommentDataControllerProvider(commentService, siteId, CommentTimeMapper())
   }
-
-  public suspend fun getConfig(): Config = commentService.getConfig()
 
   public suspend fun tryLogin(cookies: String): Boolean {
     return userRepository.loginUser(cookies).isSuccess

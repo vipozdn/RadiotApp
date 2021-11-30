@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.api
 
 import com.stelmashchuk.remark.api.comment.CommentMapper
-import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.config.Comment
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk

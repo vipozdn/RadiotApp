@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.pojo
+package com.stelmashchuk.remark.api.config
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Config(
     @SerialName("auth_providers")
-    val
-    authProviders: List<String>,
+    val authProviders: List<String>,
+
+    @SerialName("edit_duration")
+    val editDuration: Long,
 )

@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.pojo
+package com.stelmashchuk.remark.api.config
 
 import com.stelmashchuk.remark.api.user.User
 import kotlinx.serialization.SerialName

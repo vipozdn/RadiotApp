@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.CommentDataController
 import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.api.pojo.VoteType
+import com.stelmashchuk.remark.api.config.VoteType
 import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.launch
 

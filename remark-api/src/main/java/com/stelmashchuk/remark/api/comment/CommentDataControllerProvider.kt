@@ -1,14 +1,14 @@
 package com.stelmashchuk.remark.api
 
 import com.stelmashchuk.remark.api.comment.CommentMapper
+import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
-import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.comment.HttpConstants
-import com.stelmashchuk.remark.api.comment.CommentService
+import com.stelmashchuk.remark.api.comment.PostCommentUseCase
+import com.stelmashchuk.remark.api.config.VoteResponse
+import com.stelmashchuk.remark.api.config.VoteType
 import com.stelmashchuk.remark.api.user.User
-import com.stelmashchuk.remark.api.pojo.VoteResponse
-import com.stelmashchuk.remark.api.pojo.VoteType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
@@ -94,6 +94,10 @@ public class CommentDataController internal constructor(
 
           FullCommentInfo(rootComment, comments)
         }
+  }
+
+  suspend fun observeComment(commentId: String): Flow<FullComment> {
+    return commentStorage.observableComment(commentId)
   }
 
   suspend fun vote(

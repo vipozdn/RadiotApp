@@ -2,8 +2,8 @@ package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.CommentRoot
 import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.api.pojo.Locator
-import com.stelmashchuk.remark.api.pojo.PostComment
+import com.stelmashchuk.remark.api.config.Locator
+import com.stelmashchuk.remark.api.config.PostComment
 
 internal class PostCommentUseCase(
     private val commentStorage: CommentStorage,

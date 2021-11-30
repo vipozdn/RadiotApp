@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.FullComment
-import com.stelmashchuk.remark.api.pojo.Comment
+import com.stelmashchuk.remark.api.config.Comment
 
 class CommentMapper(private val commentTimeMapper: CommentTimeMapper) {
 

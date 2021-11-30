@@ -1,12 +1,12 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.pojo.Comment
-import com.stelmashchuk.remark.api.pojo.CommentOneLevelRoot
-import com.stelmashchuk.remark.api.pojo.Config
-import com.stelmashchuk.remark.api.pojo.DeleteCommentRequest
-import com.stelmashchuk.remark.api.pojo.DeletedComment
-import com.stelmashchuk.remark.api.pojo.PostComment
-import com.stelmashchuk.remark.api.pojo.VoteResponse
+import com.stelmashchuk.remark.api.config.Comment
+import com.stelmashchuk.remark.api.config.CommentOneLevelRoot
+import com.stelmashchuk.remark.api.config.Config
+import com.stelmashchuk.remark.api.config.DeleteCommentRequest
+import com.stelmashchuk.remark.api.config.DeletedComment
+import com.stelmashchuk.remark.api.config.PostComment
+import com.stelmashchuk.remark.api.config.VoteResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
