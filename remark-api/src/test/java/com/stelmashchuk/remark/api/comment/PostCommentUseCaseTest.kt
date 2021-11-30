@@ -28,14 +28,14 @@ internal class PostCommentUseCaseTest {
     val newId = "newId"
 
     val remarkService = mockk<CommentService> {
-      coEvery { postComment(PostComment(newText, rootId, Locator(siteId, postUrl))) } answers {
+      coEvery { postComment(PostComment(newText, rootId, Locator(postUrl, siteId))) } coAnswers {
         Comment(
             id = newId,
             parentId = rootId,
             text = newText,
             score = 0L,
-            user = mockk(),
-            time = "",
+            user = mockk(relaxed = true),
+            time = "2021-11-30T13:57:23.308974867-06:00",
             vote = 0,
         )
       }
@@ -43,8 +43,8 @@ internal class PostCommentUseCaseTest {
 
     commentStorage.add(FullComment(rootId, "", "text", 0L, mockk(), LocalDateTime.MAX, 0, 0, true))
 
-    val userCase = PostCommentUseCase(commentStorage, remarkService, CommentMapper(mockk(relaxed = true), mockk(relaxed = true)))
-    userCase.postComment(CommentRoot.Comment(postUrl, rootId), newText, postUrl, siteId)
+    val userCase = PostCommentUseCase(commentStorage, remarkService, CommentMapper(mockk(relaxed = true), mockk(relaxed = true)), postUrl, siteId)
+    userCase.postComment(CommentRoot.Comment(postUrl, rootId), newText)
 
     commentStorage.waitForComment(newId) should idMatch(newId).and(textMatch(newText)).and(replyCountMatch(0))
     commentStorage.waitForComment(rootId) should idMatch(rootId).and(replyCountMatch(1))

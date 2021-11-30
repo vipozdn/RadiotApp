@@ -17,7 +17,6 @@ class SingleCommentMapper(
         time = timeMapper.map(comment.time),
         commentId = comment.id,
         replyCount = comment.replyCount.takeIf { it != 0 },
-        isDeleteAvailable = comment.isCurrentUserAuthor,
     )
   }
 

@@ -5,6 +5,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.ViewModel
@@ -16,13 +17,14 @@ import com.stelmashchuk.remark.feature.comments.CommentUiModel
 
 @Composable
 fun DeleteButton(comment: CommentUiModel, postUrl: String) {
-  val viewModel: DeleteViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+  val viewModel: DeleteViewModel = viewModel(key = comment.commentId, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return DeleteViewModel(commentId = comment.commentId, commentDataController = RemarkComponent.api.commentDataControllerProvider.getDataController(postUrl)) as T
+      return RemarkComponent.deleteViewModel(comment.commentId, postUrl) as T
     }
   })
-  if (comment.isDeleteAvailable) {
+
+  if (viewModel.isDeleteAvailable.collectAsState().value == true) {
     IconButton(onClick = { viewModel.delete() }) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Delete")

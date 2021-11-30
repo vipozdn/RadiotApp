@@ -22,7 +22,7 @@ fun WriteCommentView(commentRoot: CommentRoot) {
   val viewModel: PostCommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return PostCommentViewModel(commentRoot, RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+      return RemarkComponent.postCommentViewModel(commentRoot) as T
     }
   })
 

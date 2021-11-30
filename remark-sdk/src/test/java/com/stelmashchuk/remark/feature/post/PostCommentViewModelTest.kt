@@ -1,7 +1,6 @@
 package com.stelmashchuk.remark.feature.post
 
 import app.cash.turbine.test
-import com.stelmashchuk.remark.api.comment.CommentDataController
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import io.kotlintest.shouldBe
 import io.mockk.mockk
@@ -14,8 +13,7 @@ internal class PostCommentViewModelTest {
 
   @Test
   fun `Verify isIconVisible update correctly`() = runBlocking {
-    val commentDataController: CommentDataController = mockk()
-    val viewModel = PostCommentViewModel(commentRoot, commentDataController)
+    val viewModel = PostCommentViewModel(commentRoot, mockk())
 
     viewModel.isIconVisible
         .test {

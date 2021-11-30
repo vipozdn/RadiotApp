@@ -2,7 +2,7 @@ package com.stelmashchuk.remark.api.config
 
 import com.stelmashchuk.remark.api.comment.CommentService
 
-public class ConfigRepository(private val commentService: CommentService) {
+public class ConfigRepository internal constructor(private val commentService: CommentService) {
 
   private var config: Config? = null
 

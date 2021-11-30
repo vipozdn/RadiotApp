@@ -1,9 +1,13 @@
 package com.stelmashchuk.remark.api
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.stelmashchuk.remark.api.comment.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.comment.CommentDataController
+import com.stelmashchuk.remark.api.comment.CommentMapper
 import com.stelmashchuk.remark.api.comment.CommentService
+import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
+import com.stelmashchuk.remark.api.comment.DeleteCommentUseCase
+import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.api.user.CredentialCreator
 import com.stelmashchuk.remark.api.user.RemarkCredentials
@@ -22,8 +26,45 @@ public interface SystemStorage {
   fun onValueChanges(onChange: () -> Unit)
 }
 
+public class UseCases internal constructor(
+    private val siteId: String,
+    private val userRepository: UserRepository,
+    private val commentService: CommentService,
+    private val commentTimeMapper: CommentTimeMapper,
+) {
+
+  private val storagesMap = HashMap<String, CommentStorage>()
+
+  private fun commentMapper(): CommentMapper {
+    return CommentMapper(commentTimeMapper, userRepository)
+  }
+
+  public fun getDataController(postUrl: String): CommentDataController {
+    val storage = storagesMap.getOrPut(postUrl) {
+      CommentStorage()
+    }
+    return CommentDataController(postUrl, commentService, commentMapper(), storage)
+  }
+
+  public fun getPostCommentUseCase(postUrl: String): PostCommentUseCase {
+    val storage = storagesMap.getOrPut(postUrl) {
+      CommentStorage()
+    }
+    return PostCommentUseCase(storage, commentService, commentMapper(), siteId, postUrl)
+  }
+
+  public fun getDeleteCommentUseCase(postUrl: String): DeleteCommentUseCase {
+    val storage = storagesMap.getOrPut(postUrl) {
+      CommentStorage()
+    }
+
+    return DeleteCommentUseCase(storage, commentService)
+  }
+
+}
+
 public class RemarkApi(
-    siteId: String,
+    private val siteId: String,
     baseUrl: String,
     systemStorage: SystemStorage,
 ) {
@@ -67,15 +108,11 @@ public class RemarkApi(
     ConfigRepository(commentService)
   }
 
-  public val commentDataControllerProvider: CommentDataControllerProvider by lazy {
-    CommentDataControllerProvider(commentService, siteId, CommentTimeMapper(), userRepository)
-  }
-
-  public suspend fun tryLogin(cookies: String): Boolean {
-    return userRepository.loginUser(cookies).isSuccess
-  }
-
   public fun addLoginStateListener(onLoginChange: (RemarkCredentials) -> Unit) {
     return userRepository.addListener(onLoginChange)
+  }
+
+  public val useCases: UseCases by lazy {
+    UseCases(siteId = siteId, userRepository = userRepository, commentService = commentService, commentTimeMapper = CommentTimeMapper())
   }
 }

@@ -3,32 +3,10 @@ package com.stelmashchuk.remark.api.comment
 import com.stelmashchuk.remark.api.config.VoteResponse
 import com.stelmashchuk.remark.api.config.VoteType
 import com.stelmashchuk.remark.api.user.User
-import com.stelmashchuk.remark.api.user.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import java.time.LocalDateTime
-
-public class CommentDataControllerProvider internal constructor(
-    private val commentService: CommentService,
-    private val siteId: String,
-    private val timeMapper: CommentTimeMapper,
-    private val userRepository: UserRepository,
-) {
-
-  private val map = HashMap<String, CommentDataController>()
-
-  private val commentMapper: CommentMapper by lazy {
-    CommentMapper(timeMapper, userRepository)
-  }
-
-  fun getDataController(postUrl: String): CommentDataController {
-    return map.getOrPut(postUrl) {
-      val commentStorage = CommentStorage()
-      CommentDataController(postUrl, siteId, commentService, commentMapper, commentStorage, PostCommentUseCase(commentStorage, commentService, commentMapper))
-    }
-  }
-}
 
 sealed class CommentRoot(open val postUrl: String) {
   data class Post(
@@ -66,11 +44,9 @@ data class FullComment(
 
 public class CommentDataController internal constructor(
     private val postUrl: String,
-    private val siteId: String,
     private val commentService: CommentService,
     private val commentMapper: CommentMapper,
     private val commentStorage: CommentStorage,
-    private val postCommentUseCase: PostCommentUseCase,
 ) {
 
   suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
@@ -92,29 +68,12 @@ public class CommentDataController internal constructor(
         }
   }
 
-  suspend fun observeComment(commentId: String): Flow<FullComment> {
-    return commentStorage.observableComment(commentId)
-  }
-
   suspend fun vote(
       commentId: String,
       vote: VoteType,
   ): RemarkError? {
     val voteResponse = Result.runCatching { commentService.vote(commentId, postUrl, vote.backendCode) }
     return handleResponse(voteResponse, commentId, vote)
-  }
-
-  suspend fun postComment(
-      commentRoot: CommentRoot,
-      text: String,
-  ): RemarkError? {
-    return postCommentUseCase.postComment(commentRoot, text, postUrl, siteId)
-  }
-
-  suspend fun delete(commentId: String): Any? {
-    val deletedComment = commentService.delete(commentId)
-    commentStorage.remove(deletedComment.id)
-    return null
   }
 
   private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: String, vote: VoteType): RemarkError? {

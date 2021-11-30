@@ -42,6 +42,7 @@ import com.stelmashchuk.remark.feature.comments.mappers.ScoreUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
 import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
 import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
+import com.stelmashchuk.remark.feature.delete.DeleteButton
 import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -58,7 +59,6 @@ data class CommentUiModel(
     val time: String,
     val commentId: String,
     val replyCount: Int?,
-    val isDeleteAvailable: Boolean,
 )
 
 data class CommentAuthorUiModel(
@@ -88,7 +88,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId
                   UserUiMapper(),
               ),
           ),
-          RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl),
+          RemarkComponent.api.useCases.getDataController(commentRoot.postUrl),
       ) as T
     }
   })
@@ -178,6 +178,7 @@ private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String) {
         Text(text = comment.time, fontSize = 14.sp)
       }
       MarkdownText(markdown = comment.text)
+      DeleteButton(comment = comment, postUrl = postUrl)
     }
     FullScoreView(comment.score, postUrl)
   }

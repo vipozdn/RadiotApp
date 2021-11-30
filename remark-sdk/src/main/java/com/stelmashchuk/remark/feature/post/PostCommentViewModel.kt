@@ -2,8 +2,8 @@ package com.stelmashchuk.remark.feature.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.api.comment.CommentDataController
 import com.stelmashchuk.remark.api.comment.CommentRoot
+import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class PostCommentViewModel(
     private val commentRoot: CommentRoot,
-    private val commentDataController: CommentDataController,
+    private val postCommentUseCase: PostCommentUseCase,
 ) : ViewModel() {
 
   private val _text = MutableStateFlow("")
@@ -23,7 +23,7 @@ class PostCommentViewModel(
 
   fun postComment() {
     viewModelScope.launch {
-      val error = commentDataController.postComment(commentRoot, text.value)
+      val error = postCommentUseCase.postComment(commentRoot, text.value)
       if (error == null) {
         _text.emit("")
       }

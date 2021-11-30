@@ -1,8 +1,7 @@
 package com.stelmashchuk.remark
 
 import app.cash.turbine.test
-import com.stelmashchuk.remark.api.comment.CommentDataController
-import com.stelmashchuk.remark.api.comment.CommentDataControllerProvider
+import com.stelmashchuk.remark.api.UseCases
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.config.Comment
@@ -21,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-internal class CommentDataControllerIntegrationTest {
+internal class RemarkApiIntegrationTests {
 
   private val siteId = "site-id"
 
@@ -46,7 +45,9 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    val dataController = createCommentDataController(postUrl, service)
+    val useCases = createUseCases(service)
+    val dataController = useCases.getDataController(postUrl)
+    val postUseCases = useCases.getPostCommentUseCase(postUrl)
 
     val commentRoot = CommentRoot.Comment(postUrl, rootCommentId)
 
@@ -57,7 +58,7 @@ internal class CommentDataControllerIntegrationTest {
             this.comments shouldBe emptyList()
           }
 
-          dataController.postComment(commentRoot, newText) shouldBe null
+          postUseCases.postComment(commentRoot, newText) shouldBe null
 
           awaitItem().run {
             this.rootComment should idMatch(rootCommentId).and(replyCountMatch(1))
@@ -86,7 +87,9 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    val dataController = createCommentDataController(postUrl, service)
+    val useCases = createUseCases(service)
+    val deleteCommentUseCases = useCases.getDeleteCommentUseCase(postUrl)
+    val dataController = useCases.getDataController(postUrl)
 
     val root = CommentRoot.Post(postUrl)
 
@@ -98,8 +101,7 @@ internal class CommentDataControllerIntegrationTest {
             comments.any { it.id == "1" } shouldBe true
           }
 
-
-          dataController.delete(commentToDelete) shouldBe null
+          deleteCommentUseCases.delete(commentToDelete) shouldBe null
 
           awaitItem().run {
             comments[0] should idMatch("1")
@@ -127,7 +129,9 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    val dataController = createCommentDataController(postUrl, service)
+    val useCases = createUseCases(service)
+    val dataController = useCases.getDataController(postUrl)
+    val postUseCases = useCases.getPostCommentUseCase(postUrl)
 
     val root = CommentRoot.Post(postUrl)
 
@@ -138,7 +142,7 @@ internal class CommentDataControllerIntegrationTest {
             comments[0] should idMatch(oldComment.id)
           }
 
-          dataController.postComment(root, newText) shouldBe null
+          postUseCases.postComment(root, newText) shouldBe null
 
           awaitItem().run {
             rootComment shouldBe null
@@ -169,7 +173,9 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    val dataController = createCommentDataController(postUrl, service)
+    val useCases = createUseCases(service)
+    val dataController = useCases.getDataController(postUrl)
+    val postUseCases = useCases.getPostCommentUseCase(postUrl)
 
     val root = CommentRoot.Comment(postUrl, rootCommentId)
 
@@ -182,7 +188,7 @@ internal class CommentDataControllerIntegrationTest {
             this.comments[0] should idMatch("1")
           }
 
-          dataController.postComment(root, newText) shouldBe null
+          postUseCases.postComment(root, newText) shouldBe null
 
           awaitItem().run {
             this.rootComment?.id shouldBe rootCommentId
@@ -207,7 +213,7 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    createCommentDataController(postUrl, service)
+    createUseCases(service).getDataController(postUrl)
         .observeComments(CommentRoot.Post(postUrl))
         .test {
           awaitItem().run {
@@ -232,7 +238,7 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    createCommentDataController(postUrl, service)
+    createUseCases(service).getDataController(postUrl)
         .observeComments(CommentRoot.Comment(postUrl, rootCommentId))
         .test {
           awaitItem().run {
@@ -268,7 +274,7 @@ internal class CommentDataControllerIntegrationTest {
       }
     }
 
-    val dataController = createCommentDataController(postUrl, service)
+    val dataController = createUseCases(service).getDataController(postUrl)
 
     dataController.observeComments(CommentRoot.Comment(postUrl, rootCommentId))
         .test {
@@ -302,8 +308,13 @@ internal class CommentDataControllerIntegrationTest {
         }
   }
 
-  private fun createCommentDataController(postUrl: String, service: CommentService): CommentDataController {
-    return CommentDataControllerProvider(service, siteId, mockk(relaxed = true), mockk(relaxed = true)).getDataController(postUrl)
+  private fun createUseCases(service: CommentService): UseCases {
+    return UseCases(
+        siteId,
+        mockk(relaxed = true),
+        service,
+        mockk(relaxed = true)
+    )
   }
 
   private fun mockComment(

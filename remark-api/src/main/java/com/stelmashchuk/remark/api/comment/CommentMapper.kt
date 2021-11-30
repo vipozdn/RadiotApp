@@ -3,7 +3,7 @@ package com.stelmashchuk.remark.api.comment
 import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.user.UserRepository
 
-class CommentMapper(
+internal class CommentMapper(
     private val commentTimeMapper: CommentTimeMapper,
     private val userRepository: UserRepository,
 ) {

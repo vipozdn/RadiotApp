@@ -14,7 +14,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface CommentService {
+internal interface CommentService {
 
   @GET("/api/v1/find")
   suspend fun getCommentsPlain(

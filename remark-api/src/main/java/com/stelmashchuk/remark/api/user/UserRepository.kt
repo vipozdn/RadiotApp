@@ -27,7 +27,7 @@ public class UserRepository internal constructor(
 
   var user: User? = null
     get() {
-      return Json.decodeFromString(systemStorage.getString(KEY_USER))
+      return systemStorage.getString(KEY_USER).takeIf { it.isNotBlank() }?.let { Json.decodeFromString(it) }
     }
     private set(value) {
       systemStorage.putString(KEY_USER, Json.encodeToString(value))

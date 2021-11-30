@@ -25,7 +25,7 @@ fun FullScoreView(score: ScoreUiModel, postUrl: String) {
   val viewModel: ScoreViewModel = viewModel(key = score.commentId, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return ScoreViewModel(score.commentId, RemarkComponent.api.commentDataControllerProvider.getDataController(postUrl)) as T
+      return ScoreViewModel(score.commentId, RemarkComponent.api.useCases.getDataController(postUrl)) as T
     }
   })
 
