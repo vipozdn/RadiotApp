@@ -1,7 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.config.VoteResponse
-import com.stelmashchuk.remark.api.config.VoteType
 import com.stelmashchuk.remark.api.user.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

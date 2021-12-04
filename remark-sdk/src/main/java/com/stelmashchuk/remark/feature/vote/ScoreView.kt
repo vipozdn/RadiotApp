@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.config.VoteType
+import com.stelmashchuk.remark.api.comment.VoteType
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 

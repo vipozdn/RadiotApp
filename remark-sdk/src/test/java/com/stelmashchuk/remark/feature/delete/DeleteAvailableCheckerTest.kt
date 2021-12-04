@@ -21,7 +21,7 @@ internal class DeleteAvailableCheckerTest {
     val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 20))
 
     prepareData(systemTime, 300)
-        .check(mockFullComment(true, commentTime)) shouldBe true
+        .check(mockFullComment(true, commentTime)) shouldBe 290
   }
 
   @Test
@@ -31,7 +31,27 @@ internal class DeleteAvailableCheckerTest {
     val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 11))
 
     prepareData(systemTime, 300)
-        .check(mockFullComment(true, commentTime)) shouldBe true
+        .check(mockFullComment(true, commentTime)) shouldBe 299
+  }
+
+  @Test
+  fun `verify is delete flag set correctly (2_1)`() = runBlocking {
+    val someDate = LocalDate.of(2021, 1, 1)
+    val commentTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 10))
+    val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 10))
+
+    prepareData(systemTime, 300)
+        .check(mockFullComment(true, commentTime)) shouldBe 300
+  }
+
+  @Test
+  fun `verify is delete flag set correctly (zero)`() = runBlocking {
+    val someDate = LocalDate.of(2021, 1, 1)
+    val commentTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 10))
+    val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 2, 10))
+
+    prepareData(systemTime, 60)
+        .check(mockFullComment(true, commentTime)) shouldBe null
   }
 
   @Test
@@ -40,8 +60,8 @@ internal class DeleteAvailableCheckerTest {
     val commentTime = LocalDateTime.of(someDate, LocalTime.of(1, 1, 10))
     val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 2, 10))
 
-    prepareData(systemTime, 60)
-        .check(mockFullComment(true, commentTime)) shouldBe true
+    prepareData(systemTime, 61)
+        .check(mockFullComment(true, commentTime)) shouldBe 1
   }
 
   @Test
@@ -51,16 +71,26 @@ internal class DeleteAvailableCheckerTest {
     val systemTime = LocalDateTime.of(someDate, LocalTime.of(1, 2, 11))
 
     prepareData(systemTime, 60)
-        .check(mockFullComment(true, commentTime)) shouldBe false
+        .check(mockFullComment(true, commentTime)) shouldBe null
   }
 
   @Test
   fun `verify is delete flag set correctly (year yes)`() = runBlocking {
     val commentTime = LocalDateTime.of(LocalDate.of(2021, 12, 31), LocalTime.of(23, 59, 10))
+    val systemTime = LocalDateTime.of(LocalDate.of(2022, 1, 1), LocalTime.of(0, 0, 9))
+
+    prepareData(systemTime, 60)
+        .check(mockFullComment(true, commentTime)) shouldBe 1
+  }
+
+
+  @Test
+  fun `verify is delete flag set correctly (year zero)`() = runBlocking {
+    val commentTime = LocalDateTime.of(LocalDate.of(2021, 12, 31), LocalTime.of(23, 59, 10))
     val systemTime = LocalDateTime.of(LocalDate.of(2022, 1, 1), LocalTime.of(0, 0, 10))
 
     prepareData(systemTime, 60)
-        .check(mockFullComment(true, commentTime)) shouldBe true
+        .check(mockFullComment(true, commentTime)) shouldBe null
   }
 
   @Test
@@ -69,7 +99,7 @@ internal class DeleteAvailableCheckerTest {
     val systemTime = LocalDateTime.of(LocalDate.of(2022, 1, 1), LocalTime.of(0, 1, 10))
 
     prepareData(systemTime, 60)
-        .check(mockFullComment(true, commentTime)) shouldBe false
+        .check(mockFullComment(true, commentTime)) shouldBe null
   }
 
   private fun prepareData(
@@ -87,7 +117,7 @@ internal class DeleteAvailableCheckerTest {
 
   @Test
   fun `Verify correct for isCurrentAuthor false`() = runBlocking {
-    DeleteAvailableChecker(mockk(relaxed = true), mockk(relaxed = true)).check(mockFullComment(false, mockk())) shouldBe false
+    DeleteAvailableChecker(mockk(relaxed = true), mockk(relaxed = true)).check(mockFullComment(false, mockk())) shouldBe null
   }
 
 }

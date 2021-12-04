@@ -24,11 +24,12 @@ fun DeleteButton(comment: CommentUiModel, postUrl: String) {
     }
   })
 
-  if (viewModel.isDeleteAvailable.collectAsState().value == true) {
+  val timer: Long? = viewModel.deleteAvailable().collectAsState(null).value
+  if (timer != null) {
     IconButton(onClick = { viewModel.delete() }) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Delete")
-        Text(text = "200")
+        Text(text = timer.toString())
       }
     }
   }

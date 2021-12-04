@@ -1,8 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.config.Locator
-import com.stelmashchuk.remark.api.config.PostComment
-
 public class PostCommentUseCase internal constructor(
     private val commentStorage: CommentStorage,
     private val commentService: CommentService,

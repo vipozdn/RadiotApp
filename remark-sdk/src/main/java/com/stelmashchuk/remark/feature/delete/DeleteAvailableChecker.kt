@@ -10,14 +10,21 @@ internal class DeleteAvailableChecker(
     private val osDateTime: OsDateTime,
 ) {
 
-  suspend fun check(comment: FullComment?): Boolean {
+  suspend fun check(comment: FullComment?): Long? {
     if (comment == null || !comment.isCurrentUserAuthor) {
-      return false
+      return null
     }
 
     val commentTime = comment.time
     val osTime = osDateTime.nowUTC()
 
-    return (Duration.between(commentTime, osTime).seconds <= configRepository.getConfig().editDuration)
+    val configDelta = configRepository.getConfig().editDuration
+
+    val delta = Duration.between(commentTime, osTime).seconds
+    return if (delta < configDelta) {
+      configDelta - delta
+    } else {
+      null
+    }
   }
 }

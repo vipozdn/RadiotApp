@@ -1,8 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.config.Comment
-import com.stelmashchuk.remark.api.config.Locator
-import com.stelmashchuk.remark.api.config.PostComment
 import com.stelmashchuk.remark.idMatch
 import com.stelmashchuk.remark.replyCountMatch
 import com.stelmashchuk.remark.textMatch

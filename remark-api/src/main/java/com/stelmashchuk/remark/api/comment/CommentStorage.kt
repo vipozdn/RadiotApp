@@ -50,13 +50,6 @@ internal class CommentStorage {
         .first { it != null }!!
   }
 
-  fun observableComment(commentId: String): Flow<FullComment?> {
-    return flow
-        .map { comments ->
-          comments.find { it.id == commentId }
-        }
-  }
-
   fun observableComment(commentRoot: CommentRoot): Flow<List<FullComment>> {
     return flow
         .map { comments ->

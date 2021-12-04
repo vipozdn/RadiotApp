@@ -1,6 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.config.Comment
 import com.stelmashchuk.remark.api.user.UserRepository
 
 internal class CommentMapper(

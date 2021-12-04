@@ -1,12 +1,6 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.config.Comment
-import com.stelmashchuk.remark.api.config.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.config.Config
-import com.stelmashchuk.remark.api.config.DeletedComment
-import com.stelmashchuk.remark.api.config.EditCommentRequest
-import com.stelmashchuk.remark.api.config.PostComment
-import com.stelmashchuk.remark.api.config.VoteResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
