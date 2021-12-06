@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 
 @Composable
@@ -22,7 +22,7 @@ fun WriteCommentView(commentRoot: CommentRoot) {
   val viewModel: PostCommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return PostCommentViewModel(commentRoot, RemarkComponent.api.commentDataControllerProvider.getDataController(commentRoot.postUrl)) as T
+      return RemarkComponent.postCommentViewModel(commentRoot) as T
     }
   })
 

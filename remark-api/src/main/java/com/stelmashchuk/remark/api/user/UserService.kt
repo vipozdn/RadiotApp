@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.api.user
 
-import com.stelmashchuk.remark.api.network.KEY_COOKIE
-import com.stelmashchuk.remark.api.network.KEY_HEADER_XSRF
+import com.stelmashchuk.remark.api.KEY_COOKIE
+import com.stelmashchuk.remark.api.KEY_HEADER_XSRF
 import retrofit2.http.GET
 import retrofit2.http.Header
 

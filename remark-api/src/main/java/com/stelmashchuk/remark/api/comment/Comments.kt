@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.pojo
+package com.stelmashchuk.remark.api.comment
 
 import com.stelmashchuk.remark.api.user.User
 import kotlinx.serialization.SerialName
@@ -53,9 +53,9 @@ data class Locator(
 )
 
 @Serializable
-data class DeleteCommentRequest(
+data class EditCommentRequest(
     @SerialName("delete")
-    val delete: Boolean = true,
+    val delete: Boolean,
 )
 
 @Serializable

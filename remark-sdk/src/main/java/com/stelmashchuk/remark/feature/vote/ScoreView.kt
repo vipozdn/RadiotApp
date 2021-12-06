@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.R
-import com.stelmashchuk.remark.api.pojo.VoteType
+import com.stelmashchuk.remark.api.comment.VoteType
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
@@ -25,7 +25,7 @@ fun FullScoreView(score: ScoreUiModel, postUrl: String) {
   val viewModel: ScoreViewModel = viewModel(key = score.commentId, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return ScoreViewModel(score.commentId, RemarkComponent.api.commentDataControllerProvider.getDataController(postUrl)) as T
+      return ScoreViewModel(score.commentId, RemarkComponent.api.useCases.getDataController(postUrl)) as T
     }
   })
 

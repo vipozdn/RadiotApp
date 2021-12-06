@@ -17,7 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.stelmashchuk.remark.ResourcesRepository
-import com.stelmashchuk.remark.api.CommentRoot
+import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
 import com.stelmashchuk.remark.feature.comments.OneLevelCommentView

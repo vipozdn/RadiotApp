@@ -7,7 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stelmashchuk.remark.api.RemarkApi
+import com.stelmashchuk.remark.api.config.ConfigRepository
+import com.stelmashchuk.remark.api.user.UserRepository
 import kotlinx.coroutines.launch
 
 data class LoginUiItem(
@@ -16,7 +17,8 @@ data class LoginUiItem(
 )
 
 class AuthViewModel(
-    private val remarkApi: RemarkApi,
+    private val configRepository: ConfigRepository,
+    private val userRepository: UserRepository,
     private val loginItemUiMapper: AuthProvidersUiMapper,
 ) : ViewModel() {
 
@@ -31,7 +33,7 @@ class AuthViewModel(
 
   init {
     viewModelScope.launch {
-      val config = remarkApi.getConfig()
+      val config = configRepository.getConfig()
 
       @Suppress("MagicString")
       val loginUiItems = loginItemUiMapper.map(config.authProviders.filter { it != "google" })
@@ -46,7 +48,7 @@ class AuthViewModel(
 
   fun cookiesChange(cookies: String) {
     viewModelScope.launch {
-      if (remarkApi.tryLogin(cookies)) {
+      if (userRepository.loginUser(cookies).isSuccess) {
         clearCookies()
         _loginFinishEvent.postValue(true)
       }

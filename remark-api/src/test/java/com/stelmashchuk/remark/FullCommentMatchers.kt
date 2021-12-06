@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark
 
-import com.stelmashchuk.remark.api.FullComment
+import com.stelmashchuk.remark.api.comment.FullComment
 import io.kotlintest.Matcher
 import io.kotlintest.MatcherResult
 

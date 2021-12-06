@@ -1,4 +1,4 @@
-package com.stelmashchuk.remark.api.network
+package com.stelmashchuk.remark.api
 
 import com.stelmashchuk.remark.api.comment.HttpConstants
 import com.stelmashchuk.remark.api.user.UserRepository

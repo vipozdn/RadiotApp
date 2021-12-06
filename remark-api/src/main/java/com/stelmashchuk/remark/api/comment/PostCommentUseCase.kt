@@ -1,31 +1,24 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.RemarkError
-import com.stelmashchuk.remark.api.pojo.Locator
-import com.stelmashchuk.remark.api.pojo.PostComment
-
-internal class PostCommentUseCase(
+public class PostCommentUseCase internal constructor(
     private val commentStorage: CommentStorage,
     private val commentService: CommentService,
     private val commentMapper: CommentMapper,
+    private val siteId: String,
+    private val postUrl: String,
 ) {
 
   suspend fun postComment(
       commentRoot: CommentRoot,
       text: String,
-      postUrl: String,
-      siteId: String,
   ): RemarkError? {
-    val commentResult = Result.runCatching {
+    val result = Result.runCatching {
       commentService.postComment(PostComment(
           text = text,
           parentId = if (commentRoot is CommentRoot.Comment) commentRoot.commentId else null,
           locator = Locator(siteId, postUrl),
       ))
-    }
-
-    commentResult.getOrNull()?.let { comment ->
+    }.onSuccess { comment ->
       commentStorage.transaction {
         add(commentMapper.map(comment))
 
@@ -37,6 +30,6 @@ internal class PostCommentUseCase(
       }
     }
 
-    return null
+    return if (result.isSuccess) null else throw NotImplementedError()
   }
 }

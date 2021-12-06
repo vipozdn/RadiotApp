@@ -1,7 +1,5 @@
 package com.stelmashchuk.remark.api.comment
 
-import com.stelmashchuk.remark.api.CommentRoot
-import com.stelmashchuk.remark.api.FullComment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first

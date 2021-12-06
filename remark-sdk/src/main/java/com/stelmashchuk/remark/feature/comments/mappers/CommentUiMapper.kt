@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark.feature.comments.mappers
 
-import com.stelmashchuk.remark.api.FullCommentInfo
+import com.stelmashchuk.remark.api.comment.FullCommentInfo
 import com.stelmashchuk.remark.feature.comments.FullCommentsUiModel
 
 class CommentUiMapper(

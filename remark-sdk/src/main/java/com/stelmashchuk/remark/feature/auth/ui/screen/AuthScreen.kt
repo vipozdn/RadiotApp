@@ -25,7 +25,11 @@ fun AuthScreen(onLoginFinish: () -> Unit) {
   val viewModel: AuthViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return AuthViewModel(remarkApi = RemarkComponent.api, loginItemUiMapper = RemarkComponent.authProvidersUiMapper()) as T
+      return AuthViewModel(
+          configRepository = RemarkComponent.api.configRepository,
+          loginItemUiMapper = RemarkComponent.authProvidersUiMapper(),
+          userRepository = RemarkComponent.api.userRepository,
+      ) as T
     }
   })
   val loginItems by viewModel.loginUiItem.observeAsState()

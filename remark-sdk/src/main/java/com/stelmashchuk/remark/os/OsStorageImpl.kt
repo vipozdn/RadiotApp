@@ -1,9 +1,9 @@
-package com.stelmashchuk.remark.storage
+package com.stelmashchuk.remark.os
 
 import android.content.SharedPreferences
 import com.stelmashchuk.remark.api.SystemStorage
 
-internal class SystemStorageImpl(private val sharedPreferences: SharedPreferences) : SystemStorage {
+internal class OsStorageImpl(private val sharedPreferences: SharedPreferences) : SystemStorage {
   override fun putString(key: String, value: String) {
     putStrings(mapOf(key to value))
   }
