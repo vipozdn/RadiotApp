@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.comment.DeleteCommentUseCase
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 internal class DeleteViewModel(
@@ -14,15 +16,19 @@ internal class DeleteViewModel(
     private val deleteAvailableChecker: DeleteAvailableChecker,
 ) : ViewModel() {
 
-  fun deleteAvailable(): Flow<Long?> = flow {
-    val comment = deleteCommentUseCase.getCommentById(commentId)
-    val delta = deleteAvailableChecker.check(comment)
-    if (delta != null) {
-      (delta downTo 0).forEach {
-        emit(it)
-        delay(1000)
+  val deleteAvailable: StateFlow<Long?> by lazy {
+    flow {
+      val comment = deleteCommentUseCase.getCommentById(commentId)
+      val delta = deleteAvailableChecker.check(comment)
+      if (delta != null) {
+        (delta downTo 1).forEach {
+          emit(it)
+          delay(1000)
+        }
+        emit(null)
       }
     }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
   }
 
   fun delete() {

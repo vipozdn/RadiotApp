@@ -6,6 +6,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.ViewModel
@@ -24,7 +25,8 @@ fun DeleteButton(comment: CommentUiModel, postUrl: String) {
     }
   })
 
-  val timer: Long? = viewModel.deleteAvailable().collectAsState(null).value
+  val timer: Long? by viewModel.deleteAvailable.collectAsState(initial = null)
+
   if (timer != null) {
     IconButton(onClick = { viewModel.delete() }) {
       Row(verticalAlignment = Alignment.CenterVertically) {
