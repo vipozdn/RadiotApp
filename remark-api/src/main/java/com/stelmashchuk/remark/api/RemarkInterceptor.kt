@@ -6,9 +6,9 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
-const val KEY_COOKIE = "Cookie"
-const val JWT_PREFIX = "JWT="
+internal const val KEY_HEADER_XSRF = "X-XSRF-TOKEN"
+internal const val KEY_COOKIE = "Cookie"
+internal const val JWT_PREFIX = "JWT="
 
 internal class RemarkInterceptor(
     private val userRepository: UserRepository,

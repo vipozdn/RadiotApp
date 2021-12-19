@@ -5,13 +5,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CommentOneLevelRoot(
+internal data class CommentOneLevelRoot(
     @SerialName("comments")
     val comments: List<Comment>,
 )
 
 @Serializable
-data class Comment(
+internal data class Comment(
     @SerialName("id")
     val id: String,
     @SerialName("pid")
@@ -29,7 +29,7 @@ data class Comment(
 )
 
 @Serializable
-data class PostComment(
+internal data class PostComment(
     @SerialName("text")
     val text: String,
     @SerialName("pid")
@@ -39,13 +39,13 @@ data class PostComment(
 )
 
 @Serializable
-data class DeletedComment(
+internal data class DeletedComment(
     @SerialName("id")
     val id: String,
 )
 
 @Serializable
-data class Locator(
+internal data class Locator(
     @SerialName("site")
     val site: String,
     @SerialName("url")
@@ -53,20 +53,20 @@ data class Locator(
 )
 
 @Serializable
-data class EditCommentRequest(
+internal data class EditCommentRequest(
     @SerialName("delete")
     val delete: Boolean,
 )
 
 @Serializable
-data class VoteResponse(
+internal data class VoteResponse(
     @SerialName("id")
     val id: String,
     @SerialName("score")
     val score: Long,
 )
 
-enum class VoteType(val backendCode: Int) {
+public enum class VoteType(public val backendCode: Int) {
   UP(1),
   DOWN(-1)
 }

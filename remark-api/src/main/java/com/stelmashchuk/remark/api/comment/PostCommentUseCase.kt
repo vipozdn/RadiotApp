@@ -8,7 +8,7 @@ public class PostCommentUseCase internal constructor(
     private val postUrl: String,
 ) {
 
-  suspend fun postComment(
+  public suspend fun postComment(
       commentRoot: CommentRoot,
       text: String,
   ): RemarkError? {
