@@ -3,7 +3,7 @@ package com.stelmashchuk.remark.feature.comments.mappers
 import com.stelmashchuk.remark.api.comment.FullCommentInfo
 import com.stelmashchuk.remark.feature.comments.FullCommentsUiModel
 
-class CommentUiMapper(
+internal class CommentUiMapper(
     private val singleCommentMapper: SingleCommentMapper,
 ) {
 

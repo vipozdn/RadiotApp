@@ -17,7 +17,7 @@ import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.CommentUiModel
 
 @Composable
-fun DeleteButton(comment: CommentUiModel, postUrl: String) {
+internal fun DeleteButton(comment: CommentUiModel, postUrl: String) {
   val viewModel: DeleteViewModel = viewModel(key = comment.commentId, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")

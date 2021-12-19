@@ -21,7 +21,7 @@ import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 @Composable
-fun FullScoreView(score: ScoreUiModel, postUrl: String) {
+internal fun FullScoreView(score: ScoreUiModel, postUrl: String) {
   val viewModel: ScoreViewModel = viewModel(key = score.commentId, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -36,12 +36,12 @@ fun FullScoreView(score: ScoreUiModel, postUrl: String) {
 
 @Preview
 @Composable
-fun ScoreViewPreview() {
+internal fun ScoreViewPreview() {
   ScoreView(score = ScoreUiModel("10", Color.Green.toArgb(), R.drawable.up, R.drawable.down, ""))
 }
 
 @Composable
-fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
+internal fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
     VoteButton(onClick = { onVote(VoteType.UP) }) {
       Image(painterResource(score.upRes), "up")
@@ -54,7 +54,7 @@ fun ScoreView(score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
 }
 
 @Composable
-fun VoteButton(
+internal fun VoteButton(
     onClick: () -> Unit,
     content: @Composable (RowScope.() -> Unit),
 ) {

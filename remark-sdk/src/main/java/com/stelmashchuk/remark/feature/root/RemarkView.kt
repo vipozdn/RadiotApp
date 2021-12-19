@@ -16,14 +16,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.stelmashchuk.remark.ResourcesRepository
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
 import com.stelmashchuk.remark.feature.comments.OneLevelCommentView
 
 @Composable
-fun RemarkView(postUrl: String) {
+public fun RemarkView(postUrl: String) {
   val navController = rememberNavController()
   val actions = remember(navController) {
     Actions(navController)
@@ -32,7 +31,7 @@ fun RemarkView(postUrl: String) {
   val viewModel: RemarkViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return RemarkViewModel(ResourcesRepository(RemarkComponent.context)) as T
+      return RemarkViewModel(RemarkComponent.resourcesRepository) as T
     }
   })
 

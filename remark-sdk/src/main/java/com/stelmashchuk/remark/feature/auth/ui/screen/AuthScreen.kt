@@ -21,7 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stelmashchuk.remark.di.RemarkComponent
 
 @Composable
-fun AuthScreen(onLoginFinish: () -> Unit) {
+internal fun AuthScreen(onLoginFinish: () -> Unit) {
   val viewModel: AuthViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -52,7 +52,7 @@ fun AuthScreen(onLoginFinish: () -> Unit) {
 }
 
 @Composable
-fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
+internal fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
   LazyRow {
     items(loginItems) { loginItem ->
       Button(onClick = { viewModel.selectLoginItem(loginItem) }) {
@@ -64,7 +64,7 @@ fun AuthList(loginItems: List<LoginUiItem>, viewModel: AuthViewModel) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebPageScreen(urlToRender: String, onCookieChange: (String) -> Unit) {
+internal fun WebPageScreen(urlToRender: String, onCookieChange: (String) -> Unit) {
   AndroidView(factory = { context ->
     val webView = WebView(context)
     CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)

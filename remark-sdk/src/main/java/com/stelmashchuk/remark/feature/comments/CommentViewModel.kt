@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-sealed class CommentUiState {
+internal sealed class CommentUiState {
   object Empty : CommentUiState()
   object Loading : CommentUiState()
   data class Data(val data: FullCommentsUiModel) : CommentUiState()
 }
 
-class CommentViewModel(
+internal class CommentViewModel(
     private val commentRoot: CommentRoot,
     private val commentUiMapper: CommentUiMapper,
     private val commentDataController: CommentDataController,

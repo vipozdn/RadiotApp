@@ -3,6 +3,7 @@ package com.stelmashchuk.remark.di
 import android.annotation.SuppressLint
 import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
+import com.stelmashchuk.remark.ResourcesRepository
 import com.stelmashchuk.remark.api.RemarkApi
 import com.stelmashchuk.remark.api.RemarkSettings
 import com.stelmashchuk.remark.api.comment.CommentRoot
@@ -17,9 +18,9 @@ import okhttp3.OkHttpClient
 @SuppressLint("StaticFieldLeak")
 public object RemarkComponent {
 
-  lateinit var context: Context
-  lateinit var remarkSettings: RemarkSettings
-  lateinit var okHttpClient: OkHttpClient
+  private lateinit var context: Context
+  private lateinit var remarkSettings: RemarkSettings
+  private lateinit var okHttpClient: OkHttpClient
 
   internal val api: RemarkApi by lazy { RemarkApi(remarkSettings, OsStorageImpl(BinaryPreferencesBuilder(context).build()), okHttpClient) }
 
@@ -27,6 +28,10 @@ public object RemarkComponent {
     this.context = context
     this.remarkSettings = remarkSettings
     this.okHttpClient = okHttpClient
+  }
+
+  internal val resourcesRepository : ResourcesRepository by lazy {
+    ResourcesRepository(context)
   }
 
   internal fun authProvidersUiMapper(): AuthProvidersUiMapper {

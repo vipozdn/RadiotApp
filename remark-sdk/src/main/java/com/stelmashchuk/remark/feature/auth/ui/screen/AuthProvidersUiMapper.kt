@@ -4,7 +4,7 @@ import com.stelmashchuk.remark.api.RemarkSettings
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class AuthProvidersUiMapper(
+internal class AuthProvidersUiMapper(
     private val remarkSettings: RemarkSettings,
 ) {
 
