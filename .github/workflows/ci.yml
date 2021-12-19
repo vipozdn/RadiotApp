@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Clean
+        run: ./gradlew radiot-app:clean remark-sdk:clean remark-api:clean
       - name: Run unit tests
         run: ./gradlew radiot-app:test remark-sdk:test remark-api:test
   detekt:

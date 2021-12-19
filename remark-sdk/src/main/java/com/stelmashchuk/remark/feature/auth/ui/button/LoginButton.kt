@@ -44,7 +44,7 @@ class LoginButtonViewModel(
   init {
     remarkApi.addLoginStateListener {
       this.viewModelScope.launch {
-        _needLoginButton.emit(!it.isValid())
+        _needLoginButton.emit(!it)
       }
     }
   }

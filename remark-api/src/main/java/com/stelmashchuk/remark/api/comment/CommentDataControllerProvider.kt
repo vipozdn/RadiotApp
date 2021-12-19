@@ -6,29 +6,29 @@ import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import java.time.LocalDateTime
 
-sealed class CommentRoot(open val postUrl: String) {
-  data class Post(
+public sealed class CommentRoot(public open val postUrl: String) {
+  public data class Post(
       override val postUrl: String,
   ) : CommentRoot(postUrl)
 
-  data class Comment(
+  public data class Comment(
       override val postUrl: String,
       val commentId: String,
   ) : CommentRoot(postUrl)
 }
 
-data class FullCommentInfo(
+public data class FullCommentInfo(
     val rootComment: FullComment?,
     val comments: List<FullComment>,
 )
 
-sealed class RemarkError {
-  object NotAuthUser : RemarkError()
-  object SomethingWentWrong : RemarkError()
-  object TooManyRequests : RemarkError()
+public sealed class RemarkError {
+  public object NotAuthUser : RemarkError()
+  public object SomethingWentWrong : RemarkError()
+  public object TooManyRequests : RemarkError()
 }
 
-data class FullComment(
+public data class FullComment(
     val id: String,
     val parentId: String,
     val text: String = "",
@@ -47,7 +47,7 @@ public class CommentDataController internal constructor(
     private val commentStorage: CommentStorage,
 ) {
 
-  suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
+  public suspend fun observeComments(commentRoot: CommentRoot): Flow<FullCommentInfo> {
     if (!commentStorage.hasData()) {
       commentStorage.setup(commentMapper.mapCommentsFullComments(commentService.getCommentsPlain(postUrl).comments))
     }
@@ -66,7 +66,7 @@ public class CommentDataController internal constructor(
         }
   }
 
-  suspend fun vote(
+  public suspend fun vote(
       commentId: String,
       vote: VoteType,
   ): RemarkError? {

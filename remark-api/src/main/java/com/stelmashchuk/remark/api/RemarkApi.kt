@@ -10,7 +10,6 @@ import com.stelmashchuk.remark.api.comment.DeleteCommentUseCase
 import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.api.user.CredentialCreator
-import com.stelmashchuk.remark.api.user.RemarkCredentials
 import com.stelmashchuk.remark.api.user.UserRepository
 import com.stelmashchuk.remark.api.user.UserService
 import kotlinx.serialization.json.Json
@@ -20,10 +19,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
 public interface SystemStorage {
-  fun putString(key: String, value: String)
-  fun putStrings(values: Map<String, String>)
-  fun getString(key: String): String
-  fun onValueChanges(onChange: () -> Unit)
+  public fun putString(key: String, value: String)
+  public fun putStrings(values: Map<String, String>)
+  public fun getString(key: String): String
+  public fun onValueChanges(onChange: () -> Unit)
 }
 
 public class UseCases internal constructor(
@@ -108,8 +107,10 @@ public class RemarkApi(
     ConfigRepository(commentService)
   }
 
-  public fun addLoginStateListener(onLoginChange: (RemarkCredentials) -> Unit) {
-    return userRepository.addListener(onLoginChange)
+  public fun addLoginStateListener(onLoginChange: (Boolean) -> Unit) {
+    return userRepository.addListener {
+      onLoginChange(it.isValid())
+    }
   }
 
   public val useCases: UseCases by lazy {
