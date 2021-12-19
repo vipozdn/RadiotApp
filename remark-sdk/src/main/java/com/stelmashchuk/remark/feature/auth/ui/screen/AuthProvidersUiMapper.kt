@@ -1,6 +1,6 @@
 package com.stelmashchuk.remark.feature.auth.ui.screen
 
-import com.stelmashchuk.remark.RemarkSettings
+import com.stelmashchuk.remark.api.RemarkSettings
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 

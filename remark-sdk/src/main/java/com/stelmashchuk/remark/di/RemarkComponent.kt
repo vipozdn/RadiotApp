@@ -3,8 +3,8 @@ package com.stelmashchuk.remark.di
 import android.annotation.SuppressLint
 import android.content.Context
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
-import com.stelmashchuk.remark.RemarkSettings
 import com.stelmashchuk.remark.api.RemarkApi
+import com.stelmashchuk.remark.api.RemarkSettings
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthProvidersUiMapper
 import com.stelmashchuk.remark.feature.delete.DeleteAvailableChecker
@@ -12,18 +12,21 @@ import com.stelmashchuk.remark.feature.delete.DeleteViewModel
 import com.stelmashchuk.remark.feature.post.PostCommentViewModel
 import com.stelmashchuk.remark.os.OsDateTime
 import com.stelmashchuk.remark.os.OsStorageImpl
+import okhttp3.OkHttpClient
 
 @SuppressLint("StaticFieldLeak")
 public object RemarkComponent {
 
   lateinit var context: Context
   lateinit var remarkSettings: RemarkSettings
+  lateinit var okHttpClient: OkHttpClient
 
-  internal val api: RemarkApi by lazy { RemarkApi(remarkSettings.siteId, remarkSettings.baseUrl, OsStorageImpl(BinaryPreferencesBuilder(context).build())) }
+  internal val api: RemarkApi by lazy { RemarkApi(remarkSettings, OsStorageImpl(BinaryPreferencesBuilder(context).build()), okHttpClient) }
 
-  public fun init(context: Context, remarkSettings: RemarkSettings) {
+  public fun init(context: Context, remarkSettings: RemarkSettings, okHttpClient: OkHttpClient = OkHttpClient()) {
     this.context = context
     this.remarkSettings = remarkSettings
+    this.okHttpClient = okHttpClient
   }
 
   internal fun authProvidersUiMapper(): AuthProvidersUiMapper {
