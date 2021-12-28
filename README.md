@@ -15,12 +15,19 @@ Author create the project for learn new technologies.
 
 ### Technologies:
 
+- Language: Kotlin 1.6.0
+- Serialization: [KotlinX serialization](https://github.com/Kotlin/kotlinx.serialization)
 - UI: Jetpack compose
-- UI pattern: MVVM.
+- UI pattern: MVVM
 - Threading: coroutine
 - Linter: [detekt](https://github.com/detekt/detekt)
 - Testing: Junit and [mockk](https://github.com/mockk/mockk)
 - CI: Github actions (run test, static code analysis, release app to google play)
+
+### Project guideline
+
+Don't use standard structures/classes for domain entities. For instance, don't use String for
+comment id, use value class CommentId with one field `raw`.
 
 ### Project structure
 
