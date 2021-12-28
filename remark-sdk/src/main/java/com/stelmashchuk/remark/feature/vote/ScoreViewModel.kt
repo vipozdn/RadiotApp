@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.comment.CommentDataController
+import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.RemarkError
 import com.stelmashchuk.remark.api.comment.VoteType
 import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.launch
 
 internal class ScoreViewModel(
-    private val commentId: String,
+    private val commentId: CommentId,
     private val commentDataController: CommentDataController,
 ) : ViewModel() {
 

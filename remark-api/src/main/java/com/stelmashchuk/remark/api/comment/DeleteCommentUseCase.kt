@@ -6,13 +6,8 @@ public class DeleteCommentUseCase internal constructor(
     private val postUrl: String,
 ) {
 
-  //TODO: remove this method
-  public suspend fun getCommentById(commentId: String): FullComment {
-    return commentStorage.waitForComment(commentId)
-  }
-
-  public suspend fun delete(commentId: String): Result<Unit> {
-    return Result.runCatching { commentService.edit(commentId, EditCommentRequest(true), postUrl) }
+  public suspend fun delete(commentId: CommentId): Result<Unit> {
+    return Result.runCatching { commentService.edit(commentId.raw, EditCommentRequest(true), postUrl) }
         .onSuccess { deleteComment ->
           commentStorage.remove(deleteComment.id)
         }

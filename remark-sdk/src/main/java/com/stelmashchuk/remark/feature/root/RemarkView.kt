@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthScreen
@@ -53,7 +54,8 @@ public fun RemarkView(postUrl: String) {
                   type = NavType.StringType
                 })
         ) {
-          OneLevelCommentView(CommentRoot.Comment(postUrl, it.arguments?.getString(Destinations.ROOT_COMMENT_URL)!!), actions.openReply, actions.openLogin)
+          val commentId = CommentId(it.arguments?.getString(Destinations.ROOT_COMMENT_URL)!!)
+          OneLevelCommentView(CommentRoot.Comment(postUrl, commentId), actions.openReply, actions.openLogin)
         }
 
         composable(Destinations.LOGIN_INTO_REMARK) {
@@ -76,8 +78,8 @@ private object Destinations {
 }
 
 private class Actions(navController: NavHostController) {
-  val openReply: (commentId: String) -> Unit = { commentId ->
-    navController.navigate("${Destinations.NOT_ROOT_TEMPLATE}/${commentId}")
+  val openReply: (commentId: CommentId) -> Unit = { commentId ->
+    navController.navigate("${Destinations.NOT_ROOT_TEMPLATE}/${commentId.raw}")
   }
 
   val openLogin: () -> Unit = {

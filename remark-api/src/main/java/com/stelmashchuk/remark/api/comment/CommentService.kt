@@ -22,7 +22,7 @@ internal interface CommentService {
 
   @PUT("/api/v1/vote/{commentId}")
   suspend fun vote(
-      @Path("commentId") commentId: String,
+      @Path("commentId") commentId: CommentId,
       @Query("url") postUrl: String,
       @Query("vote") vote: Int,
   ): VoteResponse

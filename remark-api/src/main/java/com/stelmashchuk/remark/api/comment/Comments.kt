@@ -10,12 +10,27 @@ internal data class CommentOneLevelRoot(
     val comments: List<Comment>,
 )
 
+@JvmInline
+@Serializable
+public value class CommentId(private val value: String) {
+  public fun isValid(): Boolean {
+    return value.isNotBlank()
+  }
+
+  public val raw: String
+    get() = value
+
+  override fun toString(): String {
+    return raw
+  }
+}
+
 @Serializable
 internal data class Comment(
     @SerialName("id")
-    val id: String,
+    val id: CommentId,
     @SerialName("pid")
-    val parentId: String,
+    val parentId: CommentId,
     @SerialName("orig")
     val text: String = "",
     @SerialName("score")
@@ -33,7 +48,7 @@ internal data class PostComment(
     @SerialName("text")
     val text: String,
     @SerialName("pid")
-    val parentId: String? = null,
+    val parentId: CommentId? = null,
     @SerialName("locator")
     val locator: Locator,
 )
@@ -41,7 +56,7 @@ internal data class PostComment(
 @Serializable
 internal data class DeletedComment(
     @SerialName("id")
-    val id: String,
+    val id: CommentId,
 )
 
 @Serializable
@@ -61,7 +76,7 @@ internal data class EditCommentRequest(
 @Serializable
 internal data class VoteResponse(
     @SerialName("id")
-    val id: String,
+    val id: CommentId,
     @SerialName("score")
     val score: Long,
 )

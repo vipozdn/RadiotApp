@@ -21,6 +21,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,6 +35,7 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.accompanist.coil.rememberCoilPainter
 import com.stelmashchuk.remark.R
+import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.auth.ui.button.LoginButton
@@ -42,7 +44,7 @@ import com.stelmashchuk.remark.feature.comments.mappers.ScoreUiMapper
 import com.stelmashchuk.remark.feature.comments.mappers.SingleCommentMapper
 import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
 import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
-import com.stelmashchuk.remark.feature.delete.DeleteButton
+import com.stelmashchuk.remark.feature.delete.ModifyCommentBlock
 import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -57,7 +59,7 @@ internal data class CommentUiModel(
     val text: String,
     val score: ScoreUiModel,
     val time: String,
-    val commentId: String,
+    val commentId: CommentId,
     val replyCount: Int?,
 )
 
@@ -71,11 +73,11 @@ internal data class ScoreUiModel(
     val color: Int,
     @DrawableRes val upRes: Int,
     @DrawableRes val downRes: Int,
-    val commentId: String,
+    val commentId: CommentId,
 )
 
 @Composable
-internal fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit, openLogin: () -> Unit) {
+internal fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: CommentId) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -88,18 +90,18 @@ internal fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (
                   UserUiMapper(),
               ),
           ),
-          RemarkComponent.api.useCases.getDataController(commentRoot.postUrl),
+          RemarkComponent.api.remarkApiFactory.getDataController(commentRoot.postUrl),
       ) as T
     }
   })
 
-  val state = viewModel.comments.collectAsState()
+  val state by viewModel.comments.collectAsState()
 
   Column {
     LoginButton(openLogin)
-    when (val data = state.value) {
+    when (state) {
       is CommentUiState.Data -> {
-        CommentsContent(data.data, commentRoot, openCommentDetails)
+        CommentsContent((state as CommentUiState.Data).data, commentRoot, openCommentDetails)
       }
       CommentUiState.Empty -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -116,7 +118,7 @@ internal fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (
 }
 
 @Composable
-internal fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit) {
+internal fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: CommentId) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
       OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
@@ -135,7 +137,7 @@ internal fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRo
 }
 
 @Composable
-internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: String) -> Unit) {
+internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: CommentId) -> Unit) {
   @Suppress("MagicNumber")
   Row(modifier = modifier
       .clickable { openCommentDetails(comment.commentId) }
@@ -178,7 +180,7 @@ private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String) {
         Text(text = comment.time, fontSize = 14.sp)
       }
       MarkdownText(markdown = comment.text)
-      DeleteButton(comment = comment, postUrl = postUrl)
+      ModifyCommentBlock(comment = comment, postUrl = postUrl)
     }
     FullScoreView(comment.score, postUrl)
   }

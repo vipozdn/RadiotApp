@@ -5,44 +5,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-internal class CommentStorage {
+public class CommentStorage {
 
-  private val data = HashMap<String, FullComment>()
+  private val data = HashMap<CommentId, FullComment>()
 
   private val flow = MutableStateFlow(emptyList<FullComment>())
 
   private val editor = Editor(data)
 
-  suspend fun transaction(block: suspend Editor.() -> Unit) {
-    editor.block()
-    reEmit()
-  }
-
-  fun hasData(): Boolean {
+  public fun hasData(): Boolean {
     return data.isNotEmpty()
   }
 
-  suspend fun setup(comments: List<FullComment>) {
-    data.putAll(comments.map { Pair(it.id, it) })
-    reEmit()
-  }
-
-  suspend fun add(comment: FullComment) {
-    editor.add(comment)
-    reEmit()
-  }
-
-  suspend fun remove(id: String) {
-    editor.remove(id)
-    reEmit()
-  }
-
-  suspend fun replace(commentId: String, comment: FullComment) {
-    editor.replace(commentId, comment)
-    reEmit()
-  }
-
-  suspend fun waitForComment(id: String): FullComment {
+  public suspend fun waitForComment(id: CommentId): FullComment {
     return flow
         .map { comments ->
           comments.find { it.id == id }
@@ -50,11 +25,36 @@ internal class CommentStorage {
         .first { it != null }!!
   }
 
-  fun observableComment(commentRoot: CommentRoot): Flow<List<FullComment>> {
+  public fun observableComment(commentRoot: CommentRoot): Flow<List<FullComment>> {
     return flow
         .map { comments ->
           comments.filter { checkIsCommented(commentRoot, it) }
         }
+  }
+
+  internal suspend fun transaction(block: suspend Editor.() -> Unit) {
+    editor.block()
+    reEmit()
+  }
+
+  internal suspend fun setup(comments: List<FullComment>) {
+    data.putAll(comments.map { Pair(it.id, it) })
+    reEmit()
+  }
+
+  internal suspend fun add(comment: FullComment) {
+    editor.add(comment)
+    reEmit()
+  }
+
+  internal suspend fun remove(id: CommentId) {
+    editor.remove(id)
+    reEmit()
+  }
+
+  internal suspend fun replace(commentId: CommentId, comment: FullComment) {
+    editor.replace(commentId, comment)
+    reEmit()
   }
 
   private suspend fun reEmit() {
@@ -64,22 +64,21 @@ internal class CommentStorage {
   private fun checkIsCommented(commentRoot: CommentRoot, comment: FullComment): Boolean {
     return when (commentRoot) {
       is CommentRoot.Comment -> commentRoot.commentId == comment.parentId
-      is CommentRoot.Post -> comment.parentId.isBlank()
-      else -> throw IllegalArgumentException()
+      is CommentRoot.Post -> !comment.parentId.isValid()
     }
   }
 
-  inner class Editor(private val data: HashMap<String, FullComment>) {
+  internal inner class Editor(private val data: HashMap<CommentId, FullComment>) {
 
     fun add(comment: FullComment) {
       data[comment.id] = comment
     }
 
-    fun remove(id: String) {
+    fun remove(id: CommentId) {
       data.remove(id)
     }
 
-    fun replace(commentId: String, comment: FullComment) {
+    fun replace(commentId: CommentId, comment: FullComment) {
       data[commentId] = comment
     }
   }

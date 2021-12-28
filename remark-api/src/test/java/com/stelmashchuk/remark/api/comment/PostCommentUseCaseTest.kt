@@ -16,13 +16,13 @@ internal class PostCommentUseCaseTest {
   fun `Verify post 2th level comment`() = runBlocking {
     val commentStorage = CommentStorage()
 
-    val rootId = "rootId"
+    val rootId = CommentId("rootId")
     val postUrl = "postUrl"
 
     val newText = "newText"
 
     val siteId = "siteId"
-    val newId = "newId"
+    val newId = CommentId("newId")
 
     val remarkService = mockk<CommentService> {
       coEvery { postComment(PostComment(newText, rootId, Locator(postUrl, siteId))) } coAnswers {
@@ -38,7 +38,7 @@ internal class PostCommentUseCaseTest {
       }
     }
 
-    commentStorage.add(FullComment(rootId, "", "text", 0L, mockk(), LocalDateTime.MAX, 0, 0, true))
+    commentStorage.add(FullComment(rootId, CommentId(""), "text", 0L, mockk(), LocalDateTime.MAX, 0, 0, true))
 
     val userCase = PostCommentUseCase(commentStorage, remarkService, CommentMapper(mockk(relaxed = true), mockk(relaxed = true)), postUrl, siteId)
     userCase.postComment(CommentRoot.Comment(postUrl, rootId), newText)

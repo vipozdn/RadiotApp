@@ -13,13 +13,13 @@ internal class CommentStorageTest {
   fun `Verify several write operation`() = runBlocking {
     val storage = CommentStorage()
 
-    val stableCommentId = "stableCommentId"
+    val stableCommentId = CommentId("stableCommentId")
     val stableComment = createFullComment(stableCommentId)
 
-    val commentToChangeId = "commentToChangeId"
+    val commentToChangeId = CommentId("commentToChangeId")
     val commentToChange = createFullComment(commentToChangeId, 0)
 
-    val newCommentId = "newCommentId"
+    val newCommentId = CommentId("newCommentId")
     val newComment = createFullComment(newCommentId)
 
     storage.add(stableComment)
@@ -47,10 +47,10 @@ internal class CommentStorageTest {
         }
   }
 
-  private fun createFullComment(id: String, replyCount: Int = 0): FullComment {
+  private fun createFullComment(id: CommentId, replyCount: Int = 0): FullComment {
     return FullComment(
         id = id,
-        parentId = "",
+        parentId = CommentId(""),
         text = "",
         score = 0L,
         user = mockk(),

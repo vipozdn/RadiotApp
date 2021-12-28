@@ -17,8 +17,8 @@ import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.CommentUiModel
 
 @Composable
-internal fun DeleteButton(comment: CommentUiModel, postUrl: String) {
-  val viewModel: DeleteViewModel = viewModel(key = comment.commentId, factory = object : ViewModelProvider.Factory {
+internal fun ModifyCommentBlock(comment: CommentUiModel, postUrl: String) {
+  val viewModel: ModifyCommentViewModel = viewModel(key = comment.commentId.raw, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
       return RemarkComponent.deleteViewModel(comment.commentId, postUrl) as T
@@ -28,11 +28,16 @@ internal fun DeleteButton(comment: CommentUiModel, postUrl: String) {
   val timer: Long? by viewModel.deleteAvailable.collectAsState(initial = null)
 
   if (timer != null) {
-    IconButton(onClick = { viewModel.delete() }) {
-      Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      IconButton(onClick = { viewModel.delete() }) {
         Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Delete")
-        Text(text = timer.toString())
       }
+
+      /*IconButton(onClick = { viewModel.startEditFlow() }) {
+        Icon(painter = painterResource(id = R.drawable.ic_edit), contentDescription = "Edit")
+      }*/
+
+      Text(text = timer.toString())
     }
   }
 }

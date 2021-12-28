@@ -15,7 +15,6 @@ internal class CredentialCreator {
                 CookiesItem(key, value)
             }
 
-        print(items)
         val jwt = items.find { it.key == "JWT" }?.value
         val xsrf = items.find { it.key == "XSRF-TOKEN" }?.value
 
