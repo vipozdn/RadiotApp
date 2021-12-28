@@ -4,10 +4,9 @@ import com.stelmashchuk.remark.api.comment.Comment
 import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentMapper
 import com.stelmashchuk.remark.api.user.User
+import com.stelmashchuk.remark.api.user.UserId
 import com.stelmashchuk.tooling.getUserRepository
-import com.stelmashchuk.tooling.mockkUser
 import io.kotlintest.shouldBe
-import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 
@@ -44,11 +43,8 @@ internal class CommentMapperTest {
     result.find { it.id == CommentId("2") }?.isCurrentUserAuthor shouldBe true
   }
 
-  private fun mockComment(id: CommentId, parentId: CommentId = CommentId(""), userId: String? = null): Comment {
-    val user = mockk<User>(relaxed = true)
-    if (userId != null) {
-      every { user.id } answers { userId }
-    }
+  private fun mockComment(id: CommentId, parentId: CommentId = CommentId(""), userId: String = ""): Comment {
+    val user = mockkUser(userId)
     return Comment(
         id = id,
         parentId = parentId,
@@ -57,6 +53,14 @@ internal class CommentMapperTest {
         user = user,
         time = "2021-11-30T13:57:23.308974867-06:00",
         vote = 0,
+    )
+  }
+
+  private fun mockkUser(mockUserId: String = ""): User {
+    return User(
+        id = UserId(mockUserId),
+        name = "",
+        avatar = ""
     )
   }
 }
