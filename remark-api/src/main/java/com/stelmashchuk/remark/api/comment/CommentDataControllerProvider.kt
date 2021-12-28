@@ -13,7 +13,7 @@ public sealed class CommentRoot(public open val postUrl: String) {
 
   public data class Comment(
       override val postUrl: String,
-      val commentId: String,
+      val commentId: CommentId,
   ) : CommentRoot(postUrl)
 }
 
@@ -29,8 +29,8 @@ public sealed class RemarkError {
 }
 
 public data class FullComment(
-    val id: String,
-    val parentId: String,
+    val id: CommentId,
+    val parentId: CommentId,
     val text: String = "",
     val score: Long,
     val user: User,
@@ -67,14 +67,14 @@ public class CommentDataController internal constructor(
   }
 
   public suspend fun vote(
-      commentId: String,
+      commentId: CommentId,
       vote: VoteType,
   ): RemarkError? {
     val voteResponse = Result.runCatching { commentService.vote(commentId, postUrl, vote.backendCode) }
     return handleResponse(voteResponse, commentId, vote)
   }
 
-  private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: String, vote: VoteType): RemarkError? {
+  private suspend fun handleResponse(voteResponse: Result<VoteResponse>, commentId: CommentId, vote: VoteType): RemarkError? {
     return if (voteResponse.isSuccess) {
       handleSuccessVote(commentId, voteResponse, vote)
     } else {
@@ -94,7 +94,7 @@ public class CommentDataController internal constructor(
     return RemarkError.SomethingWentWrong
   }
 
-  private suspend fun handleSuccessVote(commentId: String, voteResponse: Result<VoteResponse>, vote: VoteType): Nothing? {
+  private suspend fun handleSuccessVote(commentId: CommentId, voteResponse: Result<VoteResponse>, vote: VoteType): Nothing? {
     val comment = commentStorage.waitForComment(commentId)
         .copy(score = voteResponse.getOrNull()?.score!!, vote = vote.backendCode)
 

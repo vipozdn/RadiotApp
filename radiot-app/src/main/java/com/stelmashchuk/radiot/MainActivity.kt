@@ -14,6 +14,6 @@ class MainActivity : AppCompatActivity() {
     setContent {
       App()
     }
-    RemarkComponent.init(applicationContext, com.stelmashchuk.remark.api.RemarkSettings("radiot", "https://remark42.radio-t.com/"))
+    RemarkComponent.init(applicationContext, RemarkSettings("radiot", "https://remark42.radio-t.com/"))
   }
 }

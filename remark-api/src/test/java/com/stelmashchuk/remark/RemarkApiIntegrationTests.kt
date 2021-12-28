@@ -1,11 +1,12 @@
 package com.stelmashchuk.remark
 
 import app.cash.turbine.test
-import com.stelmashchuk.remark.api.UseCases
+import com.stelmashchuk.remark.api.RemarkApiFactory
+import com.stelmashchuk.remark.api.comment.Comment
+import com.stelmashchuk.remark.api.comment.CommentId
+import com.stelmashchuk.remark.api.comment.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.api.comment.CommentService
-import com.stelmashchuk.remark.api.comment.Comment
-import com.stelmashchuk.remark.api.comment.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.comment.DeletedComment
 import com.stelmashchuk.remark.api.comment.EditCommentRequest
 import com.stelmashchuk.remark.api.comment.Locator
@@ -28,9 +29,9 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify return just root without reply and root with reply`() = runBlocking {
     val postUrl = "postUrl"
-    val rootCommentId = "rootCommentId"
-    val rootComment = mockComment(rootCommentId, "")
-    val newCommentId = "newCommentId"
+    val rootCommentId = CommentId("rootCommentId")
+    val rootComment = mockComment(rootCommentId, CommentId(""))
+    val newCommentId = CommentId("newCommentId")
     val newText = "newText"
     val newComment = mockComment(newCommentId, rootCommentId, text = newText)
 
@@ -72,9 +73,9 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify delete 1th level comment`() = runBlocking {
     val postUrl = "postUrl"
-    val commentToDelete = "commentToDelete"
-    val comment1 = mockComment(commentToDelete, "")
-    val comment2 = mockComment("1", "")
+    val commentToDelete = CommentId("commentToDelete")
+    val comment1 = mockComment(commentToDelete, CommentId(""))
+    val comment2 = mockComment(CommentId("1"), CommentId(""))
 
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
@@ -83,7 +84,7 @@ internal class RemarkApiIntegrationTests {
         )
       }
 
-      coEvery { edit(commentToDelete, EditCommentRequest(true), postUrl) } coAnswers {
+      coEvery { edit(commentToDelete.raw, EditCommentRequest(true), postUrl) } coAnswers {
         DeletedComment(id = commentToDelete)
       }
     }
@@ -99,7 +100,7 @@ internal class RemarkApiIntegrationTests {
           awaitItem().run {
             rootComment shouldBe null
             comments.any { it.id == commentToDelete } shouldBe true
-            comments.any { it.id == "1" } shouldBe true
+            comments.any { it.id == CommentId("1") } shouldBe true
           }
 
           deleteCommentUseCases.delete(commentToDelete) shouldBe Result.success(Unit)
@@ -114,9 +115,9 @@ internal class RemarkApiIntegrationTests {
   fun `Verify add 1th level comments`() = runBlocking {
     val postUrl = "postUrl"
 
-    val oldComment = mockComment("1", "")
+    val oldComment = mockComment(CommentId("1"), CommentId(""))
     val newText = "newText"
-    val newComment = mockComment("2", "", text = newText)
+    val newComment = mockComment(CommentId("2"), CommentId(""), text = newText)
 
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
@@ -155,12 +156,12 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify add 2th level comments`() = runBlocking {
     val postUrl = "postUrl"
-    val rootCommentId = "rootCommentId"
-    val rootComment = mockComment(rootCommentId, "")
-    val comment1 = mockComment("1", rootCommentId)
+    val rootCommentId = CommentId("rootCommentId")
+    val rootComment = mockComment(rootCommentId, CommentId(""))
+    val comment1 = mockComment(CommentId("1"), rootCommentId)
 
     val newText = "newText"
-    val newComment = mockComment("2", rootCommentId, text = newText)
+    val newComment = mockComment(CommentId("2"), rootCommentId, text = newText)
 
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
@@ -204,12 +205,12 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify get 1th level comments`() = runBlocking {
     val postUrl = "postUrl"
-    val postComment1 = mockComment("1", "")
-    val postComment2 = mockComment("2", "")
+    val postComment1 = mockComment(CommentId("1"), CommentId(""))
+    val postComment2 = mockComment(CommentId("2"), CommentId(""))
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
-            listOf(postComment1, mockComment("3", "2"), postComment2)
+            listOf(postComment1, mockComment(CommentId("3"), CommentId("2")), postComment2)
         )
       }
     }
@@ -227,10 +228,10 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify get 2th level comments`() = runBlocking {
     val postUrl = "postUrl"
-    val rootCommentId = "aa-aa"
-    val rootComment = mockComment(rootCommentId, "")
-    val comment1 = mockComment("1", rootCommentId)
-    val comment2 = mockComment("2", rootCommentId)
+    val rootCommentId = CommentId("aa-aa")
+    val rootComment = mockComment(rootCommentId, CommentId(""))
+    val comment1 = mockComment(CommentId("1"), rootCommentId)
+    val comment2 = mockComment(CommentId("2"), rootCommentId)
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
@@ -256,11 +257,11 @@ internal class RemarkApiIntegrationTests {
   @Test
   fun `Verify vote apply for 2th level comment`(): Unit = runBlocking {
     val postUrl = "postUrl"
-    val rootCommentId = "aa-aa"
-    val voteCommentId = "1"
-    val rootComment = mockComment(rootCommentId, "")
+    val rootCommentId = CommentId("aa-aa")
+    val voteCommentId = CommentId("1")
+    val rootComment = mockComment(rootCommentId, CommentId(""))
     val comment1 = mockComment(voteCommentId, rootCommentId, 1, 0)
-    val comment2 = mockComment("2", rootCommentId)
+    val comment2 = mockComment(CommentId("2"), rootCommentId)
     val service = mockk<CommentService> {
       coEvery { getCommentsPlain(postUrl) } coAnswers {
         CommentOneLevelRoot(
@@ -309,8 +310,8 @@ internal class RemarkApiIntegrationTests {
         }
   }
 
-  private fun createUseCases(service: CommentService): UseCases {
-    return UseCases(
+  private fun createUseCases(service: CommentService): RemarkApiFactory {
+    return RemarkApiFactory(
         siteId,
         mockk(relaxed = true),
         service,
@@ -319,7 +320,7 @@ internal class RemarkApiIntegrationTests {
   }
 
   private fun mockComment(
-      mockId: String, mockParentId: String, mockScore: Int = 0, mockVote: Int = 0, text: String = "",
+      mockId: CommentId, mockParentId: CommentId, mockScore: Int = 0, mockVote: Int = 0, text: String = "",
   ): Comment {
     return Comment(
         id = mockId,

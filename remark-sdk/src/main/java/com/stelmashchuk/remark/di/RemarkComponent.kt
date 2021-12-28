@@ -6,10 +6,11 @@ import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.stelmashchuk.remark.ResourcesRepository
 import com.stelmashchuk.remark.api.RemarkApi
 import com.stelmashchuk.remark.api.RemarkSettings
+import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthProvidersUiMapper
 import com.stelmashchuk.remark.feature.delete.DeleteAvailableChecker
-import com.stelmashchuk.remark.feature.delete.DeleteViewModel
+import com.stelmashchuk.remark.feature.delete.ModifyCommentViewModel
 import com.stelmashchuk.remark.feature.post.PostCommentViewModel
 import com.stelmashchuk.remark.os.OsDateTime
 import com.stelmashchuk.remark.os.OsStorageImpl
@@ -30,7 +31,7 @@ public object RemarkComponent {
     this.okHttpClient = okHttpClient
   }
 
-  internal val resourcesRepository : ResourcesRepository by lazy {
+  internal val resourcesRepository: ResourcesRepository by lazy {
     ResourcesRepository(context)
   }
 
@@ -40,18 +41,19 @@ public object RemarkComponent {
     )
   }
 
-  internal fun deleteViewModel(commentId: String, postUrl: String): DeleteViewModel {
-    return DeleteViewModel(
+  internal fun deleteViewModel(commentId: CommentId, postUrl: String): ModifyCommentViewModel {
+    return ModifyCommentViewModel(
         commentId = commentId,
-        deleteCommentUseCase = api.useCases.getDeleteCommentUseCase(postUrl),
+        deleteCommentUseCase = api.remarkApiFactory.getDeleteCommentUseCase(postUrl),
         deleteAvailableChecker = DeleteAvailableChecker(
             configRepository = api.configRepository,
             osDateTime = OsDateTime(),
         ),
+        commentStorage = api.remarkApiFactory.getStorage(postUrl)
     )
   }
 
   internal fun postCommentViewModel(commentRoot: CommentRoot): PostCommentViewModel {
-    return PostCommentViewModel(commentRoot, api.useCases.getPostCommentUseCase(commentRoot.postUrl))
+    return PostCommentViewModel(commentRoot, api.remarkApiFactory.getPostCommentUseCase(commentRoot.postUrl))
   }
 }

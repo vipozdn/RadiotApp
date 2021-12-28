@@ -10,9 +10,3 @@ internal fun getUserRepository(mockUser: User?): UserRepository {
     every { user } answers { mockUser }
   }
 }
-
-internal fun mockkUser(mockUserId: String): User {
-  return mockk {
-    every { id } answers { mockUserId }
-  }
-}

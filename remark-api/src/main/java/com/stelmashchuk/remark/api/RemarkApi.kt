@@ -16,6 +16,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.util.concurrent.ConcurrentHashMap
 
 public interface SystemStorage {
   public fun putString(key: String, value: String)
@@ -24,39 +25,38 @@ public interface SystemStorage {
   public fun onValueChanges(onChange: () -> Unit)
 }
 
-public class UseCases internal constructor(
+public class RemarkApiFactory internal constructor(
     private val siteId: String,
     private val userRepository: UserRepository,
     private val commentService: CommentService,
     private val commentTimeMapper: CommentTimeMapper,
 ) {
 
-  private val storagesMap = HashMap<String, CommentStorage>()
+  private val storagesMap = ConcurrentHashMap<String, CommentStorage>()
 
   private fun commentMapper(): CommentMapper {
     return CommentMapper(commentTimeMapper, userRepository)
   }
 
   public fun getDataController(postUrl: String): CommentDataController {
-    val storage = storagesMap.getOrPut(postUrl) {
-      CommentStorage()
-    }
+    val storage = getStorage(postUrl)
     return CommentDataController(postUrl, commentService, commentMapper(), storage)
   }
 
   public fun getPostCommentUseCase(postUrl: String): PostCommentUseCase {
-    val storage = storagesMap.getOrPut(postUrl) {
-      CommentStorage()
-    }
+    val storage = getStorage(postUrl)
     return PostCommentUseCase(storage, commentService, commentMapper(), siteId, postUrl)
   }
 
   public fun getDeleteCommentUseCase(postUrl: String): DeleteCommentUseCase {
-    val storage = storagesMap.getOrPut(postUrl) {
+    val storage = getStorage(postUrl)
+    return DeleteCommentUseCase(storage, commentService, postUrl)
+  }
+
+  public fun getStorage(postUrl: String): CommentStorage {
+    return storagesMap.getOrPut(postUrl) {
       CommentStorage()
     }
-
-    return DeleteCommentUseCase(storage, commentService, postUrl)
   }
 }
 
@@ -66,7 +66,7 @@ public class RemarkApi(
     private val okHttpClient: OkHttpClient = OkHttpClient(),
 ) {
 
-  private val json: Json = Json {
+  internal val json: Json = Json {
     ignoreUnknownKeys = true
   }
 
@@ -108,7 +108,7 @@ public class RemarkApi(
     }
   }
 
-  public val useCases: UseCases by lazy {
-    UseCases(siteId = remarkSettings.siteId, userRepository = userRepository, commentService = commentService, commentTimeMapper = CommentTimeMapper())
+  public val remarkApiFactory: RemarkApiFactory by lazy {
+    RemarkApiFactory(siteId = remarkSettings.siteId, userRepository = userRepository, commentService = commentService, commentTimeMapper = CommentTimeMapper())
   }
 }

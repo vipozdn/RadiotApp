@@ -9,35 +9,26 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.comment.VoteType
 import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 @Composable
 internal fun FullScoreView(score: ScoreUiModel, postUrl: String) {
-  val viewModel: ScoreViewModel = viewModel(key = score.commentId, factory = object : ViewModelProvider.Factory {
+  val viewModel: ScoreViewModel = viewModel(key = score.commentId.raw, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return ScoreViewModel(score.commentId, RemarkComponent.api.useCases.getDataController(postUrl)) as T
+      return ScoreViewModel(score.commentId, RemarkComponent.api.remarkApiFactory.getDataController(postUrl)) as T
     }
   })
 
   ScoreView(score = score) { voteType ->
     viewModel.vote(voteType)
   }
-}
-
-@Preview
-@Composable
-internal fun ScoreViewPreview() {
-  ScoreView(score = ScoreUiModel("10", Color.Green.toArgb(), R.drawable.up, R.drawable.down, ""))
 }
 
 @Composable

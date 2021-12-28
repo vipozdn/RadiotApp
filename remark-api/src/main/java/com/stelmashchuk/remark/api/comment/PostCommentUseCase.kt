@@ -23,7 +23,7 @@ public class PostCommentUseCase internal constructor(
         add(commentMapper.map(comment))
 
         val parentId = comment.parentId
-        if (parentId.isNotBlank()) {
+        if (parentId.isValid()) {
           val parent = commentStorage.waitForComment(parentId)
           replace(parentId, parent.copy(replyCount = parent.replyCount.inc()))
         }
