@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class PostCommentViewModel(
+internal class PostCommentViewModel(
     private val commentRoot: CommentRoot,
     private val postCommentUseCase: PostCommentUseCase,
 ) : ViewModel() {

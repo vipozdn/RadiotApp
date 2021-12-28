@@ -9,7 +9,7 @@ import com.stelmashchuk.remark.api.comment.VoteType
 import com.stelmashchuk.remark.feature.root.SnackBarBus
 import kotlinx.coroutines.launch
 
-class ScoreViewModel(
+internal class ScoreViewModel(
     private val commentId: String,
     private val commentDataController: CommentDataController,
 ) : ViewModel() {

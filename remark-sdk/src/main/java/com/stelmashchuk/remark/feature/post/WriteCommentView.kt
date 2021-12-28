@@ -18,7 +18,7 @@ import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.di.RemarkComponent
 
 @Composable
-fun WriteCommentView(commentRoot: CommentRoot) {
+internal fun WriteCommentView(commentRoot: CommentRoot) {
   val viewModel: PostCommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")

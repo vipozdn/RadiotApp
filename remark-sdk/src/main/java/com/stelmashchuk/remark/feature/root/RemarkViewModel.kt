@@ -7,7 +7,7 @@ import com.stelmashchuk.remark.ResourcesRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class RemarkViewModel(private val resourcesRepository: ResourcesRepository) : ViewModel() {
+internal class RemarkViewModel(private val resourcesRepository: ResourcesRepository) : ViewModel() {
 
   val snackBar: SnackbarHostState = SnackbarHostState()
 

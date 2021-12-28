@@ -15,7 +15,6 @@ import com.stelmashchuk.remark.api.user.UserService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
 public interface SystemStorage {
@@ -59,44 +58,40 @@ public class UseCases internal constructor(
 
     return DeleteCommentUseCase(storage, commentService, postUrl)
   }
-
 }
 
 public class RemarkApi(
-    private val siteId: String,
-    baseUrl: String,
-    systemStorage: SystemStorage,
+    private val remarkSettings: RemarkSettings,
+    private val systemStorage: SystemStorage,
+    private val okHttpClient: OkHttpClient = OkHttpClient(),
 ) {
+
+  private val json: Json = Json {
+    ignoreUnknownKeys = true
+  }
+
+  private val converterFactory = json.asConverterFactory("application/json".toMediaType())
 
   private val commentService: CommentService by lazy {
     Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(remarkSettings.baseUrl)
         .client(
-            OkHttpClient.Builder()
-                .addInterceptor(RemarkInterceptor(userRepository, siteId))
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            okHttpClient.newBuilder()
+                .addInterceptor(RemarkInterceptor(userRepository, remarkSettings.siteId))
                 .build()
         )
-        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(converterFactory)
         .build()
         .create(CommentService::class.java)
   }
 
   private val userService: UserService by lazy {
     Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .client(
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .build()
-        )
-        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .baseUrl(remarkSettings.baseUrl)
+        .client(okHttpClient)
+        .addConverterFactory(converterFactory)
         .build()
         .create(UserService::class.java)
-  }
-
-  private val json: Json = Json {
-    ignoreUnknownKeys = true
   }
 
   public val userRepository: UserRepository by lazy {
@@ -114,6 +109,6 @@ public class RemarkApi(
   }
 
   public val useCases: UseCases by lazy {
-    UseCases(siteId = siteId, userRepository = userRepository, commentService = commentService, commentTimeMapper = CommentTimeMapper())
+    UseCases(siteId = remarkSettings.siteId, userRepository = userRepository, commentService = commentService, commentTimeMapper = CommentTimeMapper())
   }
 }

@@ -6,7 +6,7 @@ import com.stelmashchuk.remark.R
 import com.stelmashchuk.remark.api.comment.FullComment
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
-class ScoreUiMapper {
+internal class ScoreUiMapper {
 
   fun map(comment: FullComment): ScoreUiModel {
     return ScoreUiModel(

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.stelmashchuk.radiot.presentation.App
-import com.stelmashchuk.remark.RemarkSettings
+import com.stelmashchuk.remark.api.RemarkSettings
 import com.stelmashchuk.remark.di.RemarkComponent
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +14,6 @@ class MainActivity : AppCompatActivity() {
     setContent {
       App()
     }
-    RemarkComponent.init(applicationContext, RemarkSettings("radiot", "https://remark42.radio-t.com/"))
+    RemarkComponent.init(applicationContext, com.stelmashchuk.remark.api.RemarkSettings("radiot", "https://remark42.radio-t.com/"))
   }
 }

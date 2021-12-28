@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginButton(openLogin: () -> Unit) {
+internal fun LoginButton(openLogin: () -> Unit) {
   val viewModel: LoginButtonViewModel = viewModel(factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -34,7 +34,7 @@ fun LoginButton(openLogin: () -> Unit) {
   }
 }
 
-class LoginButtonViewModel(
+internal class LoginButtonViewModel(
     remarkApi: RemarkApi,
 ) : ViewModel() {
 

@@ -11,12 +11,12 @@ import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.api.user.UserRepository
 import kotlinx.coroutines.launch
 
-data class LoginUiItem(
+internal data class LoginUiItem(
     val name: String,
     val url: String,
 )
 
-class AuthViewModel(
+internal class AuthViewModel(
     private val configRepository: ConfigRepository,
     private val userRepository: UserRepository,
     private val loginItemUiMapper: AuthProvidersUiMapper,

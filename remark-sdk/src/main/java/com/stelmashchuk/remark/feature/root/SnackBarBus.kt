@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-object SnackBarBus {
+internal object SnackBarBus {
 
   sealed class SnackBarData {
     data class ById(@StringRes val msgId: Int) : SnackBarData()

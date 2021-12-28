@@ -47,12 +47,12 @@ import com.stelmashchuk.remark.feature.post.WriteCommentView
 import com.stelmashchuk.remark.feature.vote.FullScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
-data class FullCommentsUiModel(
+internal data class FullCommentsUiModel(
     val root: CommentUiModel?,
     val comments: List<CommentUiModel>,
 )
 
-data class CommentUiModel(
+internal data class CommentUiModel(
     val author: CommentAuthorUiModel,
     val text: String,
     val score: ScoreUiModel,
@@ -61,12 +61,12 @@ data class CommentUiModel(
     val replyCount: Int?,
 )
 
-data class CommentAuthorUiModel(
+internal data class CommentAuthorUiModel(
     val name: String,
     val avatar: String,
 )
 
-data class ScoreUiModel(
+internal data class ScoreUiModel(
     val score: String,
     val color: Int,
     @DrawableRes val upRes: Int,
@@ -75,7 +75,7 @@ data class ScoreUiModel(
 )
 
 @Composable
-fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit, openLogin: () -> Unit) {
+internal fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit, openLogin: () -> Unit) {
   val viewModel: CommentViewModel = viewModel(key = commentRoot.toString(), factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -116,7 +116,7 @@ fun OneLevelCommentView(commentRoot: CommentRoot, openCommentDetails: (commentId
 }
 
 @Composable
-fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit) {
+internal fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: CommentRoot, openCommentDetails: (commentId: String) -> Unit) {
   Column {
     fullCommentsUiModel.root?.let {
       OneCommentViewWithImage(modifier = Modifier, comment = it, postUrl = commentRoot.postUrl, openCommentDetails = openCommentDetails)
@@ -135,7 +135,7 @@ fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRoot: Comme
 }
 
 @Composable
-fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: String) -> Unit) {
+internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: String) -> Unit) {
   @Suppress("MagicNumber")
   Row(modifier = modifier
       .clickable { openCommentDetails(comment.commentId) }
