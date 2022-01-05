@@ -12,7 +12,7 @@ data class Podcast(
     @SerialName("show_num")
     val number: Long,
     @SerialName("time_labels")
-    val timeLabels: List<TimeLabels>,
+    val timeLabels: List<TimeLabels>? = null,
 )
 
 @Serializable
