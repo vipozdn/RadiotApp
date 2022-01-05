@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -146,15 +147,19 @@ internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: Com
           .fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceEvenly,
   ) {
-    ImageBlock(comment)
-    CenterBlock(comment, postUrl)
-    FullScoreView(modifier = Modifier.requiredWidth(64.dp), comment.score, postUrl)
+    ImageBlock(modifier = Modifier.requiredWidth(IntrinsicSize.Min), comment)
+    CenterBlock(comment = comment, postUrl = postUrl)
+    FullScoreView(modifier = Modifier
+        .requiredWidth(IntrinsicSize.Min)
+        .padding(horizontal = 8.dp), comment.score, postUrl)
+    Spacer(modifier = Modifier.requiredWidth(4.dp))
   }
 }
 
 @Composable
-private fun ImageBlock(comment: CommentUiModel) {
+private fun ImageBlock(modifier: Modifier, comment: CommentUiModel) {
   Column(
+      modifier = modifier,
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
@@ -178,8 +183,8 @@ private fun ImageBlock(comment: CommentUiModel) {
 }
 
 @Composable
-private fun CenterBlock(comment: CommentUiModel, postUrl: String) {
-  Column {
+private fun CenterBlock(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String) {
+  Column(modifier = modifier) {
     Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
       Text(text = comment.author.name, fontSize = 14.sp)
       Spacer(modifier = Modifier.width(4.dp))
