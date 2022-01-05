@@ -6,12 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -139,49 +141,56 @@ internal fun CommentsContent(fullCommentsUiModel: FullCommentsUiModel, commentRo
 @Composable
 internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String, openCommentDetails: (commentId: CommentId) -> Unit) {
   @Suppress("MagicNumber")
-  Row(modifier = modifier
-      .clickable { openCommentDetails(comment.commentId) }
-      .fillMaxWidth()) {
-    Column(
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Image(
-          painter = rememberCoilPainter(
-              request = comment.author.avatar,
-              requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
-                return transformations(CircleCropTransformation())
-              },
-              shouldRefetchOnSizeChange = { _, _ -> true },
-          ),
-          contentDescription = "Avatar ${comment.author.name}",
-          modifier = Modifier
-              .padding(8.dp)
-              .size(40.dp),
-      )
-      comment.replyCount?.let {
-        Text(text = stringResource(R.string.reply, it), fontSize = 18.sp)
-      }
-    }
-    CommentWithoutAvatar(comment, postUrl)
+  Row(
+      modifier = modifier
+          .clickable { openCommentDetails(comment.commentId) }
+          .fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceEvenly,
+  ) {
+    ImageBlock(modifier = Modifier.requiredWidth(IntrinsicSize.Min), comment)
+    CenterBlock(comment = comment, postUrl = postUrl)
+    FullScoreView(modifier = Modifier
+        .requiredWidth(IntrinsicSize.Min)
+        .padding(horizontal = 8.dp), comment.score, postUrl)
+    Spacer(modifier = Modifier.requiredWidth(4.dp))
   }
 }
 
 @Composable
-private fun CommentWithoutAvatar(comment: CommentUiModel, postUrl: String) {
-  Row(
-      Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
+private fun ImageBlock(modifier: Modifier, comment: CommentUiModel) {
+  Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.SpaceBetween,
+      horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Column {
-      Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
-        Text(text = comment.author.name, fontSize = 14.sp)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = comment.time, fontSize = 14.sp)
-      }
-      MarkdownText(markdown = comment.text)
-      ModifyCommentBlock(comment = comment, postUrl = postUrl)
+    Image(
+        painter = rememberCoilPainter(
+            request = comment.author.avatar,
+            requestBuilder = fun ImageRequest.Builder.(_: IntSize): ImageRequest.Builder {
+              return transformations(CircleCropTransformation())
+            },
+            shouldRefetchOnSizeChange = { _, _ -> true },
+        ),
+        contentDescription = "Avatar ${comment.author.name}",
+        modifier = Modifier
+            .padding(8.dp)
+            .size(40.dp),
+    )
+    comment.replyCount?.let {
+      Text(text = stringResource(R.string.reply, it), fontSize = 18.sp)
     }
-    FullScoreView(comment.score, postUrl)
+  }
+}
+
+@Composable
+private fun CenterBlock(modifier: Modifier = Modifier, comment: CommentUiModel, postUrl: String) {
+  Column(modifier = modifier) {
+    Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
+      Text(text = comment.author.name, fontSize = 14.sp)
+      Spacer(modifier = Modifier.width(4.dp))
+      Text(text = comment.time, fontSize = 14.sp)
+    }
+    MarkdownText(markdown = comment.text)
+    ModifyCommentBlock(comment = comment, postUrl = postUrl)
   }
 }
