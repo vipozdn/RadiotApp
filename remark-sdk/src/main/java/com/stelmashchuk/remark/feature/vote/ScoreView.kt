@@ -1,7 +1,7 @@
 package com.stelmashchuk.remark.feature.vote
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -19,7 +19,7 @@ import com.stelmashchuk.remark.di.RemarkComponent
 import com.stelmashchuk.remark.feature.comments.ScoreUiModel
 
 @Composable
-internal fun FullScoreView(modifier: Modifier, score: ScoreUiModel, postUrl: String) {
+internal fun ScoreView(modifier: Modifier = Modifier, score: ScoreUiModel, postUrl: String) {
   val viewModel: ScoreViewModel = viewModel(key = score.commentId.raw, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
@@ -33,8 +33,8 @@ internal fun FullScoreView(modifier: Modifier, score: ScoreUiModel, postUrl: Str
 }
 
 @Composable
-internal fun ScoreView(modifier: Modifier, score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
-  Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+internal fun ScoreView(modifier: Modifier = Modifier, score: ScoreUiModel, onVote: (VoteType) -> Unit = {}) {
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
     VoteButton(onClick = { onVote(VoteType.UP) }) {
       Image(painterResource(score.upRes), "up")
     }
