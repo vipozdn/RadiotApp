@@ -7,7 +7,7 @@ public class DeleteCommentUseCase internal constructor(
 ) {
 
   public suspend fun delete(commentId: CommentId): Result<Unit> {
-    return Result.runCatching { commentService.edit(commentId.raw, EditCommentRequest(true), postUrl) }
+    return Result.runCatching { commentService.delete(commentId, DeleteRequest(true), postUrl) }
         .onSuccess { deleteComment ->
           commentStorage.remove(deleteComment.id)
         }

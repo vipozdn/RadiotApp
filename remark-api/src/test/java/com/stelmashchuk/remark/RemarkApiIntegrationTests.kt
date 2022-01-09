@@ -7,8 +7,9 @@ import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentOneLevelRoot
 import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.api.comment.CommentService
-import com.stelmashchuk.remark.api.comment.DeletedComment
-import com.stelmashchuk.remark.api.comment.EditCommentRequest
+import com.stelmashchuk.remark.api.comment.DeleteRequest
+import com.stelmashchuk.remark.api.comment.DeleteResponse
+import com.stelmashchuk.remark.api.comment.EditRequest
 import com.stelmashchuk.remark.api.comment.Locator
 import com.stelmashchuk.remark.api.comment.PostComment
 import com.stelmashchuk.remark.api.comment.VoteResponse
@@ -60,7 +61,7 @@ internal class RemarkApiIntegrationTests {
             this.comments shouldBe emptyList()
           }
 
-          postUseCases.postComment(commentRoot, newText) shouldBe null
+          postUseCases.postComment(commentRoot, newText) shouldBe Result.success(Unit)
 
           awaitItem().run {
             this.rootComment should idMatch(rootCommentId).and(replyCountMatch(1))
@@ -69,6 +70,48 @@ internal class RemarkApiIntegrationTests {
         }
   }
 
+  @Test
+  fun `Verify edit 1th level comment`() = runBlocking {
+    val postUrl = "postUrl"
+    val commentToEditId = CommentId("commentToEdit")
+    val comment1 = mockComment(commentToEditId, CommentId(""))
+    val comment2 = mockComment(CommentId("1"), CommentId(""))
+    val newText = "newCommentText"
+
+    val service = mockk<CommentService> {
+      coEvery { getCommentsPlain(postUrl) } coAnswers {
+        CommentOneLevelRoot(
+            listOf(comment1, comment2)
+        )
+      }
+
+      coEvery { edit(commentToEditId, EditRequest(text = newText), postUrl) } coAnswers {
+        comment1.copy(text = newText)
+      }
+    }
+
+    val useCases = createUseCases(service)
+    val editCommentUseCases = useCases.getEditCommentUseCase(postUrl)
+    val dataController = useCases.getDataController(postUrl)
+
+    val root = CommentRoot.Post(postUrl)
+
+    dataController.observeComments(root)
+        .test {
+          awaitItem().run {
+            rootComment shouldBe null
+            comments.any { it.id == commentToEditId } shouldBe true
+            comments.any { it.id == CommentId("1") } shouldBe true
+          }
+
+          editCommentUseCases.editComment(commentToEditId, newText) shouldBe Result.success(Unit)
+
+          awaitItem().run {
+            comments.find { it.id == commentToEditId } shouldBe idMatch(commentToEditId).and(textMatch(newText))
+            comments.any { it.id == CommentId("1") } shouldBe true
+          }
+        }
+  }
 
   @Test
   fun `Verify delete 1th level comment`() = runBlocking {
@@ -84,8 +127,8 @@ internal class RemarkApiIntegrationTests {
         )
       }
 
-      coEvery { edit(commentToDelete.raw, EditCommentRequest(true), postUrl) } coAnswers {
-        DeletedComment(id = commentToDelete)
+      coEvery { delete(commentToDelete, DeleteRequest(true), postUrl) } coAnswers {
+        DeleteResponse(id = commentToDelete)
       }
     }
 
@@ -190,7 +233,7 @@ internal class RemarkApiIntegrationTests {
             this.comments[0] should idMatch("1")
           }
 
-          postUseCases.postComment(root, newText) shouldBe null
+          postUseCases.postComment(root, newText) shouldBe Result.success(Unit)
 
           awaitItem().run {
             this.rootComment?.id shouldBe rootCommentId

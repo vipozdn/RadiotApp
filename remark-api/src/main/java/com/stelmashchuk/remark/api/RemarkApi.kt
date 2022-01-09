@@ -7,6 +7,7 @@ import com.stelmashchuk.remark.api.comment.CommentService
 import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.comment.CommentTimeMapper
 import com.stelmashchuk.remark.api.comment.DeleteCommentUseCase
+import com.stelmashchuk.remark.api.comment.EditCommentUseCase
 import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.api.user.CredentialCreator
@@ -51,6 +52,11 @@ public class RemarkApiFactory internal constructor(
   public fun getDeleteCommentUseCase(postUrl: String): DeleteCommentUseCase {
     val storage = getStorage(postUrl)
     return DeleteCommentUseCase(storage, commentService, postUrl)
+  }
+
+  public fun getEditCommentUseCase(postUrl: String): EditCommentUseCase {
+    val storage = getStorage(postUrl)
+    return EditCommentUseCase(commentStorage = storage, commentService = commentService, postUrl = postUrl)
   }
 
   public fun getStorage(postUrl: String): CommentStorage {

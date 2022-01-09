@@ -11,8 +11,8 @@ public class PostCommentUseCase internal constructor(
   public suspend fun postComment(
       commentRoot: CommentRoot,
       text: String,
-  ): RemarkError? {
-    val result = Result.runCatching {
+  ): Result<Unit> {
+    return Result.runCatching {
       commentService.postComment(PostComment(
           text = text,
           parentId = if (commentRoot is CommentRoot.Comment) commentRoot.commentId else null,
@@ -29,7 +29,6 @@ public class PostCommentUseCase internal constructor(
         }
       }
     }
-
-    return if (result.isSuccess) null else throw NotImplementedError("text in error $text")
+        .map { }
   }
 }
