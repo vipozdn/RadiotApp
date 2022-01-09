@@ -6,19 +6,29 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class PostCommentFactory(private val remarkApiFactory: RemarkApiFactory) {
 
-  private val storageMap = ConcurrentHashMap<CommentRoot, PostCommentStorage>()
+  private val storageMap = ConcurrentHashMap<String, PostCommentStorage>()
+  private val editModeMap = ConcurrentHashMap<String, EditMode>()
 
-  fun create(commentRoot: CommentRoot): PostCommentViewModel {
+  fun createPostCommentViewModel(commentRoot: CommentRoot): PostCommentViewModel {
     val postComment = PostComment(
         postCommentUseCase = remarkApiFactory.getPostCommentUseCase(commentRoot.postUrl),
-        postCommentStorage = getStorage(commentRoot)
+        postCommentStorage = getStorage(commentRoot.postUrl),
+        editCommentUseCase = remarkApiFactory.getEditCommentUseCase(commentRoot.postUrl),
+        editMode = getEditMode(commentRoot.postUrl),
+        commentRoot = commentRoot,
     )
-    return PostCommentViewModel(postComment = postComment, getStorage(commentRoot))
+    return PostCommentViewModel(postComment = postComment, getStorage(commentRoot.postUrl))
   }
 
-  private fun getStorage(commentRoot: CommentRoot): PostCommentStorage {
-    return storageMap.getOrPut(commentRoot) {
-      PostCommentStorage(commentRoot)
+  internal fun getEditMode(postUrl: String): EditMode {
+    return editModeMap.getOrPut(postUrl) {
+      EditMode(commentStorage = remarkApiFactory.getStorage(postUrl), postCommentStorage = getStorage(postUrl))
+    }
+  }
+
+  private fun getStorage(postUrl: String): PostCommentStorage {
+    return storageMap.getOrPut(postUrl) {
+      PostCommentStorage()
     }
   }
 }

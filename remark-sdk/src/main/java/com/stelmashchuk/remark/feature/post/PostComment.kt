@@ -1,14 +1,19 @@
 package com.stelmashchuk.remark.feature.post
 
+import com.stelmashchuk.remark.api.comment.CommentRoot
+import com.stelmashchuk.remark.api.comment.EditCommentUseCase
 import com.stelmashchuk.remark.api.comment.PostCommentUseCase
 
 internal class PostComment(
     private val postCommentUseCase: PostCommentUseCase,
     private val postCommentStorage: PostCommentStorage,
-) : EditMode by postCommentStorage {
+    private val editCommentUseCase: EditCommentUseCase,
+    private val editMode: EditMode,
+    private val commentRoot: CommentRoot,
+) {
 
   internal suspend fun postComment() {
-    if (postCommentStorage.flowEditCommentId().value != null) {
+    if (editMode.flowEditCommentId().value != null) {
       editComment()
     } else {
       postNewComment()
@@ -16,15 +21,20 @@ internal class PostComment(
   }
 
   private suspend fun postNewComment() {
-    val root = postCommentStorage.root
     val text = postCommentStorage.flowText().value
-    val error = postCommentUseCase.postComment(root, text)
-    if (error == null) {
+    val result = postCommentUseCase.postComment(commentRoot, text)
+    if (result.isSuccess) {
       postCommentStorage.clear()
     }
   }
 
   private suspend fun editComment() {
-    throw NotImplementedError()
+    val id = requireNotNull(editMode.flowEditCommentId().value)
+    val text = postCommentStorage.flowText().value
+
+    if (editCommentUseCase.editComment(id, text).isSuccess) {
+      postCommentStorage.clear()
+      editMode.closeEditMode()
+    }
   }
 }

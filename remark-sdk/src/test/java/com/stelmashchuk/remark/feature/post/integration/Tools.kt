@@ -16,5 +16,5 @@ internal fun createViewModel(
     every { getPostCommentUseCase(any()) } answers { postCommentUseCase }
   }
   val factory = PostCommentFactory(apiFactory)
-  return factory.create(commentRoot = commentRoot)
+  return factory.createPostCommentViewModel(commentRoot = commentRoot)
 }

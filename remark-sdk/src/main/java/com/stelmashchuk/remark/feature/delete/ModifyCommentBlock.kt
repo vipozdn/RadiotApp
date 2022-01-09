@@ -33,9 +33,9 @@ internal fun ModifyCommentBlock(comment: CommentUiModel, postUrl: String) {
         Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Delete")
       }
 
-      /*IconButton(onClick = { viewModel.startEditFlow() }) {
+      IconButton(onClick = { viewModel.startEditFlow() }) {
         Icon(painter = painterResource(id = R.drawable.ic_edit), contentDescription = "Edit")
-      }*/
+      }
 
       Text(text = timer.toString())
     }
