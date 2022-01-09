@@ -30,6 +30,6 @@ public class PostCommentUseCase internal constructor(
       }
     }
 
-    return if (result.isSuccess) null else throw NotImplementedError()
+    return if (result.isSuccess) null else throw NotImplementedError("text in error $text")
   }
 }
