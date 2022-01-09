@@ -143,17 +143,17 @@ internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: Com
       modifier = modifier
           .clickable { openCommentDetails(comment.commentId) }
           .fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceEvenly,
+      horizontalArrangement = Arrangement.SpaceBetween,
   ) {
     ImageBlock(comment = comment)
-    CenterBlock(comment = comment, postUrl = postUrl)
+    CenterBlock(comment = comment, postUrl = postUrl, modifier = Modifier.fillMaxWidth())
   }
 }
 
 @Composable
 private fun ImageBlock(comment: CommentUiModel, modifier: Modifier = Modifier) {
   Column(
-      modifier = modifier,
+      modifier = modifier.width(48.dp),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
