@@ -7,11 +7,10 @@ import com.stelmashchuk.remark.ResourcesRepository
 import com.stelmashchuk.remark.api.RemarkApi
 import com.stelmashchuk.remark.api.RemarkSettings
 import com.stelmashchuk.remark.api.comment.CommentId
-import com.stelmashchuk.remark.api.comment.CommentRoot
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthProvidersUiMapper
 import com.stelmashchuk.remark.feature.delete.DeleteAvailableChecker
 import com.stelmashchuk.remark.feature.delete.ModifyCommentViewModel
-import com.stelmashchuk.remark.feature.post.PostCommentViewModel
+import com.stelmashchuk.remark.feature.post.PostCommentFactory
 import com.stelmashchuk.remark.os.OsDateTime
 import com.stelmashchuk.remark.os.OsStorageImpl
 import okhttp3.OkHttpClient
@@ -35,6 +34,10 @@ public object RemarkComponent {
     ResourcesRepository(context)
   }
 
+  internal val postCommentFactory: PostCommentFactory by lazy {
+    PostCommentFactory(api.remarkApiFactory)
+  }
+
   internal fun authProvidersUiMapper(): AuthProvidersUiMapper {
     return AuthProvidersUiMapper(
         remarkSettings
@@ -51,9 +54,5 @@ public object RemarkComponent {
         ),
         commentStorage = api.remarkApiFactory.getStorage(postUrl)
     )
-  }
-
-  internal fun postCommentViewModel(commentRoot: CommentRoot): PostCommentViewModel {
-    return PostCommentViewModel(commentRoot, api.remarkApiFactory.getPostCommentUseCase(commentRoot.postUrl))
   }
 }
