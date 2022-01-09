@@ -41,7 +41,7 @@ public object RemarkComponent {
     )
   }
 
-  internal fun deleteViewModel(commentId: CommentId, postUrl: String): ModifyCommentViewModel {
+  internal fun modifyViewModel(commentId: CommentId, postUrl: String): ModifyCommentViewModel {
     return ModifyCommentViewModel(
         commentId = commentId,
         deleteCommentUseCase = api.remarkApiFactory.getDeleteCommentUseCase(postUrl),

@@ -31,7 +31,7 @@ internal class ModifyCommentViewModel(
         emit(null)
       }
     }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
   }
 
   fun delete() {

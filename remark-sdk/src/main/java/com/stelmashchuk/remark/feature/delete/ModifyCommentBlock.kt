@@ -21,7 +21,7 @@ internal fun ModifyCommentBlock(comment: CommentUiModel, postUrl: String) {
   val viewModel: ModifyCommentViewModel = viewModel(key = comment.commentId.raw, factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return RemarkComponent.deleteViewModel(comment.commentId, postUrl) as T
+      return RemarkComponent.modifyViewModel(comment.commentId, postUrl) as T
     }
   })
 
