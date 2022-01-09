@@ -187,7 +187,7 @@ internal class RemarkApiIntegrationTests {
             comments[0] should idMatch(oldComment.id)
           }
 
-          postUseCases.postComment(root, newText) shouldBe null
+          postUseCases.postComment(root, newText) shouldBe Result.success(Unit)
 
           awaitItem().run {
             rootComment shouldBe null
