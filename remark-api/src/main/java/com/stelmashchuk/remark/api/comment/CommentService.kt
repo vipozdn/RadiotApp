@@ -28,11 +28,18 @@ internal interface CommentService {
   ): VoteResponse
 
   @PUT("/api/v1/comment/{commentId}")
-  suspend fun edit(
-      @Path("commentId") commentId: String,
-      @Body editCommentRequest: EditCommentRequest,
+  suspend fun delete(
+      @Path("commentId") commentId: CommentId,
+      @Body deleteRequest: DeleteRequest,
       @Query("url") postUrl: String,
-  ): DeletedComment
+  ): DeleteResponse
+
+  @PUT("/api/v1/comment/{commentId}")
+  suspend fun edit(
+      @Path("commentId") commentId: CommentId,
+      @Body editRequest: EditRequest,
+      @Query("url") postUrl: String,
+  ): Comment
 
   @GET("api/v1/config")
   suspend fun getConfig(): Config

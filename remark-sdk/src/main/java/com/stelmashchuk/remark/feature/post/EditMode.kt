@@ -1,11 +1,30 @@
 package com.stelmashchuk.remark.feature.post
 
 import com.stelmashchuk.remark.api.comment.CommentId
+import com.stelmashchuk.remark.api.comment.CommentStorage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
-internal interface EditMode {
+internal class EditMode(
+    private val commentStorage: CommentStorage,
+    private val postCommentStorage: PostCommentStorage,
+) {
 
-  suspend fun startEditMode(commentId: CommentId)
+  private val editCommentId = MutableStateFlow<CommentId?>(null)
 
-  suspend fun closeEditMode()
+  suspend fun flowEditCommentId(): StateFlow<CommentId?> {
+    return editCommentId.stateIn(GlobalScope)
+  }
+
+  suspend fun startEditMode(commentId: CommentId) {
+    editCommentId.emit(commentId)
+    postCommentStorage.updateText(commentStorage.waitForComment(commentId).text)
+  }
+
+  suspend fun closeEditMode() {
+    editCommentId.emit(null)
+  }
 
 }

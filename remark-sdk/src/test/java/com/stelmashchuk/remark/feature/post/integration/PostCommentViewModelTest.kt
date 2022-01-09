@@ -43,17 +43,4 @@ internal class PostCommentViewModelTest {
 
     coVerify(exactly = 1) { postCommentUseCase.postComment(commentRoot, text) }
   }
-
-  @Test
-  fun `Verify edit exist comment`() = runBlocking {
-    val commentRoot = mockk<CommentRoot>(relaxed = true)
-    val postCommentUseCase = mockk<PostCommentUseCase>()
-    val viewModel = createViewModel(postCommentUseCase = postCommentUseCase, commentRoot = commentRoot)
-
-    val text = "comment_text"
-    viewModel.updateText(text)
-    viewModel.postComment()
-
-    coVerify(exactly = 1) { postCommentUseCase.postComment(commentRoot, text) }
-  }
 }

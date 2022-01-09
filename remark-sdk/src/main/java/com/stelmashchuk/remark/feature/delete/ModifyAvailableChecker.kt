@@ -5,7 +5,7 @@ import com.stelmashchuk.remark.api.config.ConfigRepository
 import com.stelmashchuk.remark.os.OsDateTime
 import java.time.Duration
 
-internal class DeleteAvailableChecker(
+internal class ModifyAvailableChecker(
     private val configRepository: ConfigRepository,
     private val osDateTime: OsDateTime,
 ) {

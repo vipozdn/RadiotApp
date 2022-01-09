@@ -8,7 +8,7 @@ import com.stelmashchuk.remark.api.RemarkApi
 import com.stelmashchuk.remark.api.RemarkSettings
 import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.feature.auth.ui.screen.AuthProvidersUiMapper
-import com.stelmashchuk.remark.feature.delete.DeleteAvailableChecker
+import com.stelmashchuk.remark.feature.delete.ModifyAvailableChecker
 import com.stelmashchuk.remark.feature.delete.ModifyCommentViewModel
 import com.stelmashchuk.remark.feature.post.PostCommentFactory
 import com.stelmashchuk.remark.os.OsDateTime
@@ -48,11 +48,12 @@ public object RemarkComponent {
     return ModifyCommentViewModel(
         commentId = commentId,
         deleteCommentUseCase = api.remarkApiFactory.getDeleteCommentUseCase(postUrl),
-        deleteAvailableChecker = DeleteAvailableChecker(
+        modifyAvailableChecker = ModifyAvailableChecker(
             configRepository = api.configRepository,
             osDateTime = OsDateTime(),
         ),
-        commentStorage = api.remarkApiFactory.getStorage(postUrl)
+        commentStorage = api.remarkApiFactory.getStorage(postUrl),
+        editMode = postCommentFactory.getEditMode(postUrl),
     )
   }
 }

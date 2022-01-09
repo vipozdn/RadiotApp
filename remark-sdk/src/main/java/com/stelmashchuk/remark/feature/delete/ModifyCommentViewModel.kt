@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.stelmashchuk.remark.api.comment.CommentId
 import com.stelmashchuk.remark.api.comment.CommentStorage
 import com.stelmashchuk.remark.api.comment.DeleteCommentUseCase
+import com.stelmashchuk.remark.feature.post.EditMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,14 +16,15 @@ import kotlinx.coroutines.launch
 internal class ModifyCommentViewModel(
     private val commentId: CommentId,
     private val deleteCommentUseCase: DeleteCommentUseCase,
-    private val deleteAvailableChecker: DeleteAvailableChecker,
+    private val modifyAvailableChecker: ModifyAvailableChecker,
     private val commentStorage: CommentStorage,
+    private val editMode: EditMode,
 ) : ViewModel() {
 
   val deleteAvailable: StateFlow<Long?> by lazy {
     flow {
       val comment = commentStorage.waitForComment(commentId)
-      val delta = deleteAvailableChecker.check(comment)
+      val delta = modifyAvailableChecker.check(comment)
       if (delta != null) {
         (delta downTo 1).forEach {
           emit(it)
@@ -41,6 +43,8 @@ internal class ModifyCommentViewModel(
   }
 
   fun startEditFlow() {
-    throw IllegalArgumentException()
+    viewModelScope.launch {
+      editMode.startEditMode(commentId)
+    }
   }
 }

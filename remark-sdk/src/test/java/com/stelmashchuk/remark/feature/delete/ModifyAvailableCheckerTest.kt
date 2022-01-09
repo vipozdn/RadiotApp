@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-internal class DeleteAvailableCheckerTest {
+internal class ModifyAvailableCheckerTest {
 
   @Test
   fun `verify is delete flag set correctly (1)`() = runBlocking {
@@ -105,19 +105,19 @@ internal class DeleteAvailableCheckerTest {
   private fun prepareData(
       systemTime: LocalDateTime,
       editDuration: Long,
-  ): DeleteAvailableChecker {
+  ): ModifyAvailableChecker {
     val configRepository = getConfigRepository(editDuration)
 
     val osDateTime = mockk<OsDateTime> {
       every { nowUTC() } returns systemTime
     }
 
-    return DeleteAvailableChecker(configRepository, osDateTime)
+    return ModifyAvailableChecker(configRepository, osDateTime)
   }
 
   @Test
   fun `Verify correct for isCurrentAuthor false`() = runBlocking {
-    DeleteAvailableChecker(mockk(relaxed = true), mockk(relaxed = true)).check(mockFullComment(false, mockk())) shouldBe null
+    ModifyAvailableChecker(mockk(relaxed = true), mockk(relaxed = true)).check(mockFullComment(false, mockk())) shouldBe null
   }
 
 }

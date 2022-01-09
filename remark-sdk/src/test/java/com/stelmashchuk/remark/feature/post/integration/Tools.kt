@@ -12,9 +12,9 @@ internal fun createViewModel(
     postCommentUseCase: PostCommentUseCase = mockk(),
     commentRoot: CommentRoot = mockk(relaxed = true),
 ): PostCommentViewModel {
-  val apiFactory = mockk<RemarkApiFactory> {
+  val apiFactory = mockk<RemarkApiFactory>(relaxed = true) {
     every { getPostCommentUseCase(any()) } answers { postCommentUseCase }
   }
   val factory = PostCommentFactory(apiFactory)
-  return factory.create(commentRoot = commentRoot)
+  return factory.createPostCommentViewModel(commentRoot = commentRoot)
 }

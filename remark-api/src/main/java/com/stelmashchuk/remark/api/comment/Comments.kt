@@ -54,7 +54,7 @@ internal data class PostComment(
 )
 
 @Serializable
-internal data class DeletedComment(
+internal data class DeleteResponse(
     @SerialName("id")
     val id: CommentId,
 )
@@ -68,10 +68,17 @@ internal data class Locator(
 )
 
 @Serializable
-internal data class EditCommentRequest(
+internal data class DeleteRequest(
     @SerialName("delete")
     val delete: Boolean,
 )
+
+@Serializable
+internal data class EditRequest(
+    @SerialName("text")
+    val text: String,
+)
+
 
 @Serializable
 internal data class VoteResponse(
