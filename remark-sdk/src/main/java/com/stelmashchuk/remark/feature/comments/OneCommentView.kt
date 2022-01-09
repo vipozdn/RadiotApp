@@ -6,14 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,7 +46,7 @@ import com.stelmashchuk.remark.feature.comments.mappers.TimeMapper
 import com.stelmashchuk.remark.feature.comments.mappers.UserUiMapper
 import com.stelmashchuk.remark.feature.delete.ModifyCommentBlock
 import com.stelmashchuk.remark.feature.post.WriteCommentView
-import com.stelmashchuk.remark.feature.vote.FullScoreView
+import com.stelmashchuk.remark.feature.vote.ScoreView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 internal data class FullCommentsUiModel(
@@ -147,17 +145,13 @@ internal fun OneCommentViewWithImage(modifier: Modifier = Modifier, comment: Com
           .fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceEvenly,
   ) {
-    ImageBlock(modifier = Modifier.requiredWidth(IntrinsicSize.Min), comment)
+    ImageBlock(comment = comment)
     CenterBlock(comment = comment, postUrl = postUrl)
-    FullScoreView(modifier = Modifier
-        .requiredWidth(IntrinsicSize.Min)
-        .padding(horizontal = 8.dp), comment.score, postUrl)
-    Spacer(modifier = Modifier.requiredWidth(4.dp))
   }
 }
 
 @Composable
-private fun ImageBlock(modifier: Modifier, comment: CommentUiModel) {
+private fun ImageBlock(comment: CommentUiModel, modifier: Modifier = Modifier) {
   Column(
       modifier = modifier,
       verticalArrangement = Arrangement.SpaceBetween,
@@ -173,7 +167,7 @@ private fun ImageBlock(modifier: Modifier, comment: CommentUiModel) {
         ),
         contentDescription = "Avatar ${comment.author.name}",
         modifier = Modifier
-            .padding(8.dp)
+            .padding(4.dp)
             .size(40.dp),
     )
     comment.replyCount?.let {
@@ -187,10 +181,14 @@ private fun CenterBlock(modifier: Modifier = Modifier, comment: CommentUiModel, 
   Column(modifier = modifier) {
     Row(modifier = Modifier.padding(paddingValues = PaddingValues(vertical = 8.dp))) {
       Text(text = comment.author.name, fontSize = 14.sp)
-      Spacer(modifier = Modifier.width(4.dp))
+      Spacer(modifier = Modifier.width(2.dp))
       Text(text = comment.time, fontSize = 14.sp)
+      Spacer(modifier = Modifier.width(2.dp))
     }
     MarkdownText(markdown = comment.text)
-    ModifyCommentBlock(comment = comment, postUrl = postUrl)
+    Column {
+      ScoreView(score = comment.score, postUrl = postUrl)
+      ModifyCommentBlock(comment = comment, postUrl = postUrl)
+    }
   }
 }
